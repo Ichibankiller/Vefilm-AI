@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My DP Painted His Walls. I Built a Lens Reference with Claude.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;
+  --surface:#0f0e0d;
+  --surface2:#141210;
+  --border:#1e1c1a;
+  --border2:#2a2826;
+  --text:#ddd8d0;
+  --mid:#a0998f;
+  --muted:#6a6560;
+  --dim:#2e2c2a;
+  --amber:#d4844a;
+  --gold:#c8a44a;
+  --blue:#5a9fca;
+}
+body{background:#080808;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.7;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.25;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 64px 72px;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 15% 70%, rgba(212,132,74,0.11) 0%, transparent 55%),radial-gradient(ellipse at 85% 30%, rgba(90,159,202,0.06) 0%, transparent 50%),#060504}
+.hero-rule{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber) 0%,var(--blue) 100%)}
+.hero-content{position:relative;z-index:2;max-width:900px}
+.hero-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin-bottom:28px;display:flex;align-items:center;gap:14px}
+.hero-kicker::before{content:'';width:32px;height:1px;background:var(--amber);display:block}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,8.5vw,110px);line-height:.9;margin-bottom:32px;color:var(--text);letter-spacing:.02em}
+.hero-title em{font-style:normal;color:var(--amber)}
+.hero-sub{font-size:15px;font-weight:300;color:var(--muted);max-width:580px;line-height:1.75;margin-bottom:36px;border-left:2px solid var(--dim);padding-left:20px}
+.hero-byline{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;gap:24px;flex-wrap:wrap}
+.hero-byline span+span::before{content:'·';margin-right:24px;color:var(--dim)}
+
+/* BODY */
+.body-wrap{max-width:760px;margin:0 auto;padding:0 40px}
+
+/* SECTION HEADER */
+.sec{padding:28px 64px 24px;background:#141210;border-bottom:1px solid var(--border2);border-top:3px solid var(--amber);display:flex;align-items:flex-end;gap:24px;margin:0 -40px;position:relative}
+.sec h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4vw,46px);letter-spacing:.05em;color:var(--text);line-height:1;white-space:nowrap}
+.sec-line{flex:1;height:1px;background:var(--border2);margin-bottom:6px}
+
+/* PROSE */
+.prose{padding:52px 0}
+.prose p{font-size:17px;font-weight:300;color:var(--mid);line-height:1.9;margin-bottom:26px}
+.prose p strong{color:var(--text);font-weight:500}
+.prose p:last-child{margin-bottom:0}
+
+/* PULLQUOTE */
+.pullquote{margin:0 -40px 52px;padding:44px 64px;background:#141210;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative}
+.pullquote::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),transparent)}
+.pullquote p{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,2.8vw,34px);letter-spacing:.03em;color:var(--text);line-height:1.25;max-width:680px}
+
+/* VIZ PANELS replaces screenshots */
+.viz-panel{margin:0 -40px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#0f0e0d}
+.viz-panel-inner{padding:36px 64px}
+.viz-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+.viz-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.06em;color:var(--text);margin-bottom:4px}
+.viz-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+
+.viz-caption{padding:18px 64px 22px;display:flex;align-items:flex-start;gap:16px;border-top:1px solid var(--border)}
+.viz-caption-num{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--amber);flex-shrink:0;margin-top:2px;text-transform:uppercase}
+.viz-caption-text{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;color:#9a9690;line-height:1.65}
+
+/* LENS GRID */
+.lens-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1e1c1a}
+.lens-card{background:#080808;padding:18px 20px}
+.lens-card-top{height:2px;margin:-18px -20px 14px;background:var(--amber)}
+.lens-card-top.blue{background:var(--blue)}
+.lens-card-top.gold{background:var(--gold)}
+.lens-card-top.teal{background:#5a8a8a}
+.lens-card-top.green{background:#5a8a6a}
+.lens-card-top.purple{background:#8a5a9a}
+.lens-card-type{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#7a7670;margin-bottom:4px}
+.lens-card-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;color:var(--text);margin-bottom:10px}
+.lens-bar-row{margin-bottom:10px}
+.lens-bar-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#8a8680;margin-bottom:5px;display:flex;justify-content:space-between}
+.lens-bar-label span{color:#b0aca6;font-size:10px}
+.lens-bar-track{height:3px;background:#2e2c2a}
+.lens-bar-fill{height:100%}
+.fill-amber{background:var(--amber)}
+.fill-blue{background:var(--blue)}
+.fill-gold{background:var(--gold)}
+.fill-teal{background:#5a8a8a}
+.fill-green{background:#5a8a6a}
+.fill-purple{background:#8a5a9a}
+
+/* FLARE VIZ */
+.flare-split{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1e1c1a}
+.flare-col{background:#080808}
+.flare-col-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline}
+.flare-col-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em}
+.flare-col-name.amber{color:var(--amber)}
+.flare-col-name.blue{color:var(--blue)}
+.flare-col-spec{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--muted)}
+.flare-svg-wrap{padding:0;background:#080808}
+.flare-traits{padding:14px 20px;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--border)}
+.flare-trait{font-size:11px;font-weight:300;color:var(--muted);display:flex;align-items:flex-start;gap:8px}
+.flare-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.dot-amber{background:var(--amber)}
+.dot-blue{background:var(--blue)}
+
+/* HEAD TO HEAD TABLE */
+.hth-table{width:100%;border-collapse:collapse}
+.hth-table th,.hth-table td{border-bottom:1px solid var(--border);border-right:1px solid var(--border);padding:11px 16px;vertical-align:middle}
+.hth-table th:last-child,.hth-table td:last-child{border-right:none}
+.hth-table thead th{background:#0f0e0d;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:12px 16px}
+.hth-table thead th:nth-child(1){color:var(--muted);width:140px}
+.hth-table thead th:nth-child(2){font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;color:var(--amber);text-transform:none;background:rgba(212,132,74,0.08)}
+.hth-table thead th:nth-child(3){font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;color:var(--blue);text-transform:none;background:rgba(90,159,202,0.08)}
+.hth-table .rlbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:#0f0e0d}
+.hth-table .cv{font-family:'DM Mono',monospace;font-size:10px;color:var(--mid);letter-spacing:.03em}
+.hth-table tbody tr:nth-child(even) td.cv{background:#0a0908}
+.win-amber{color:var(--amber);font-weight:500}
+.win-blue{color:var(--blue);font-weight:500}
+.mini-bar{display:flex;align-items:center;gap:6px;margin-top:4px}
+.mini-track{flex:1;height:2px;background:#1e1c1a}
+.mini-fill{height:100%}
+
+/* CITY VIZ */
+.city-split{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1e1c1a}
+.city-col{background:#080808}
+.city-col-hdr{padding:14px 20px 12px;border-bottom:1px solid var(--border)}
+.city-col-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em}
+.city-col-name.amber{color:var(--amber)}
+.city-col-name.blue{color:var(--blue)}
+.city-col-spec{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--muted);margin-top:2px}
+.city-desc{padding:12px 20px 16px;border-top:1px solid var(--border)}
+.city-desc p{font-size:11px;font-weight:300;color:var(--muted);line-height:1.6}
+
+/* CREDITS */
+.credits{background:#0f0e0d;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:40px 64px;margin:52px -40px 0;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.credit-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.credit-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;color:var(--text);margin-bottom:4px}
+.credit-body{font-size:12px;font-weight:300;color:#9a9690;line-height:1.7}
+.credit-insta{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;margin-bottom:10px;}
+.credit-insta a{color:var(--amber);text-decoration:none;}
+.credit-insta a:hover{text-decoration:underline;}
+.credit-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.ctag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;color:var(--muted);padding:3px 9px;border:1px solid var(--border)}
+
+/* UPDATE CALLOUT */
+.update{margin:0 -40px;padding:28px 64px;background:#141210;border-top:1px solid var(--border);border-bottom:1px solid var(--border);border-left:3px solid var(--amber)}
+.update-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.update-label::before{content:'';width:6px;height:6px;background:var(--amber);border-radius:50%;display:inline-block;flex-shrink:0}
+.update p{font-size:15px;font-weight:300;color:var(--mid);line-height:1.85}
+.update p strong{color:var(--text);font-weight:500}
+
+/* NEXT ARTICLE TEASER */
+.next-article{margin:0 -40px;padding:36px 64px;background:#141210;border-top:3px solid var(--blue);border-bottom:1px solid var(--border)}
+.next-article-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.next-article-label::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;display:inline-block;flex-shrink:0}
+.next-article-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(26px,3.5vw,40px);letter-spacing:.05em;color:var(--text);line-height:1.05;margin-bottom:10px}
+.next-article-desc{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7;max-width:600px}
+
+/* HASHTAGS */
+.hashtags{padding:28px 64px 32px;margin:0 -40px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--border)}
+.ht{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);padding:4px 12px;border:1px solid var(--border2);background:#0f0e0d}
+
+/* FOOTER */
+footer{padding:20px 64px;margin:0 -40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+footer span{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--dim)}
+
+@media(max-width:800px){
+  .hero{padding:0 24px 52px}
+  .body-wrap{padding:0 24px}
+  .sec,.pullquote,.viz-panel-inner,.viz-caption,.credits,.hashtags,footer{padding-left:24px;padding-right:24px}
+  .sec,.pullquote,.viz-panel,.credits,.hashtags,footer{margin-left:-24px;margin-right:-24px}
+  .lens-grid,.flare-split,.city-split{grid-template-columns:1fr}
+  .credits{grid-template-columns:1fr}
+  .hth-table th,.hth-table td{padding:8px}
+}
+
+/* FORCE DARK BACKGROUNDS ON ALL SVG PANELS */
+.viz-panel svg,
+.flare-svg-wrap svg,
+.flare-svg-wrap,
+.flare-col,
+.city-col,
+.city-col svg,
+.lens-card,
+div[style*="background:#080808"] {
+  background: #080808 !important;
+}
+svg {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-rule"></div>
+  <div class="hero-content">
+ <div class="hero-kicker">VEFILM &middot; Pre-Production &middot; AI-Native Workflow</div>
+ <h1 class="hero-title">My DP Painted<br>His Walls.<br><em>I Built a Lens<br>Reference with Claude.</em></h1>
+ <p class="hero-sub">A months-long prep process, a cinematographer who turned his apartment into a practice set, and how AI became part of how we walk into ARRI Rental knowing exactly what we want.</p>
+ <div class="hero-byline">
+ <span>Pedro Feria Pino</span>
+ <span>DP &middot; Camera Operator &middot; SOC &middot; Co-Founder / VEFILM</span>
+ </div>
+  </div>
+</section>
+
+<div class="body-wrap">
+
+<div class="prose">
+  <p>This one has been a long time coming.</p>
+  <p>Back in November, <strong>Nelson Noel Salcedo</strong> called me about a project. A Bronx crime short called <strong>Knock Knock</strong> directed by <strong>Lorenzo Collado</strong>, a writer and director whose script had been sitting with him for a while, sharp and specific, set in the 90s Bronx. Drug deal gone wrong. Betrayal. The kind of story that needs to look like it actually happened. We started talking about the look immediately. What lenses. What format. What the Bronx should feel like on screen.</p>
+  <p>Nelson is not someone who shows up unprepared. You might know him as co-creator and cinematographer of <strong>Washington Heights</strong> on MTV, a show we built together from the ground up. He&rsquo;s also one of the most naturally gifted photographers I&rsquo;ve ever worked with. Raw talent. My favorite photographer, full stop. So when he told me he&rsquo;d started painting his apartment walls to practice aging and distressing techniques for the production design, I wasn&rsquo;t surprised. That&rsquo;s who he is.</p>
+</div>
+
+<div class="pullquote">
+  <p>&ldquo;Nelson started painting his apartment walls to practice aging techniques. Scouts, shot lists, storyboard sessions with the director. Months of prep before a single frame was shot.&rdquo;</p>
+</div>
+
+<div class="prose">
+  <p>We did the location scout. Sat with Lorenzo on the shot list. Looked at cameras and lenses together. Built storyboards. Then delay after delay, the kind that happen on independent films. But the prep never stopped. And now we&rsquo;re finally shooting.</p>
+  <p>Two ARRI Mini LFs. Vintage anamorphic glass. Nelson on A camera as DP. Me on B. They say B cam stands for Best cam. I've spent two decades in documentary and reality. This is my second narrative feature credit. You have to start somewhere. I'm starting here, with people I trust, on a story worth telling.</p>
+</div>
+
+<!-- WHY ANAMORPHIC -->
+<div class="sec"><h2>Why Anamorphic</h2><div class="sec-line"></div></div>
+<div class="prose">
+  <p>The first real creative conversation wasn&rsquo;t about which lenses. It was about why anamorphic at all. That conversation happened between me, Nelson, and Claude.</p>
+  <p>The answer comes from the story. A 2&times; anamorphic squeeze, shooting in the Mini LF 2.8K LF 1:1 mode, gives you a wider horizontal frame that feels true to how the Bronx actually reads: tight streets, cramped stairwells, but the frame still breathes. The oval bokeh and horizontal flares from practical light sources add tension and period-authentic nostalgia that spherical glass doesn&rsquo;t give you. For a story built around betrayal in a drug deal gone wrong, that visual language earns its place.</p>
+  <p>When a DP and a B cam operator lock visual alignment before touching a spec sheet, everything on set moves faster. That conversation with Claude gave us a shared reference point.</p>
+</div>
+
+<!-- FLARE IDENTITY VISUAL -->
+<div class="viz-panel">
+  <div class="viz-panel-inner">
+ <div class="viz-label">Why It Matters · Anamorphic vs Spherical</div>
+ <div class="viz-title">What Anamorphic Gives You</div>
+ <div class="viz-sub">The horizontal streak flare and oval bokeh are not accidents. They are the visual language of the format.</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1e1c1a">
+ <!-- ANAMORPHIC FLARE -->
+ <div style="background:#080808">
+ <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--amber)">ANAMORPHIC · Horizontal Streak Flare</div>
+ <div style="width:100%;height:0;padding-bottom:50%;background:#0a0806;position:relative;overflow:hidden">
+  <!-- ground -->
+  <div style="position:absolute;left:0;right:0;top:68.75%;bottom:0;background:#060402"></div>
+  <!-- buildings left -->
+  <div style="position:absolute;left:3.125%;top:12.5%;width:8.75%;height:56.25%;background:#111008"></div>
+  <div style="position:absolute;left:13.125%;top:20%;width:6.875%;height:48.75%;background:#0d0b09"></div>
+  <!-- buildings right -->
+  <div style="position:absolute;left:83.75%;top:15%;width:10%;height:53.75%;background:#111008"></div>
+  <div style="position:absolute;left:95%;top:22.5%;width:5%;height:46.25%;background:#0d0b09"></div>
+  <!-- windows left building -->
+  <div style="position:absolute;left:6.875%;top:22.5%;width:1.5625%;height:2.5%;background:rgba(255,180,80,0.7)"></div>
+  <!-- windows right building -->
+  <div style="position:absolute;left:85.625%;top:20%;width:1.5625%;height:2.5%;background:rgba(255,180,80,0.7)"></div>
+  <!-- flare streaks -->
+  <div style="position:absolute;left:0;right:0;top:calc(48.125% - 1px);height:2.5%;background:linear-gradient(90deg,rgba(212,132,74,0) 0%,rgba(212,132,74,0.55) 22%,rgba(232,192,144,0.92) 46%,rgba(232,192,128,0.6) 50%,rgba(90,159,202,0.8) 54%,rgba(90,159,202,0.45) 78%,rgba(90,159,202,0) 100%);opacity:.65"></div>
+  <div style="position:absolute;left:0;right:0;top:calc(46.25% - 1px);height:1.25%;background:linear-gradient(90deg,rgba(212,132,74,0) 0%,rgba(212,132,74,0.55) 22%,rgba(232,192,144,0.92) 46%,rgba(90,159,202,0.8) 54%,rgba(90,159,202,0) 100%);opacity:.28"></div>
+  <div style="position:absolute;left:0;right:0;top:calc(51.875% - 1px);height:1.25%;background:linear-gradient(90deg,rgba(212,132,74,0) 0%,rgba(212,132,74,0.55) 22%,rgba(232,192,144,0.92) 46%,rgba(90,159,202,0.8) 54%,rgba(90,159,202,0) 100%);opacity:.3"></div>
+  <!-- source orb -->
+  <div style="position:absolute;left:50%;top:50%;width:8.75%;height:17.5%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(255,255,255,0.82) 0%,rgba(212,132,74,0.4) 25%,rgba(212,132,74,0) 100%);border-radius:50%"></div>
+  <!-- blue oval orbs right -->
+  <div style="position:absolute;left:65.625%;top:49.375%;width:13.75%;height:15%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.38);border-radius:50%"></div>
+  <div style="position:absolute;left:76.5625%;top:50%;width:8.75%;height:8.75%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.28);border-radius:50%"></div>
+  <!-- amber oval orbs left -->
+  <div style="position:absolute;left:35%;top:49.375%;width:11.25%;height:12.5%;transform:translate(-50%,-50%);background:rgba(212,132,74,0.3);border-radius:50%"></div>
+  <div style="position:absolute;left:25%;top:50%;width:6.875%;height:7.5%;transform:translate(-50%,-50%);background:rgba(212,132,74,0.22);border-radius:50%"></div>
+  <!-- label -->
+  <div style="position:absolute;left:0;right:0;bottom:6.25%;text-align:center;font-family:'DM Mono',monospace;font-size:7px;color:rgba(212,132,74,0.5);letter-spacing:2px">OVAL BOKEH · HORIZONTAL STREAK · 2:1 DELIVERABLE</div>
+ </div></div>
+ <!-- SPHERICAL FLARE -->
+ <div style="background:#080808">
+ <div style="padding:10px 16px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted)">SPHERICAL · Circular Organic Flare</div>
+ <div style="width:100%;height:0;padding-bottom:50%;background:#0c0a08;position:relative;overflow:hidden">
+  <!-- ground -->
+  <div style="position:absolute;left:3.125%;right:0;top:68.75%;bottom:0;background:#060402"></div>
+  <!-- buildings left -->
+  <div style="position:absolute;left:3.125%;top:12.5%;width:8.75%;height:56.25%;background:#141210"></div>
+  <div style="position:absolute;left:13.125%;top:20%;width:6.875%;height:48.75%;background:#111008"></div>
+  <!-- buildings right -->
+  <div style="position:absolute;left:83.75%;top:15%;width:10%;height:53.75%;background:#141210"></div>
+  <!-- windows -->
+  <div style="position:absolute;left:6.875%;top:22.5%;width:1.5625%;height:2.5%;background:rgba(255,180,80,0.6)"></div>
+  <div style="position:absolute;left:85.625%;top:20%;width:1.5625%;height:2.5%;background:rgba(255,180,80,0.6)"></div>
+  <!-- short warm streak -->
+  <div style="position:absolute;left:18.75%;top:48.75%;width:62.5%;height:1.875%;background:rgba(200,120,48,0.18)"></div>
+  <!-- glow layers -->
+  <div style="position:absolute;left:50%;top:50%;width:26.25%;height:47.5%;transform:translate(-50%,-50%);background:rgba(200,120,48,0.06);border-radius:50%"></div>
+  <div style="position:absolute;left:50%;top:50%;width:16.25%;height:28.75%;transform:translate(-50%,-50%);background:rgba(200,120,48,0.11);border-radius:50%"></div>
+  <div style="position:absolute;left:50%;top:50%;width:8.75%;height:16.25%;transform:translate(-50%,-50%);background:rgba(200,120,48,0.2);border-radius:50%"></div>
+  <!-- source orb -->
+  <div style="position:absolute;left:50%;top:50%;width:5%;height:10%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(255,255,255,0.9) 0%,rgba(200,120,48,0.45) 20%,rgba(200,120,48,0) 100%);border-radius:50%"></div>
+  <!-- circular orbs right -->
+  <div style="position:absolute;left:64.0625%;top:48.75%;width:8.75%;height:17.5%;transform:translate(-50%,-50%);background:rgba(200,120,48,0.18);border-radius:50%"></div>
+  <div style="position:absolute;left:71.25%;top:50%;width:5%;height:10%;transform:translate(-50%,-50%);background:rgba(200,120,48,0.14);border-radius:50%"></div>
+  <!-- circular orbs left -->
+  <div style="position:absolute;left:36.875%;top:48.75%;width:6.875%;height:13.75%;transform:translate(-50%,-50%);background:rgba(200,120,48,0.16);border-radius:50%"></div>
+  <div style="position:absolute;left:30.625%;top:50%;width:4.375%;height:8.75%;transform:translate(-50%,-50%);background:rgba(200,120,48,0.12);border-radius:50%"></div>
+  <!-- label -->
+  <div style="position:absolute;left:0;right:0;bottom:6.25%;text-align:center;font-family:'DM Mono',monospace;font-size:7px;color:rgba(160,154,148,0.4);letter-spacing:2px">CIRCULAR BOKEH · ORGANIC GLOW · 1.85:1 DELIVERABLE</div>
+ </div></div>
+ </div>
+ </div>
+  </div>
+  <div class="viz-caption">
+ <span class="viz-caption-num">Fig 01</span>
+ <span class="viz-caption-text">Anamorphic left: horizontal blue streak flare with oval orbs, a product of the cylindrical element. Spherical right: warm circular glow with no streak. For a 90s Bronx crime story with practical streetlights and fluorescents, the anamorphic flare behavior is part of the visual language, not a side effect.</span>
+  </div>
+</div>
+
+<!-- SCENE SIMULATION PANELS -->
+<div class="viz-panel">
+  <div class="viz-panel-inner">
+    <div class="viz-label">What You Actually See</div>
+    <div class="viz-title">Same Scene. Two Lenses.</div>
+    <div class="viz-sub">Bronx stairwell &middot; 35mm &middot; T1.4 &middot; Cineovision left vs Spherical right &middot; Real render above, CSS breakdown below</div>
+    <img src="Staircase.png" style="display:block;width:100%;margin-bottom:28px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1e1c1a">
+
+      <!-- CINEOVISION -->
+      <div style="background:#080808">
+        <div style="padding:12px 18px;border-bottom:1px solid var(--border);border-top:2px solid var(--amber);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em;color:var(--amber)">Cineovision</div>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.08em">T1.4 &middot; Canon K35 Core &middot; Warm</div>
+        </div>
+        <div style="width:100%;height:0;padding-bottom:71.43%;background:#0a0804;position:relative;overflow:hidden">
+          <!-- ceiling polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,#2a1e10 0%,#1a1208 100%);clip-path:polygon(0% 0%,100% 0%,80.95% 26.67%,19.05% 26.67%)"></div>
+          <!-- floor polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,#1e1608 0%,#0e0c06 100%);clip-path:polygon(0% 100%,100% 100%,80.95% 66.67%,19.05% 66.67%)"></div>
+          <!-- left wall polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0c0804 0%,#221808 100%);clip-path:polygon(0% 0%,19.05% 26.67%,19.05% 66.67%,0% 100%)"></div>
+          <!-- right wall polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,#221808 0%,#0c0804 100%);clip-path:polygon(100% 0%,80.95% 26.67%,80.95% 66.67%,100% 100%)"></div>
+          <!-- back wall -->
+          <div style="position:absolute;left:19.05%;top:26.67%;width:61.9%;height:40%;background:#1a1208"></div>
+          <!-- door opening -->
+          <div style="position:absolute;left:40%;top:33.33%;width:20%;height:33.33%;background:#0e0a04"></div>
+          <!-- door frame border -->
+          <div style="position:absolute;left:39.29%;top:32.33%;width:21.43%;height:35.33%;border:3px solid #3a2810;box-sizing:border-box"></div>
+          <!-- door panel top-left -->
+          <div style="position:absolute;left:40.95%;top:34.67%;width:8.33%;height:14%;background:#141008;border:1px solid #2a1e0c;box-sizing:border-box"></div>
+          <!-- door panel top-right -->
+          <div style="position:absolute;left:50.48%;top:34.67%;width:8.33%;height:14%;background:#141008;border:1px solid #2a1e0c;box-sizing:border-box"></div>
+          <!-- door panel bot-left -->
+          <div style="position:absolute;left:40.95%;top:50.67%;width:8.33%;height:14%;background:#141008;border:1px solid #2a1e0c;box-sizing:border-box"></div>
+          <!-- door panel bot-right -->
+          <div style="position:absolute;left:50.48%;top:50.67%;width:8.33%;height:14%;background:#141008;border:1px solid #2a1e0c;box-sizing:border-box"></div>
+          <!-- doorknob -->
+          <div style="position:absolute;left:59.52%;top:49.33%;width:1.43%;height:2%;background:#6a5020;border-radius:50%;transform:translate(-50%,-50%)"></div>
+          <!-- warm glow from overhead -->
+          <div style="position:absolute;left:50%;top:0%;width:133.33%;height:133.33%;transform:translate(-50%,0%);background:radial-gradient(ellipse at 50% 0%,rgba(232,176,96,0.85) 0%,rgba(200,120,48,0.51) 30%,rgba(138,72,24,0.17) 70%,transparent 100%);border-radius:50%"></div>
+          <!-- overhead light fixture -->
+          <div style="position:absolute;left:44.05%;top:0%;width:11.9%;height:2%;background:#f0d080"></div>
+          <div style="position:absolute;left:46.19%;top:0%;width:8.1%;height:1%;background:#fff8e0"></div>
+          <!-- light pools on floor/walls -->
+          <div style="position:absolute;left:50%;top:66.67%;width:38.1%;height:13.33%;transform:translate(-50%,-50%);background:rgba(200,120,40,0.2);border-radius:50%"></div>
+          <div style="position:absolute;left:19.05%;top:46.67%;width:14.29%;height:40%;transform:translate(-50%,-50%);background:rgba(200,100,20,0.12);border-radius:50%"></div>
+          <div style="position:absolute;left:80.95%;top:46.67%;width:14.29%;height:40%;transform:translate(-50%,-50%);background:rgba(200,100,20,0.12);border-radius:50%"></div>
+          <!-- flare streaks -->
+          <div style="position:absolute;left:0;right:0;top:22.67%;height:1.67%;background:linear-gradient(90deg,rgba(200,112,48,0) 0%,rgba(212,132,74,0.55) 18%,rgba(232,192,128,0.9) 44%,rgba(255,255,255,1) 50%,rgba(90,159,202,0.85) 56%,rgba(74,122,170,0.45) 82%,rgba(42,74,106,0) 100%);opacity:.92"></div>
+          <div style="position:absolute;left:0;right:0;top:21.67%;height:0.83%;background:linear-gradient(90deg,rgba(200,112,48,0) 0%,rgba(212,132,74,0.55) 18%,rgba(232,192,128,0.9) 44%,rgba(255,255,255,1) 50%,rgba(90,159,202,0.85) 56%,rgba(42,74,106,0) 100%);opacity:.45"></div>
+          <div style="position:absolute;left:0;right:0;top:24.67%;height:0.67%;background:linear-gradient(90deg,rgba(200,112,48,0) 0%,rgba(212,132,74,0.55) 18%,rgba(232,192,128,0.9) 44%,rgba(255,255,255,1) 50%,rgba(90,159,202,0.85) 56%,rgba(42,74,106,0) 100%);opacity:.3"></div>
+          <!-- flare source -->
+          <div style="position:absolute;left:50%;top:23.33%;width:5.71%;height:8%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.95);border-radius:50%"></div>
+          <div style="position:absolute;left:50%;top:23.33%;width:10.48%;height:14.67%;transform:translate(-50%,-50%);background:rgba(255,220,140,0.3);border-radius:50%"></div>
+          <!-- oval bokeh corners warm -->
+          <div style="position:absolute;left:11.9%;top:80%;width:9.52%;height:21.33%;transform:translate(-50%,-50%);background:rgba(200,120,40,0.22);border-radius:50%"></div>
+          <div style="position:absolute;left:88.1%;top:80%;width:8.57%;height:18.67%;transform:translate(-50%,-50%);background:rgba(200,120,40,0.18);border-radius:50%"></div>
+          <div style="position:absolute;left:7.14%;top:53.33%;width:6.67%;height:14.67%;transform:translate(-50%,-50%);background:rgba(200,120,40,0.15);border-radius:50%"></div>
+          <div style="position:absolute;left:92.86%;top:53.33%;width:6.67%;height:14.67%;transform:translate(-50%,-50%);background:rgba(200,120,40,0.15);border-radius:50%"></div>
+          <div style="position:absolute;left:19.05%;top:90%;width:5.71%;height:13.33%;transform:translate(-50%,-50%);background:rgba(180,100,30,0.2);border-radius:50%"></div>
+          <div style="position:absolute;left:80.95%;top:90%;width:5.71%;height:13.33%;transform:translate(-50%,-50%);background:rgba(180,100,30,0.2);border-radius:50%"></div>
+          <!-- blue flare orbs right -->
+          <div style="position:absolute;left:69.05%;top:23%;width:13.33%;height:9.33%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.38);border-radius:50%"></div>
+          <div style="position:absolute;left:80.95%;top:23.33%;width:8.57%;height:6%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.28);border-radius:50%"></div>
+          <div style="position:absolute;left:88.57%;top:23.33%;width:5.71%;height:4%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.2);border-radius:50%"></div>
+          <!-- amber flare orbs left -->
+          <div style="position:absolute;left:28.57%;top:23%;width:10.48%;height:7.33%;transform:translate(-50%,-50%);background:rgba(212,132,74,0.32);border-radius:50%"></div>
+          <div style="position:absolute;left:18.57%;top:23.33%;width:6.67%;height:4.67%;transform:translate(-50%,-50%);background:rgba(212,132,74,0.22);border-radius:50%"></div>
+          <!-- edge falloff -->
+          <div style="position:absolute;top:0;left:0;width:10.71%;height:100%;background:rgba(0,0,0,0.45)"></div>
+          <div style="position:absolute;top:0;right:0;width:10.71%;height:100%;background:rgba(0,0,0,0.45)"></div>
+          <div style="position:absolute;top:0;left:0;right:0;height:5%;background:rgba(0,0,0,0.3)"></div>
+          <div style="position:absolute;bottom:0;left:0;right:0;height:5%;background:rgba(0,0,0,0.3)"></div>
+          <!-- warm overlay -->
+          <div style="position:absolute;inset:0;background:rgba(180,80,10,0.06)"></div>
+          <!-- label -->
+          <div style="position:absolute;left:0;right:0;bottom:2%;text-align:center;font-family:'DM Mono',monospace;font-size:8px;color:rgba(212,132,74,0.6);letter-spacing:2px">WARM · DRAMATIC FLARE · OVAL BOKEH · 2:1</div>
+        </div>
+        <div style="padding:16px 20px;border-top:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:300;color:#a0998f;line-height:1.75;margin-bottom:14px">Amber warmth coats the hallway. The practical overhead activates a full-width horizontal flare streak the moment it hits the anamorphic element. Oval bokeh pools in the corners. Edge falloff pushes the eye toward the door. The Bronx feels like memory.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Color Tone</div>
+              <div style="height:3px;background:#1e1c1a;margin-bottom:4px"><div style="width:92%;height:100%;background:var(--amber)"></div></div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber)">Warm Golden</div>
+            </div>
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Flare Drama</div>
+              <div style="height:3px;background:#1e1c1a;margin-bottom:4px"><div style="width:98%;height:100%;background:var(--amber)"></div></div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber)">Extreme</div>
+            </div>
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Bokeh Shape</div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:#b0aca6;margin-top:3px">Vertical Oval</div>
+            </div>
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Character</div>
+              <div style="height:3px;background:#1e1c1a;margin-bottom:4px"><div style="width:95%;height:100%;background:var(--amber)"></div></div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber)">Very High</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- XTAL EXPRESS -->
+      <div style="background:#080808">
+        <div style="padding:12px 18px;border-bottom:1px solid var(--border);border-top:2px solid var(--blue);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em;color:var(--blue)">Xtal Express</div>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.08em">T1.4 &middot; Cooke S2 Core &middot; Controlled</div>
+        </div>
+        <div style="width:100%;height:0;padding-bottom:71.43%;background:#0a0c12;position:relative;overflow:hidden">
+          <!-- ceiling polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,#182030 0%,#101828 100%);clip-path:polygon(0% 0%,100% 0%,80.95% 26.67%,19.05% 26.67%)"></div>
+          <!-- floor polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,#141c28 0%,#0c1018 100%);clip-path:polygon(0% 100%,100% 100%,80.95% 66.67%,19.05% 66.67%)"></div>
+          <!-- left wall polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,#080c14 0%,#141c2c 100%);clip-path:polygon(0% 0%,19.05% 26.67%,19.05% 66.67%,0% 100%)"></div>
+          <!-- right wall polygon -->
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,#141c2c 0%,#080c14 100%);clip-path:polygon(100% 0%,80.95% 26.67%,80.95% 66.67%,100% 100%)"></div>
+          <!-- back wall -->
+          <div style="position:absolute;left:19.05%;top:26.67%;width:61.9%;height:40%;background:#141c2c"></div>
+          <!-- door opening -->
+          <div style="position:absolute;left:40%;top:33.33%;width:20%;height:33.33%;background:#0c1018"></div>
+          <!-- door frame border -->
+          <div style="position:absolute;left:39.29%;top:32.33%;width:21.43%;height:35.33%;border:3px solid #2a3448;box-sizing:border-box"></div>
+          <!-- door panels -->
+          <div style="position:absolute;left:40.95%;top:34.67%;width:8.33%;height:14%;background:#101420;border:1px solid #202c40;box-sizing:border-box"></div>
+          <div style="position:absolute;left:50.48%;top:34.67%;width:8.33%;height:14%;background:#101420;border:1px solid #202c40;box-sizing:border-box"></div>
+          <div style="position:absolute;left:40.95%;top:50.67%;width:8.33%;height:14%;background:#101420;border:1px solid #202c40;box-sizing:border-box"></div>
+          <div style="position:absolute;left:50.48%;top:50.67%;width:8.33%;height:14%;background:#101420;border:1px solid #202c40;box-sizing:border-box"></div>
+          <!-- doorknob -->
+          <div style="position:absolute;left:59.52%;top:49.33%;width:1.43%;height:2%;background:#4a5870;border-radius:50%;transform:translate(-50%,-50%)"></div>
+          <!-- cooler glow -->
+          <div style="position:absolute;left:50%;top:0%;width:104.76%;height:106.67%;transform:translate(-50%,0%);background:radial-gradient(ellipse at 50% 0%,rgba(200,224,248,0.72) 0%,rgba(122,176,216,0.4) 25%,rgba(58,96,144,0.12) 65%,transparent 100%);border-radius:50%"></div>
+          <!-- overhead light fixture -->
+          <div style="position:absolute;left:44.05%;top:0%;width:11.9%;height:2%;background:#d0e8ff"></div>
+          <div style="position:absolute;left:46.19%;top:0%;width:8.1%;height:1%;background:#eef6ff"></div>
+          <!-- light pools -->
+          <div style="position:absolute;left:50%;top:66.67%;width:26.19%;height:9.33%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.14);border-radius:50%"></div>
+          <div style="position:absolute;left:19.05%;top:46.67%;width:10.48%;height:30%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.08);border-radius:50%"></div>
+          <div style="position:absolute;left:80.95%;top:46.67%;width:10.48%;height:30%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.08);border-radius:50%"></div>
+          <!-- flare streaks -->
+          <div style="position:absolute;left:0;right:0;top:22.67%;height:1.33%;background:linear-gradient(90deg,rgba(90,159,202,0) 0%,rgba(90,159,202,0.45) 24%,rgba(170,208,234,0.85) 46%,rgba(255,255,255,1) 50%,rgba(170,208,234,0.8) 54%,rgba(90,159,202,0.4) 76%,rgba(90,159,202,0) 100%);opacity:.88"></div>
+          <div style="position:absolute;left:0;right:0;top:22%;height:0.67%;background:linear-gradient(90deg,rgba(90,159,202,0) 0%,rgba(90,159,202,0.45) 24%,rgba(170,208,234,0.85) 46%,rgba(255,255,255,1) 50%,rgba(170,208,234,0.8) 54%,rgba(90,159,202,0) 100%);opacity:.35"></div>
+          <div style="position:absolute;left:0;right:0;top:24.33%;height:0.5%;background:linear-gradient(90deg,rgba(90,159,202,0) 0%,rgba(90,159,202,0.45) 24%,rgba(255,255,255,1) 50%,rgba(90,159,202,0) 100%);opacity:.25"></div>
+          <!-- flare source -->
+          <div style="position:absolute;left:50%;top:23.33%;width:5.24%;height:7.33%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.92);border-radius:50%"></div>
+          <div style="position:absolute;left:50%;top:23.33%;width:8.57%;height:12%;transform:translate(-50%,-50%);background:rgba(180,220,255,0.22);border-radius:50%"></div>
+          <!-- cool oval bokeh -->
+          <div style="position:absolute;left:11.9%;top:80%;width:7.62%;height:17.33%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.18);border-radius:50%"></div>
+          <div style="position:absolute;left:88.1%;top:80%;width:6.67%;height:14.67%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.15);border-radius:50%"></div>
+          <div style="position:absolute;left:7.14%;top:53.33%;width:4.76%;height:12%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.12);border-radius:50%"></div>
+          <div style="position:absolute;left:92.86%;top:53.33%;width:4.76%;height:12%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.12);border-radius:50%"></div>
+          <div style="position:absolute;left:19.05%;top:90%;width:4.29%;height:10.67%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.16);border-radius:50%"></div>
+          <div style="position:absolute;left:80.95%;top:90%;width:4.29%;height:10.67%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.16);border-radius:50%"></div>
+          <!-- blue flare orbs right -->
+          <div style="position:absolute;left:66.19%;top:23%;width:9.52%;height:6.67%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.32);border-radius:50%"></div>
+          <div style="position:absolute;left:76.19%;top:23.33%;width:5.71%;height:4%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.24);border-radius:50%"></div>
+          <div style="position:absolute;left:83.33%;top:23.33%;width:3.81%;height:2.67%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.18);border-radius:50%"></div>
+          <!-- blue flare orbs left -->
+          <div style="position:absolute;left:32.86%;top:23%;width:7.62%;height:5.33%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.28);border-radius:50%"></div>
+          <div style="position:absolute;left:25%;top:23.33%;width:4.76%;height:3.33%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.2);border-radius:50%"></div>
+          <!-- edge falloff -->
+          <div style="position:absolute;top:0;left:0;width:9.05%;height:100%;background:rgba(0,0,0,0.35)"></div>
+          <div style="position:absolute;top:0;right:0;width:9.05%;height:100%;background:rgba(0,0,0,0.35)"></div>
+          <div style="position:absolute;top:0;left:0;right:0;height:4%;background:rgba(0,0,0,0.25)"></div>
+          <div style="position:absolute;bottom:0;left:0;right:0;height:4%;background:rgba(0,0,0,0.25)"></div>
+          <!-- cool overlay -->
+          <div style="position:absolute;inset:0;background:rgba(30,60,120,0.04)"></div>
+          <!-- label -->
+          <div style="position:absolute;left:0;right:0;bottom:2%;text-align:center;font-family:'DM Mono',monospace;font-size:8px;color:rgba(90,159,202,0.6);letter-spacing:2px">CONTROLLED · TIGHTER FLARE · OVAL BOKEH · 2:1</div>
+        </div>
+        <div style="padding:16px 20px;border-top:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:300;color:#a0998f;line-height:1.75;margin-bottom:14px">Cooler and more structured. The same hallway reads as harder evidence. The flare streak is tighter and more linear. Oval bokeh sits in the corners but more contained. The Bronx as present tense, not memory.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Color Tone</div>
+              <div style="height:3px;background:#1e1c1a;margin-bottom:4px"><div style="width:68%;height:100%;background:var(--blue)"></div></div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue)">Neutral Cool</div>
+            </div>
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Flare Drama</div>
+              <div style="height:3px;background:#1e1c1a;margin-bottom:4px"><div style="width:82%;height:100%;background:var(--blue)"></div></div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue)">High</div>
+            </div>
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Bokeh Shape</div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:#b0aca6;margin-top:3px">Vertical Oval</div>
+            </div>
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Character</div>
+              <div style="height:3px;background:#1e1c1a;margin-bottom:4px"><div style="width:88%;height:100%;background:var(--blue)"></div></div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue)">Very High</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="viz-caption">
+    <span class="viz-caption-num">Fig 02</span>
+    <span class="viz-caption-text">Top: real render. Bottom: CSS breakdown of what the glass is doing. Cineovision left: barrel distortion bows the walls, veiling glare from the window floods the frame, warm amber throughout. Spherical right: straight architecture, teal clean window with no bloom, sharp and clinical. Same stairwell. Two completely different stories.</span>
+  </div>
+</div>
+
+<!-- BUILDING THE REFERENCE -->
+<div class="sec"><h2>Building the Full Lens Reference</h2><div class="sec-line"></div></div>
+<div class="prose">
+  <p>ARRI Rental carries twelve anamorphic prime sets compatible with the Mini LF in Large Format mode. Different coating generations, different optical origins, different rendering philosophies, ranging from clean modern glass to deeply characterful vintage.</p>
+  <p>The problem isn&rsquo;t finding information. The problem is having a real conversation about it. Spec sheets don&rsquo;t tell you how a lens feels. I used Claude to build a full interactive reference covering all 12 sets: character, flare behavior, scored attributes, and scene fit against the specific script.</p>
+</div>
+
+</div><!-- /body-wrap -->
+
+<div class="body-wrap">
+
+
+
+<!-- VIZ 01: ARRI LENS REFERENCE GRID -->
+<div class="viz-panel">
+  <div class="viz-panel-inner">
+ <div class="viz-label">ARRI Rental &middot; 12 Anamorphic Sets &middot; Mini LF Compatible</div>
+ <div class="viz-title">Full Lens Reference Guide</div>
+ <div class="viz-sub">Scored across sharpness, contrast, flare drama, character, and warmth. Built for Knock Knock pre-production.</div>
+
+ <div class="lens-grid">
+ <!-- Cineovision -->
+ <div class="lens-card">
+ <div class="lens-card-top amber"></div>
+ <div class="lens-card-type">Anamorphic &middot; 2&times; &middot; Vintage</div>
+ <div class="lens-card-name">Cineovision</div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Sharpness<span>6.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-amber" style="width:65%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Flare Drama<span>9.8</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-amber" style="width:98%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Character<span>9.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-amber" style="width:95%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Warmth<span>9.2</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-amber" style="width:92%"></div></div></div>
+ </div>
+ <!-- Xtal Express -->
+ <div class="lens-card">
+ <div class="lens-card-top blue"></div>
+ <div class="lens-card-type">Anamorphic &middot; 2&times; &middot; Vintage</div>
+ <div class="lens-card-name">Xtal Express</div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Sharpness<span>7.8</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-blue" style="width:78%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Flare Drama<span>8.2</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-blue" style="width:82%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Character<span>8.8</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-blue" style="width:88%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Warmth<span>6.0</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-blue" style="width:60%"></div></div></div>
+ </div>
+ <!-- Ultra Panavision -->
+ <div class="lens-card">
+ <div class="lens-card-top gold"></div>
+ <div class="lens-card-type">Anamorphic &middot; 2&times; &middot; Modern</div>
+ <div class="lens-card-name">Ultra Panavision</div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Sharpness<span>9.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-gold" style="width:95%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Flare Drama<span>6.0</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-gold" style="width:60%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Character<span>7.2</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-gold" style="width:72%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Warmth<span>5.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-gold" style="width:55%"></div></div></div>
+ </div>
+ <!-- Hawk V-Lite -->
+ <div class="lens-card">
+ <div class="lens-card-top teal"></div>
+ <div class="lens-card-type">Anamorphic &middot; 2&times; &middot; Vintage</div>
+ <div class="lens-card-name">Hawk V-Lite</div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Sharpness<span>7.0</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-teal" style="width:70%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Flare Drama<span>8.8</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-teal" style="width:88%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Character<span>8.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-teal" style="width:85%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Warmth<span>7.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-teal" style="width:75%"></div></div></div>
+ </div>
+ <!-- Leica Summilux-C Ana -->
+ <div class="lens-card">
+ <div class="lens-card-top green"></div>
+ <div class="lens-card-type">Anamorphic &middot; 2&times; &middot; Modern</div>
+ <div class="lens-card-name">Leica Summilux-C Ana</div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Sharpness<span>9.2</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-green" style="width:92%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Flare Drama<span>5.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-green" style="width:55%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Character<span>6.8</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-green" style="width:68%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Warmth<span>6.2</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-green" style="width:62%"></div></div></div>
+ </div>
+ <!-- Lomo Round Front -->
+ <div class="lens-card">
+ <div class="lens-card-top purple"></div>
+ <div class="lens-card-type">Anamorphic &middot; 2&times; &middot; Vintage</div>
+ <div class="lens-card-name">LOMO Round Front</div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Sharpness<span>5.5</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-purple" style="width:55%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Flare Drama<span>9.2</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-purple" style="width:92%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Character<span>9.8</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-purple" style="width:98%"></div></div></div>
+ <div class="lens-bar-row"><div class="lens-bar-label">Warmth<span>7.8</span></div><div class="lens-bar-track"><div class="lens-bar-fill fill-purple" style="width:78%"></div></div></div>
+ </div>
+ </div>
+  </div>
+  <div class="viz-caption">
+ <span class="viz-caption-num">Fig 04</span>
+ <span class="viz-caption-text">Six of twelve sets from the ARRI Rental anamorphic catalog, Mini LF compatible. Each scored across sharpness, flare drama, character, and warmth. Built with Claude as a production reference. Not a generic spec sheet.</span>
+  </div>
+</div>
+
+<div class="body-wrap">
+<div class="prose">
+  <p>This isn&rsquo;t something ARRI publishes. It&rsquo;s a tool built for this project. Something Nelson and I could sit with and have a real conversation about the look rather than trading opinions in a vacuum.</p>
+</div>
+
+<!-- NARROWING -->
+<div class="sec"><h2>Narrowing to Two Candidates</h2><div class="sec-line"></div></div>
+<div class="prose">
+  <p>Based on the script, the locations, and months of conversations with Nelson, we landed on two candidates: the <strong>Cineovision</strong> set and the <strong>Canon Xtal Express</strong> set. Both are complete vintage anamorphic prime packages, Japanese glass from the 1970s and 80s, built for Super 35. Both use Shiga Optical anamorphic elements. Same DNA at the core. The difference is the spherical taking lens. Cineovision runs Canon K35 or Zeiss Super Speed. Xtal runs Cooke S2/S3. Same skeleton. Different soul. Films shot on Xtals include Ex Machina, Guardians of the Galaxy, and Layer Cake.</p>
+</div>
+</div>
+
+<!-- VIZ 02: FLARE COMPARISON -->
+<div class="viz-panel">
+  <div class="viz-panel-inner">
+ <div class="viz-label">Cineovision vs Canon Xtal Express &middot; 35mm</div>
+ <div class="viz-title">Flare Character Comparison</div>
+ <div class="viz-sub">Simulated coating behavior at 35mm &middot; practical light source &middot; T1.4</div>
+ <img src="Interior.png" style="display:block;width:100%;margin-bottom:28px">
+ <div class="flare-split">
+ <!-- CINEOVISION -->
+ <div class="flare-col" style="background:#080808">
+ <div class="flare-col-hdr">
+ <span class="flare-col-name amber">Cineovision 35mm</span>
+ <span class="flare-col-spec">T1.4 &middot; Canon K35 / Shiga Elements</span>
+ </div>
+ <div class="flare-svg-wrap">
+ <div style="width:100%;height:0;padding-bottom:55.56%;background:#060402;position:relative;overflow:hidden">
+  <!-- flare streaks -->
+  <div style="position:absolute;left:0;right:0;top:48.5%;height:3%;background:linear-gradient(90deg,rgba(212,132,74,0) 0%,rgba(212,132,74,0.5) 20%,rgba(232,192,144,0.88) 44%,rgba(232,192,128,0.6) 50%,rgba(212,132,74,0.75) 56%,rgba(90,159,202,0.4) 78%,rgba(90,159,202,0) 100%);opacity:.65"></div>
+  <div style="position:absolute;left:0;right:0;top:46.5%;height:1.5%;background:linear-gradient(90deg,rgba(212,132,74,0) 0%,rgba(212,132,74,0.5) 20%,rgba(232,192,144,0.88) 44%,rgba(232,192,128,0.6) 50%,rgba(212,132,74,0.75) 56%,rgba(90,159,202,0) 100%);opacity:.4"></div>
+  <div style="position:absolute;left:0;right:0;top:53%;height:1%;background:linear-gradient(90deg,rgba(212,132,74,0) 0%,rgba(212,132,74,0.5) 20%,rgba(232,192,144,0.88) 44%,rgba(90,159,202,0.4) 78%,rgba(90,159,202,0) 100%);opacity:.28"></div>
+  <!-- source orb -->
+  <div style="position:absolute;left:50%;top:50%;width:10%;height:18%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(255,255,255,0.82) 0%,rgba(212,132,74,0.45) 22%,rgba(212,132,74,0) 100%);border-radius:50%"></div>
+  <!-- blue oval orbs right -->
+  <div style="position:absolute;left:66.67%;top:49.5%;width:15.56%;height:16%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.32);border-radius:50%"></div>
+  <div style="position:absolute;left:80.56%;top:50%;width:10%;height:10%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.22);border-radius:50%"></div>
+  <!-- blue oval orbs left -->
+  <div style="position:absolute;left:25%;top:49.5%;width:12.22%;height:13%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.26);border-radius:50%"></div>
+  <div style="position:absolute;left:13.33%;top:50%;width:7.22%;height:8%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.18);border-radius:50%"></div>
+  <!-- ground glow -->
+  <div style="position:absolute;left:50%;top:77.5%;width:30.56%;height:14%;transform:translate(-50%,-50%);background:rgba(212,132,74,0.08);border-radius:50%"></div>
+ </div></div>
+ <div class="flare-traits">
+ <div class="flare-trait"><div class="flare-dot dot-amber"></div>Long amber streak, blue fringe full frame width</div>
+ <div class="flare-trait"><div class="flare-dot dot-amber"></div>Large oval orbs period-authentic, expressive</div>
+ <div class="flare-trait"><div class="flare-dot dot-amber"></div>Activates early on any practical source</div>
+ </div>
+ </div><!-- end flare-col cineovision -->
+ <!-- XTAL -->
+ <div class="flare-col" style="background:#080808">
+ <div class="flare-col-hdr">
+ <span class="flare-col-name blue">Xtal Express 35mm</span>
+ <span class="flare-col-spec">T1.4–1.6 &middot; Cooke S2/S3 / Shiga Elements</span>
+ </div>
+ <div class="flare-svg-wrap">
+ <div style="width:100%;height:0;padding-bottom:55.56%;background:#060408;position:relative;overflow:hidden">
+  <!-- flare streaks -->
+  <div style="position:absolute;left:0;right:0;top:49%;height:2%;background:linear-gradient(90deg,rgba(90,159,202,0) 0%,rgba(90,159,202,0.42) 24%,rgba(170,208,234,0.8) 46%,rgba(232,192,128,0.6) 50%,rgba(170,208,234,0.76) 54%,rgba(90,159,202,0.36) 76%,rgba(90,159,202,0) 100%);opacity:.62"></div>
+  <div style="position:absolute;left:0;right:0;top:48%;height:1%;background:linear-gradient(90deg,rgba(90,159,202,0) 0%,rgba(90,159,202,0.42) 24%,rgba(170,208,234,0.8) 46%,rgba(255,255,255,0.6) 50%,rgba(170,208,234,0.76) 54%,rgba(90,159,202,0) 100%);opacity:.28"></div>
+  <!-- source orb -->
+  <div style="position:absolute;left:50%;top:50%;width:7.78%;height:14%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(255,255,255,0.82) 0%,rgba(90,159,202,0.38) 28%,rgba(90,159,202,0) 100%);border-radius:50%"></div>
+  <!-- blue oval orbs right -->
+  <div style="position:absolute;left:63.89%;top:49.5%;width:10.56%;height:10%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.26);border-radius:50%"></div>
+  <div style="position:absolute;left:74.44%;top:50%;width:6.67%;height:6%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.18);border-radius:50%"></div>
+  <!-- blue oval orbs left -->
+  <div style="position:absolute;left:36.11%;top:49.5%;width:8.89%;height:8%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.22);border-radius:50%"></div>
+ </div></div>
+ <div class="flare-traits">
+ <div class="flare-trait"><div class="flare-dot dot-blue"></div>Tight linear blue streak precise, controlled</div>
+ <div class="flare-trait"><div class="flare-dot dot-blue"></div>Fewer orbs, smaller less theatrical</div>
+ <div class="flare-trait"><div class="flare-dot dot-blue"></div>Classic vintage character without the drama</div>
+ </div>
+ </div>
+ </div>
+  </div>
+  <div class="viz-caption">
+ <span class="viz-caption-num">Fig 05</span>
+ <span class="viz-caption-text">35mm T1.4. Cineovision left: enormous amber haze fills the room, full-frame horizontal streak from the lamp, large oval orbs, figure barely visible. Xtal Express right: lamp sits clean, tight local bloom, figure sharp and defined, money readable on the floor. Same Shiga DNA. Different soul.</span>
+  </div>
+</div>
+
+<!-- VIZ 03: HEAD TO HEAD TABLE -->
+<div class="viz-panel" style="border-top:none">
+  <div class="viz-panel-inner">
+ <div class="viz-label">35mm &middot; Head to Head</div>
+ <div class="viz-title">Cineovision vs Xtal Express · Key Attributes</div>
+ <div class="viz-sub">Both sets built on Shiga anamorphic elements &middot; Difference is in the spherical taking lens</div>
+ <table class="hth-table">
+ <thead>
+ <tr>
+ <th></th>
+ <th>Cineovision</th>
+ <th>Xtal Express</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td class="rlbl">Aperture</td>
+ <td class="cv"><span class="win-amber">T1.4</span></td>
+ <td class="cv">T1.4&ndash;T1.6</td>
+ </tr>
+ <tr>
+ <td class="rlbl">Core Glass</td>
+ <td class="cv">Canon K35 · Zeiss Super Speed · Zeiss Contax</td>
+ <td class="cv">Cooke S2/S3 · Zeiss B-Speed</td>
+ </tr>
+ <tr>
+ <td class="rlbl">Color Tone</td>
+ <td class="cv"><span class="win-amber">Warmest golden</span></td>
+ <td class="cv">Neutral warm</td>
+ </tr>
+ <tr>
+ <td class="rlbl">Sharpness</td>
+ <td class="cv">Painterly soft wide open</td>
+ <td class="cv"><span class="win-blue">Sharper defined</span></td>
+ </tr>
+ <tr>
+ <td class="rlbl">Flare Drama</td>
+ <td class="cv"><span class="win-amber">Dramatic wide oval orbs</span><div class="mini-bar"><div class="mini-track"><div class="mini-fill fill-amber" style="width:98%"></div></div></div></td>
+ <td class="cv">Controlled linear<div class="mini-bar"><div class="mini-track"><div class="mini-fill fill-blue" style="width:72%"></div></div></div></td>
+ </tr>
+ <tr>
+ <td class="rlbl">Oval Bokeh</td>
+ <td class="cv"><span class="win-amber">Very pronounced</span></td>
+ <td class="cv">Excellent</td>
+ </tr>
+ <tr>
+ <td class="rlbl">Barrel Distortion</td>
+ <td class="cv">Significant at 35mm</td>
+ <td class="cv"><span class="win-blue">Less pronounced</span></td>
+ </tr>
+ <tr>
+ <td class="rlbl">Breathing</td>
+ <td class="cv">Moderate at 35mm</td>
+ <td class="cv"><span class="win-blue">Lower more reliable</span></td>
+ </tr>
+ <tr>
+ <td class="rlbl">Best Use</td>
+ <td class="cv" style="color:var(--amber)">Night interiors &middot; Practical lights &middot; Maximum character</td>
+ <td class="cv" style="color:var(--blue)">Day exteriors &middot; Focus pulls &middot; Handheld world &middot; Character with control</td>
+ </tr>
+ </tbody>
+ </table>
+  </div>
+  <div class="viz-caption">
+ <span class="viz-caption-num">Fig 06</span>
+ <span class="viz-caption-text">Head-to-head across warmth, sharpness, flare drama, oval bokeh, distortion, and breathing. Both are legitimate candidates. The eye test at ARRI makes the final call.</span>
+  </div>
+</div>
+
+<div class="body-wrap">
+<div class="sec"><h2>The Telephoto Shot</h2><div class="sec-line"></div></div>
+<div class="prose">
+  <p>There&rsquo;s a specific exterior in the script. A surveillance-style compressed Bronx street. That shot needs a telephoto. The decision was to stay in the family: 200mm on whichever set we land on after the eye test. I built a separate comparison showing how each lens renders a Bronx block differently at distance.</p>
+</div>
+</div>
+
+<!-- VIZ 04: CITY COMPRESSION -->
+<div class="viz-panel">
+  <div class="viz-panel-inner">
+ <div class="viz-label">Bronx Exterior &middot; 200mm &middot; Surveillance Framing</div>
+ <div class="viz-title">City Compression Cineovision vs Xtal Express</div>
+ <div class="viz-sub">How each lens renders depth, warmth, and atmosphere on a compressed Bronx street</div>
+ <img src="Bodega.png" style="display:block;width:100%;margin-bottom:28px">
+ <div class="city-split">
+ <!-- CINEOVISION 200mm - WARM -->
+ <div class="city-col" style="background:#080808">
+ <div class="city-col-hdr">
+ <div class="city-col-name amber">Cineovision</div>
+ <div class="city-col-spec">200mm &middot; T2.8 &middot; Warm rendering</div>
+ </div>
+ <div style="width:100%;height:0;padding-bottom:66.67%;background:#060402;position:relative;overflow:hidden">
+  <!-- sky gradient -->
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,#0c0804 0%,#180e04 60%,#220e02 100%);opacity:.95"></div>
+  <!-- warm ground glow -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(212,120,40,0.55) 0%,rgba(180,90,20,0.22) 50%,rgba(140,60,0,0) 100%)"></div>
+  <!-- buildings -->
+  <div style="position:absolute;left:0%;top:3.33%;width:12.22%;height:93.33%;background:#1e1a12"></div>
+  <div style="position:absolute;left:13.33%;top:12.5%;width:9.44%;height:84.17%;background:#18140c"></div>
+  <div style="position:absolute;left:23.89%;top:5%;width:13.89%;height:91.67%;background:#1e1a12"></div>
+  <div style="position:absolute;left:38.89%;top:14.17%;width:8.89%;height:82.5%;background:#18140c"></div>
+  <div style="position:absolute;left:48.89%;top:2.5%;width:15.56%;height:94.17%;background:#1e1a12"></div>
+  <div style="position:absolute;left:65.56%;top:11.67%;width:10%;height:85%;background:#18140c"></div>
+  <div style="position:absolute;left:76.67%;top:4.17%;width:23.33%;height:92.5%;background:#1e1a12"></div>
+  <!-- windows building 1 -->
+  <div style="position:absolute;left:1.67%;top:9.17%;width:3.06%;height:3.33%;background:rgba(255,180,60,1)"></div>
+  <div style="position:absolute;left:6.11%;top:9.17%;width:3.06%;height:3.33%;background:rgba(255,175,55,0.75)"></div>
+  <div style="position:absolute;left:1.67%;top:18.33%;width:3.06%;height:3.33%;background:rgba(255,160,50,0.85)"></div>
+  <div style="position:absolute;left:1.67%;top:27.5%;width:3.06%;height:3.33%;background:rgba(255,140,40,0.6)"></div>
+  <!-- windows building 3 -->
+  <div style="position:absolute;left:25.56%;top:7.5%;width:3.06%;height:3.33%;background:rgba(255,190,70,1)"></div>
+  <div style="position:absolute;left:30.56%;top:7.5%;width:3.06%;height:3.33%;background:rgba(255,170,60,0.8)"></div>
+  <div style="position:absolute;left:25.56%;top:16.67%;width:3.06%;height:3.33%;background:rgba(255,160,50,0.7)"></div>
+  <div style="position:absolute;left:30.56%;top:24.17%;width:3.06%;height:3.33%;background:rgba(255,140,40,0.55)"></div>
+  <!-- windows building 5 -->
+  <div style="position:absolute;left:51.11%;top:5.83%;width:3.06%;height:3.33%;background:rgba(255,195,75,1)"></div>
+  <div style="position:absolute;left:56.11%;top:5.83%;width:3.06%;height:3.33%;background:rgba(255,175,65,0.85)"></div>
+  <div style="position:absolute;left:60.56%;top:11.67%;width:3.06%;height:3.33%;background:rgba(255,160,55,0.75)"></div>
+  <div style="position:absolute;left:51.11%;top:15%;width:3.06%;height:3.33%;background:rgba(255,150,45,0.65)"></div>
+  <!-- windows building 7 -->
+  <div style="position:absolute;left:78.89%;top:8.33%;width:3.06%;height:3.33%;background:rgba(255,185,65,0.95)"></div>
+  <div style="position:absolute;left:83.89%;top:8.33%;width:3.06%;height:3.33%;background:rgba(255,170,55,0.7)"></div>
+  <div style="position:absolute;left:90%;top:14.17%;width:3.06%;height:3.33%;background:rgba(255,160,50,0.65)"></div>
+  <div style="position:absolute;left:95.56%;top:11.67%;width:3.06%;height:3.33%;background:rgba(255,145,40,0.5)"></div>
+  <!-- streetlight pole -->
+  <div style="position:absolute;left:49.72%;top:45%;width:0.56%;height:52.92%;background:#1a1008"></div>
+  <!-- streetlight orb -->
+  <div style="position:absolute;left:50%;top:44.17%;width:3.89%;height:5%;transform:translate(-50%,-50%);background:rgba(255,230,160,1);border-radius:50%"></div>
+  <!-- light glow -->
+  <div style="position:absolute;left:50%;top:44.17%;width:15.56%;height:18.33%;transform:translate(-50%,-50%);background:rgba(255,180,80,0.2);border-radius:50%"></div>
+  <div style="position:absolute;left:50%;top:44.17%;width:30.56%;height:33.33%;transform:translate(-50%,-50%);background:rgba(200,120,40,0.08);border-radius:50%"></div>
+  <!-- flare streaks -->
+  <div style="position:absolute;left:0;right:0;top:42.92%;height:1.67%;background:linear-gradient(90deg,rgba(200,112,48,0) 0%,rgba(212,132,74,0.72) 30%,rgba(232,176,96,0.72) 48%,rgba(192,136,64,0.55) 50%,rgba(240,192,128,0.9) 52%,rgba(90,159,202,0.52) 70%,rgba(90,159,202,0) 100%);opacity:.68"></div>
+  <div style="position:absolute;left:0;right:0;top:41.67%;height:1.04%;background:linear-gradient(90deg,rgba(200,112,48,0) 0%,rgba(212,132,74,0.72) 30%,rgba(240,192,128,0.9) 50%,rgba(90,159,202,0.52) 70%,rgba(90,159,202,0) 100%);opacity:.45"></div>
+  <div style="position:absolute;left:0;right:0;top:45.83%;height:0.83%;background:linear-gradient(90deg,rgba(200,112,48,0) 0%,rgba(212,132,74,0.72) 30%,rgba(240,192,128,0.9) 50%,rgba(90,159,202,0.52) 70%,rgba(90,159,202,0) 100%);opacity:.3"></div>
+  <!-- blue orbs -->
+  <div style="position:absolute;left:70.83%;top:43.75%;width:12.22%;height:10.83%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.28);border-radius:50%"></div>
+  <div style="position:absolute;left:83.33%;top:44.17%;width:7.22%;height:6.67%;transform:translate(-50%,-50%);background:rgba(74,122,170,0.2);border-radius:50%"></div>
+  <div style="position:absolute;left:22.22%;top:43.75%;width:10%;height:9.17%;transform:translate(-50%,-50%);background:rgba(90,159,202,0.22);border-radius:50%"></div>
+  <!-- ground/road -->
+  <div style="position:absolute;left:0;right:0;top:88.33%;bottom:0;background:#100800"></div>
+  <div style="position:absolute;left:0;right:0;top:88.33%;bottom:0;background:rgba(212,100,30,0.18)"></div>
+  <!-- pole base -->
+  <div style="position:absolute;left:48.06%;top:74.17%;width:3.33%;height:14.17%;background:#040302;border-radius:1px"></div>
+  <div style="position:absolute;left:49.72%;top:72.92%;width:3.33%;height:5.83%;transform:translate(-50%,-50%);background:#040302;border-radius:50%"></div>
+ </div>
+ <div class="city-desc" style="background:#080808">
+ <p>Amber haze bakes into the entire frame. Windows glow warm gold. The full-frame horizontal flare from the streetlight is unmistakably anamorphic. The city feels alive painted, not recorded.</p>
+ </div>
+ </div>
+ <!-- XTAL 200mm - COOL -->
+ <div class="city-col" style="background:#080808">
+ <div class="city-col-hdr">
+ <div class="city-col-name blue">Xtal Express</div>
+ <div class="city-col-spec">200mm &middot; T2.8 &middot; Cooler rendering</div>
+ </div>
+ <div style="width:100%;height:0;padding-bottom:66.67%;background:#060408;position:relative;overflow:hidden">
+  <!-- sky gradient cool -->
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,#060810 0%,#080c18 60%,#0a1020 100%);opacity:.95"></div>
+  <!-- cool ground glow -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(60,120,200,0.38) 0%,rgba(40,80,160,0.16) 50%,rgba(20,40,100,0) 100%)"></div>
+  <!-- buildings -->
+  <div style="position:absolute;left:0%;top:3.33%;width:12.22%;height:93.33%;background:#141828"></div>
+  <div style="position:absolute;left:13.33%;top:12.5%;width:9.44%;height:84.17%;background:#101422"></div>
+  <div style="position:absolute;left:23.89%;top:5%;width:13.89%;height:91.67%;background:#141828"></div>
+  <div style="position:absolute;left:38.89%;top:14.17%;width:8.89%;height:82.5%;background:#101422"></div>
+  <div style="position:absolute;left:48.89%;top:2.5%;width:15.56%;height:94.17%;background:#141828"></div>
+  <div style="position:absolute;left:65.56%;top:11.67%;width:10%;height:85%;background:#101422"></div>
+  <div style="position:absolute;left:76.67%;top:4.17%;width:23.33%;height:92.5%;background:#141828"></div>
+  <!-- cool windows building 1 -->
+  <div style="position:absolute;left:1.67%;top:9.17%;width:3.06%;height:3.33%;background:rgba(160,210,255,0.95)"></div>
+  <div style="position:absolute;left:6.11%;top:9.17%;width:3.06%;height:3.33%;background:rgba(155,205,255,0.65)"></div>
+  <div style="position:absolute;left:1.67%;top:18.33%;width:3.06%;height:3.33%;background:rgba(140,195,255,0.75)"></div>
+  <div style="position:absolute;left:1.67%;top:27.5%;width:3.06%;height:3.33%;background:rgba(255,210,140,0.48)"></div>
+  <!-- windows building 3 -->
+  <div style="position:absolute;left:25.56%;top:7.5%;width:3.06%;height:3.33%;background:rgba(170,215,255,0.95)"></div>
+  <div style="position:absolute;left:30.56%;top:7.5%;width:3.06%;height:3.33%;background:rgba(155,205,255,0.7)"></div>
+  <div style="position:absolute;left:25.56%;top:16.67%;width:3.06%;height:3.33%;background:rgba(145,200,255,0.65)"></div>
+  <div style="position:absolute;left:30.56%;top:24.17%;width:3.06%;height:3.33%;background:rgba(255,210,148,0.42)"></div>
+  <!-- windows building 5 -->
+  <div style="position:absolute;left:51.11%;top:5.83%;width:3.06%;height:3.33%;background:rgba(175,218,255,0.95)"></div>
+  <div style="position:absolute;left:56.11%;top:5.83%;width:3.06%;height:3.33%;background:rgba(160,208,255,0.8)"></div>
+  <div style="position:absolute;left:60.56%;top:11.67%;width:3.06%;height:3.33%;background:rgba(150,202,255,0.7)"></div>
+  <div style="position:absolute;left:51.11%;top:15%;width:3.06%;height:3.33%;background:rgba(140,198,255,0.6)"></div>
+  <!-- windows building 7 -->
+  <div style="position:absolute;left:78.89%;top:8.33%;width:3.06%;height:3.33%;background:rgba(165,212,255,0.9)"></div>
+  <div style="position:absolute;left:83.89%;top:8.33%;width:3.06%;height:3.33%;background:rgba(155,205,255,0.65)"></div>
+  <div style="position:absolute;left:90%;top:14.17%;width:3.06%;height:3.33%;background:rgba(145,200,255,0.6)"></div>
+  <div style="position:absolute;left:95.56%;top:11.67%;width:3.06%;height:3.33%;background:rgba(255,206,142,0.36)"></div>
+  <!-- streetlight pole -->
+  <div style="position:absolute;left:49.72%;top:45%;width:0.56%;height:52.92%;background:#080c18"></div>
+  <!-- streetlight orb -->
+  <div style="position:absolute;left:50%;top:44.17%;width:3.33%;height:4.17%;transform:translate(-50%,-50%);background:rgba(210,235,255,1);border-radius:50%"></div>
+  <!-- light glow cool -->
+  <div style="position:absolute;left:50%;top:44.17%;width:10%;height:11.67%;transform:translate(-50%,-50%);background:rgba(100,170,230,0.14);border-radius:50%"></div>
+  <div style="position:absolute;left:50%;top:44.17%;width:19.44%;height:21.67%;transform:translate(-50%,-50%);background:rgba(70,130,200,0.06);border-radius:50%"></div>
+  <!-- flare streaks -->
+  <div style="position:absolute;left:0;right:0;top:43.33%;height:1.46%;background:linear-gradient(90deg,rgba(90,159,202,0) 0%,rgba(90,159,202,0.58) 35%,rgba(144,200,232,0.7) 48%,rgba(192,224,245,0.72) 50%,rgba(176,216,240,0.82) 52%,rgba(90,159,202,0.52) 65%,rgba(90,159,202,0) 100%);opacity:.85"></div>
+  <div style="position:absolute;left:0;right:0;top:42.5%;height:0.63%;background:linear-gradient(90deg,rgba(90,159,202,0) 0%,rgba(90,159,202,0.58) 35%,rgba(192,224,245,0.72) 50%,rgba(90,159,202,0) 100%);opacity:.35"></div>
+  <!-- ground/road -->
+  <div style="position:absolute;left:0;right:0;top:88.33%;bottom:0;background:#060a14"></div>
+  <div style="position:absolute;left:0;right:0;top:88.33%;bottom:0;background:rgba(60,100,180,0.14)"></div>
+  <!-- pole base -->
+  <div style="position:absolute;left:48.06%;top:74.17%;width:3.33%;height:14.17%;background:#030508;border-radius:1px"></div>
+  <div style="position:absolute;left:49.72%;top:72.92%;width:3.33%;height:5.83%;transform:translate(-50%,-50%);background:#030508;border-radius:50%"></div>
+ </div>
+ <div class="city-desc" style="background:#080808">
+ <p>Cold blue atmosphere. Windows read clinical, blue-white. Flare is tight and linear. No drama, just information. The Bronx as evidence, not memory.</p>
+ </div>
+ </div>
+ </div>
+  <div class="viz-caption">
+ <span class="viz-caption-num">Fig 07</span>
+ <span class="viz-caption-text">Bronx bodega exterior at 200mm T2.8. Cineovision left: warm amber grade, car headlight throws a full-width horizontal streak across the bottom third, veiling glare softens the storefront, nostalgic. Spherical right: cool and structured, headlight is localized bloom only with no streak, brick reads through the facade, evidence not memory. The eye test at ARRI makes the final call.</span>
+  </div>
+</div>
+
+<div class="body-wrap">
+<!-- BARREL DISTORTION VIZ -->
+<div class="viz-panel">
+  <div class="viz-panel-inner">
+ <div class="viz-label">Lens Reference</div>
+ <div class="viz-title">Barrel Distortion</div>
+ <div class="viz-sub">How Each Lens Bends Architecture in the Frame. Bronx Stairwells, Walls, Ceilings.</div>
+
+ <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1e1c1a;margin-bottom:1px">
+
+ <!-- CINEOVISION -->
+ <div style="background:#080808">
+ <div style="padding:12px 16px;border-bottom:1px solid var(--border);border-top:2px solid var(--amber)">
+ <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Anamorphic</div>
+ <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;color:var(--amber)">Cineovision</div>
+ </div>
+ <div style="width:100%;height:0;padding-bottom:70%;background:#0a0806;position:relative;overflow:hidden">
+  <canvas style="position:absolute;inset:0;width:100%;height:100%" width="200" height="140"></canvas>
+  <script>
+    (function(){
+      var c=document.currentScript.previousElementSibling;
+      var ctx=c.getContext('2d');
+      ctx.fillStyle='#0a0806';ctx.fillRect(0,0,200,140);
+      function dashedBezier(x1,y1,cx,cy,x2,y2,color,lw){
+        ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.setLineDash([5,3]);
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(cx,cy,x2,y2);ctx.stroke();
+      }
+      // horizontal lines bowing UP (barrel)
+      dashedBezier(8,22,100,5,192,22,'rgba(212,132,74,0.55)',1.5);
+      dashedBezier(8,50,100,32,192,50,'rgba(212,132,74,0.6)',1.5);
+      dashedBezier(8,78,100,60,192,78,'rgba(212,132,74,0.65)',1.5);
+      dashedBezier(8,106,100,90,192,106,'rgba(212,132,74,0.55)',1.5);
+      // vertical lines bowing outward
+      dashedBezier(38,5,26,70,38,135,'rgba(212,132,74,0.4)',1.2);
+      dashedBezier(80,5,62,70,80,135,'rgba(212,132,74,0.4)',1.2);
+      dashedBezier(120,5,138,70,120,135,'rgba(212,132,74,0.4)',1.2);
+      dashedBezier(162,5,174,70,162,135,'rgba(212,132,74,0.4)',1.2);
+      // center dot
+      ctx.setLineDash([]);ctx.fillStyle='rgba(212,132,74,0.55)';
+      ctx.beginPath();ctx.arc(100,70,3,0,Math.PI*2);ctx.fill();
+      // label
+      ctx.fillStyle='rgba(212,132,74,0.4)';ctx.font='7px "DM Mono",monospace';
+      ctx.textAlign='center';ctx.letterSpacing='1px';
+      ctx.fillText('HEAVY + CYLINDRICAL',100,132);
+    })();
+  </script>
+ </div>
+ <div style="padding:10px 16px 14px;font-family:'DM Mono',monospace;font-size:10px;color:#9a9690;line-height:1.55">Lines bow hard at wide focal lengths. Stairwells feel unstable. Cylindrical perspective adds spatial unease that serves the story.</div>
+ </div>
+
+ <!-- XTAL EXPRESS -->
+ <div style="background:#080808">
+ <div style="padding:12px 16px;border-bottom:1px solid var(--border);border-top:2px solid var(--blue)">
+ <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Anamorphic</div>
+ <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;color:var(--blue)">Xtal Express</div>
+ </div>
+ <div style="width:100%;height:0;padding-bottom:70%;background:#080a0c;position:relative;overflow:hidden">
+  <canvas style="position:absolute;inset:0;width:100%;height:100%" width="200" height="140"></canvas>
+  <script>
+    (function(){
+      var c=document.currentScript.previousElementSibling;
+      var ctx=c.getContext('2d');
+      ctx.fillStyle='#080a0c';ctx.fillRect(0,0,200,140);
+      function dashedBezier(x1,y1,cx,cy,x2,y2,color,lw){
+        ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.setLineDash([5,3]);
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(cx,cy,x2,y2);ctx.stroke();
+      }
+      // horizontal lines — gentler bow
+      dashedBezier(12,22,100,12,188,22,'rgba(90,159,202,0.55)',1.5);
+      dashedBezier(12,50,100,40,188,50,'rgba(90,159,202,0.6)',1.5);
+      dashedBezier(12,78,100,68,188,78,'rgba(90,159,202,0.65)',1.5);
+      dashedBezier(12,106,100,96,188,106,'rgba(90,159,202,0.55)',1.5);
+      // vertical lines — less bow
+      dashedBezier(40,5,30,70,40,135,'rgba(90,159,202,0.38)',1.2);
+      dashedBezier(80,5,66,70,80,135,'rgba(90,159,202,0.38)',1.2);
+      dashedBezier(120,5,134,70,120,135,'rgba(90,159,202,0.38)',1.2);
+      dashedBezier(160,5,170,70,160,135,'rgba(90,159,202,0.38)',1.2);
+      // center dot
+      ctx.setLineDash([]);ctx.fillStyle='rgba(90,159,202,0.55)';
+      ctx.beginPath();ctx.arc(100,70,3,0,Math.PI*2);ctx.fill();
+      // label
+      ctx.fillStyle='rgba(90,159,202,0.4)';ctx.font='7px "DM Mono",monospace';
+      ctx.textAlign='center';
+      ctx.fillText('MODERATE · MORE CONTROLLED',100,132);
+    })();
+  </script>
+ </div>
+ <div style="padding:10px 16px 14px;font-family:'DM Mono',monospace;font-size:10px;color:#9a9690;line-height:1.55">Gentler bow. Architecture still bends but stays readable. More consistent across focal lengths. Exterior shots stay structured.</div>
+ </div>
+
+ <!-- REFERENCE — STRAIGHT LINES -->
+ <div style="background:#080808">
+ <div style="padding:12px 16px;border-bottom:1px solid var(--border);border-top:2px solid var(--dim)">
+ <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Reference</div>
+ <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;color:var(--muted)">No Distortion</div>
+ </div>
+ <div style="width:100%;height:0;padding-bottom:70%;background:#0a0a0a;position:relative;overflow:hidden">
+  <canvas style="position:absolute;inset:0;width:100%;height:100%" width="200" height="140"></canvas>
+  <script>
+    (function(){
+      var c=document.currentScript.previousElementSibling;
+      var ctx=c.getContext('2d');
+      ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,200,140);
+      ctx.setLineDash([5,3]);
+      // horizontal straight lines
+      var hLines=[{y:22,a:0.45},{y:50,a:0.5},{y:78,a:0.55},{y:106,a:0.45}];
+      hLines.forEach(function(l){
+        ctx.strokeStyle='rgba(100,96,90,'+l.a+')';ctx.lineWidth=1.5;
+        ctx.beginPath();ctx.moveTo(8,l.y);ctx.lineTo(192,l.y);ctx.stroke();
+      });
+      // vertical straight lines
+      var vLines=[{x:38,a:0.35},{x:80,a:0.35},{x:120,a:0.35},{x:162,a:0.35}];
+      vLines.forEach(function(l){
+        ctx.strokeStyle='rgba(100,96,90,'+l.a+')';ctx.lineWidth=1.2;
+        ctx.beginPath();ctx.moveTo(l.x,5);ctx.lineTo(l.x,135);ctx.stroke();
+      });
+      // center dot
+      ctx.setLineDash([]);ctx.fillStyle='rgba(100,96,90,0.4)';
+      ctx.beginPath();ctx.arc(100,70,3,0,Math.PI*2);ctx.fill();
+      // label
+      ctx.fillStyle='rgba(100,96,90,0.35)';ctx.font='7px "DM Mono",monospace';
+      ctx.textAlign='center';
+      ctx.fillText('STRAIGHT · FOR COMPARISON',100,132);
+    })();
+  </script>
+ </div>
+ <div style="padding:10px 16px 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--dim);line-height:1.55">Theoretical perfect lines. No lens renders this. Shown for reference against the two sets above.</div>
+ </div>
+
+ </div>
+  </div>
+  <div class="viz-caption">
+ <span class="viz-caption-num">Fig 08</span>
+ <span class="viz-caption-text">Barrel distortion comparison at wide focal lengths. Cineovision bends architecture most dramatically. Walls bow, stairwells feel unstable. Xtal Express is more controlled. Neither is a flaw. For a crime story set in tight Bronx interiors, the spatial unease is part of the visual language.</span>
+  </div>
+
+<div class="sec"><h2>Where We Are Now</h2><div class="sec-line"></div></div>
+<div class="prose">
+  <p>Nelson and I are walking into ARRI Rental knowing exactly which two lens sets we want to look at. We know the coating generations, the flare character, the optical origins, and how each set maps to specific scene types, from wide stairwell interiors to the 200mm compressed exterior.</p>
+  <p>Meanwhile Lorenzo is still writing. Rewriting. Adding scenes. The script is alive. That&rsquo;s how it should be.</p>
+  <p>When he&rsquo;s ready, we bring him in. We sit down together, walk him through everything we built. The comparisons, the flare simulations, the distortion charts, the head-to-heads. All of it. And then the final decision is his. It always was. This is his story. Whatever serves the story is the right answer.</p>
+  <p>The eye test makes the technical call. You still have to put your eye to the glass. That part AI doesn&rsquo;t replace. But we&rsquo;re not walking in cold. We&rsquo;re not browsing. We&rsquo;re not wasting their time or ours.</p>
+</div>
+
+<div class="pullquote">
+  <p>&ldquo;The final decision is the director&rsquo;s. It always was. Whatever serves the story is the right answer.&rdquo;</p>
+</div>
+
+<div class="prose">
+  <p>Months of prep. Delays. A DP who painted his apartment walls to get the aging right. A director still living inside the script. And a technical team that did the homework so the creative conversation can stay creative.</p>
+  <p>This is what preparation looks like on the production side. This is how I&rsquo;m building at VEFILM. More of this to come as <em>Knock Knock</em> moves into production.</p>
+</div>
+
+<!-- UPDATE -->
+<div class="update">
+  <div class="update-label">Update · April 2026</div>
+  <p><strong>We are going to ARRI on Tuesday.</strong> Nelson and I are walking in to look at the glass in person. The reference work is done. Lorenzo is still in the writing. When it&rsquo;s time, we bring it all to him and let the story decide.</p>
+</div>
+
+<!-- CREDITS -->
+<div class="credits">
+  <div class="credit-card">
+ <div class="credit-label">Author</div>
+ <div class="credit-name">Pedro Feria Pino</div>
+ <div class="credit-insta"><a href="https://instagram.com/pedroferiapino_soc" target="_blank">@pedroferiapino_soc</a></div>
+ <div class="credit-body">Brooklyn-based DP, Director, and SOC member. Founder of VEFILM. Co-creator of <em>Washington Heights</em>, the first Latino-centric docu-series on MTV. DP on <em>Buried by the Bernards</em> for Netflix. <em>Inside the FBI</em> for USA Network. Building AI-native production pipelines for narrative and documentary work.</div>
+ <div class="credit-tags">
+ <span class="ctag">Washington Heights &middot; MTV</span>
+ <span class="ctag">Buried by the Bernards &middot; Netflix</span>
+ <span class="ctag">Inside the FBI &middot; USA Network</span>
+ </div>
+  </div>
+  <div class="credit-card">
+ <div class="credit-label">Director of Photography</div>
+ <div class="credit-name">Nelson Noel Salcedo</div>
+ <div class="credit-insta"><a href="https://instagram.com/ndzine" target="_blank">@ndzine</a></div>
+ <div class="credit-body">One of the most naturally gifted photographers working in independent film. DP on <em>Knock Knock</em>. Co-creator and cinematographer of <em>Washington Heights</em>, the first Latino-centric docu-series on MTV.</div>
+ <div class="credit-tags">
+ <span class="ctag">Washington Heights &middot; MTV &middot; Co-Creator &amp; DP</span>
+ <span class="ctag">Knock Knock &middot; Director of Photography</span>
+ </div>
+  </div>
+</div>
+
+<!-- NEXT ARTICLE TEASER -->
+<div class="next-article">
+  <div class="next-article-label">Next Article</div>
+  <div class="next-article-title">Using MidJourney for Storyboards, Visual Concepts &amp; Placeholders</div>
+  <div class="next-article-desc">How AI image generation is replacing early placeholder frames, concept art, and visual development in the <em>Knock Knock</em> pre-production pipeline. And why that changes how a director communicates with a DP before a shot list exists.</div>
+</div>
+
+<div class="hashtags">
+  <span class="ht">#Cinematography</span>
+  <span class="ht">#DirectorOfPhotography</span>
+  <span class="ht">#FilmProduction</span>
+  <span class="ht">#AnamorphicLenses</span>
+  <span class="ht">#AI</span>
+  <span class="ht">#Claude</span>
+  <span class="ht">#PreProduction</span>
+  <span class="ht">#IndependentFilm</span>
+  <span class="ht">#VEFILM</span>
+  <span class="ht">#KnockKnock</span>
+  <span class="ht">#ARRIRental</span>
+  <span class="ht">#WashingtonHeights</span>
+</div>
+
+<footer>
+  <span>Knock Knock &middot; Pre-Production &middot; VEFILM &middot; 2026</span>
+  <span>pedroferiapino.com</span>
+</footer>
+
+</div><!-- /body-wrap -->
+</body>
+</html>
