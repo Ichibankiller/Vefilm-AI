@@ -58,15 +58,15 @@
         .project-tag { display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255,107,0,0.15); color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; }
         /* GENERATORS */
         .gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .gen-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid var(--border); padding: 2rem; transition: border-color 0.3s, transform 0.3s; }
+        .gen-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; transition: border-color 0.3s, transform 0.3s; }
         .gen-card:hover { border-color: var(--accent); transform: translateY(-5px); }
         .gen-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; margin-bottom: 0.75rem; }
         .gen-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
-        .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 100px; margin-top: 1rem; }
+        .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 100px; margin-top: 1rem; }
         .gen-card textarea:focus { outline: none; border-color: var(--accent); }
-        .gen-card button { width: 100%; background: var(--accent); color: #000; border: none; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; cursor: pointer; transition: background 0.3s; }
+        .gen-card button { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 12px; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; cursor: pointer; transition: background 0.3s; }
         .gen-card button:hover { background: #ff8533; }
-        .gen-output { background: rgba(0,0,0,0.8); border: 1px solid var(--border); padding: 1rem; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-teal); max-height: 200px; overflow-y: auto; white-space: pre-wrap; display: none; }
+        .gen-output { background: rgba(0,0,0,0.8); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-teal); max-height: 200px; overflow-y: auto; white-space: pre-wrap; display: none; }
         footer { padding: 3rem; text-align: center; border-top: 1px solid #222; }
         footer p { color: var(--text-dim); font-size: 0.85rem; }
         /* TIMECODE */
@@ -122,7 +122,7 @@
             <div class="lookbook-item"><img src="images/GreyHouse/06_arrest.png" alt="Arrest"><div class="lookbook-caption"><h4>The Arrest</h4><p>Through the glass</p></div></div>
             <div class="lookbook-item"><img src="images/GreyHouse/07_blood.png" alt="Blood"><div class="lookbook-caption"><h4>The Aftermath</h4><p>What he found</p></div></div>
             <div class="lookbook-item"><img src="images/GreyHouse/01_shock.png" alt="Detective"><div class="lookbook-caption"><h4>Detective Rennie</h4><p>The Discovery</p></div></div>
-            <div class="lookbook-item"><img src="images/GreyHouse/10 Who is the killer.png" alt="Killer"><div class="lookbook-caption"><h4>Who Is The Killer?</h4><p>The Mystery</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/10%20Who%20is%20the%20killer.png" alt="Killer"><div class="lookbook-caption"><h4>Who Is The Killer?</h4><p>The Mystery</p></div></div>
         </div>
     </section>
 
@@ -148,6 +148,18 @@
             <div class="thumb" onclick="upd('06_draw_sketch.png', '06_draw_render.png', this)" style="background-image: url('images/KnockKnock/pairs/06_draw_sketch.png');"></div>
             <div class="thumb" onclick="upd('07_kiss_sketch.png', '07_kiss_render.jpg', this)" style="background-image: url('images/KnockKnock/pairs/07_kiss_sketch.png');"></div>
             <div class="thumb" onclick="upd('08_hallway_sketch.png', '08_hallway_render.png', this)" style="background-image: url('images/KnockKnock/pairs/08_hallway_sketch.png');"></div>
+        </div>
+        
+        <!-- KNOCK KNOCK LOOKBOOK -->
+        <div class="lookbook-grid" style="margin-top: 4rem; max-width: 1100px;">
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/01_drone_render.png" alt="Drone"><div class="lookbook-caption"><h4>The Bronx</h4><p>Opening drone shot</p></div></div>
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/02_dulce_render.png" alt="Dulce"><div class="lookbook-caption"><h4>Dulce</h4><p>Main character</p></div></div>
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/03_car_render.jpg" alt="Car"><div class="lookbook-caption"><h4>The Ride</h4><p>Night drive</p></div></div>
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/04_gun_render.jpg" alt="Gun"><div class="lookbook-caption"><h4>The Piece</h4><p>Tension builds</p></div></div>
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/05_closeup_render.jpg" alt="Closeup"><div class="lookbook-caption"><h4>The Stare</h4><p>Intense closeup</p></div></div>
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/06_draw_render.png" alt="Draw"><div class="lookbook-caption"><h4>The Draw</h4><p>Moment of truth</p></div></div>
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/07_kiss_render.jpg" alt="Kiss"><div class="lookbook-caption"><h4>The Kiss</h4><p>Intimate moment</p></div></div>
+            <div class="lookbook-item"><img src="images/KnockKnock/pairs/08_hallway_render.png" alt="Hallway"><div class="lookbook-caption"><h4>The Hallway</h4><p>Final scene</p></div></div>
         </div>
     </section>
 
