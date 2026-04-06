@@ -8,8 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
         :root {
             --bg: #0a0a0a;
             --bg-card: #111;
@@ -18,660 +17,362 @@
             --accent: #ff6b00;
             --accent-teal: #00f2ff;
         }
-        
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            overflow-x: hidden;
         }
-
+        /* CUSTOM CURSOR */
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s, background 0.2s;
+        }
+        .cursor-ring {
+            width: 40px; height: 40px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+        }
+        .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(1.5); background: var(--accent-teal); }
+        .cursor-hover .cursor-ring { width: 50px; height: 50px; border-color: var(--accent-teal); }
         /* NAV */
         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            position: fixed; top: 0; left: 0; right: 0;
             padding: 1.5rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             z-index: 1000;
             background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
         }
-        
         .logo { height: 50px; }
-        
-        .nav-links {
-            display: flex;
-            gap: 2.5rem;
-        }
-        
+        .nav-links { display: flex; gap: 2.5rem; }
         .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
+            color: var(--text-dim); text-decoration: none;
+            font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em;
             transition: color 0.3s;
         }
-        
         .nav-links a:hover { color: var(--text); }
-
-        /* HERO */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 8rem 3rem 4rem;
-            position: relative;
-        }
-        
-        .hero h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(4rem, 12vw, 10rem);
-            line-height: 0.9;
-            letter-spacing: -0.02em;
-        }
-        
-        .hero h1 span { color: var(--accent); }
-        
-        .hero-sub {
-            font-size: 1.1rem;
-            color: var(--text-dim);
-            max-width: 500px;
-            margin-top: 2rem;
-        }
-        
-        .hero-cta {
-            margin-top: 3rem;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: var(--accent);
-            color: #000;
-        }
-        
-        .btn-primary:hover {
-            background: #ff8533;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            color: var(--text);
-            border: 1px solid var(--text-dim);
-        }
-        
-        .btn-outline:hover {
-            border-color: var(--text);
-        }
-
         /* SECTIONS */
-        section {
-            padding: 6rem 3rem;
-        }
-        
-        .section-header {
-            margin-bottom: 4rem;
-        }
-        
+        section { padding: 6rem 3rem; }
         .section-label {
-            font-size: 0.75rem;
-            color: var(--accent);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
+            font-size: 0.75rem; color: var(--accent);
+            letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem;
         }
-        
         .section-title {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            line-height: 1;
+            font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1;
         }
-
+        .section-desc { color: var(--text-dim); max-width: 600px; margin-top: 1rem; }
         /* PROJECT GRID */
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
-        }
-
-        .project-card {
-            background: var(--bg-card);
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .project-card video,
-        .project-card img {
-            width: 100%;
-            aspect-ratio: 16/9;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .project-info {
-            padding: 1.5rem;
-        }
-        
-        .project-info h3 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .project-info p {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-        }
-        
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .project-card { background: var(--bg-card); overflow: hidden; }
+        .project-card video, .project-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+        .project-info { padding: 1.5rem; }
+        .project-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .project-info p { color: var(--text-dim); font-size: 0.9rem; }
         .project-tag {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: rgba(255,107,0,0.15);
-            color: var(--accent);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 1rem;
+            display: inline-block; padding: 0.25rem 0.75rem;
+            background: rgba(255,107,0,0.15); color: var(--accent);
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem;
         }
-
-        /* KNOCK KNOCK SLIDER */
+        /* HERO VIDEO */
+        .hero-video { position: relative; width: 100%; margin-top: 80px; }
+        .hero-video video { width: 100%; max-height: 80vh; object-fit: cover; }
+        .hero-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 4rem 3rem 2rem;
+            background: linear-gradient(to top, rgba(10,10,10,1), transparent);
+        }
+        .hero-overlay h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95;
+        }
+        .hero-overlay p { color: var(--text-dim); max-width: 500px; margin-top: 1rem; }
+        /* COMPARISON SLIDER */
+        .slider-section { padding: 4rem 3rem; }
+        .slider-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 2rem; }
         .slider-container {
-            position: relative;
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            background: #000;
+            position: relative; width: 100%; aspect-ratio: 16/9;
+            overflow: hidden; background: #000; border-radius: 4px;
         }
-        
-        .slider-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .slider-after {
-            clip-path: inset(0 50% 0 0);
-        }
-        
+        .slider-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .slider-container .after { clip-path: inset(0 50% 0 0); }
         .slider-handle {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 4px;
-            background: var(--accent);
-            cursor: ew-resize;
-            z-index: 10;
+            position: absolute; top: 0; bottom: 0; left: 50%;
+            width: 4px; background: var(--accent); cursor: ew-resize; z-index: 10;
+            transform: translateX(-50%);
         }
-        
         .slider-handle::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
+            content: ''; position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            border-radius: 50%;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--accent); border: 3px solid #fff;
         }
-
-        /* GREY HOUSE LOOKBOOK */
-        .lookbook-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+        .slider-handle::after {
+            content: '⟷'; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); color: #000; font-size: 16px; font-weight: bold;
         }
-        
-        .lookbook-grid img {
-            width: 100%;
-            aspect-ratio: 2.39/1;
-            object-fit: cover;
-            filter: saturate(0.9);
-            transition: filter 0.3s, transform 0.3s;
+        .slider-label {
+            position: absolute; bottom: 10px; padding: 4px 10px;
+            background: rgba(0,0,0,0.7); font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 0.1em; border-radius: 2px;
         }
-        
-        .lookbook-grid img:hover {
-            filter: saturate(1.1);
-            transform: scale(1.02);
+        .slider-label.left { left: 10px; }
+        .slider-label.right { right: 10px; }
+        /* LOOKBOOK GRID */
+        .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 2rem; }
+        .lookbook-item { position: relative; overflow: hidden; }
+        .lookbook-item img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform 0.5s; }
+        .lookbook-item:hover img { transform: scale(1.05); }
+        .lookbook-caption {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
         }
-        
-        .lookbook-featured {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-        
-        .lookbook-featured img {
-            aspect-ratio: 1/1;
-        }
-
-        /* GENERATOR TOOLS */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .tool-card {
-            background: var(--bg-card);
-            border: 1px solid #222;
-            padding: 2rem;
-            transition: border-color 0.3s;
-        }
-        
-        .tool-card:hover {
-            border-color: var(--accent);
-        }
-        
-        .tool-number {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 3rem;
-            color: var(--accent);
-            line-height: 1;
-        }
-        
-        .tool-name {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
-            margin: 0.5rem 0 1rem;
-        }
-        
-        .tool-desc {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .tool-input {
-            width: 100%;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            padding: 1rem;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.9rem;
-            resize: vertical;
-            min-height: 100px;
-            margin-bottom: 1rem;
-        }
-        
-        .tool-input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        
-        .tool-output {
-            background: #0a0a0a;
-            border: 1px solid #222;
-            padding: 1rem;
-            min-height: 150px;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            white-space: pre-wrap;
-            overflow-y: auto;
-            max-height: 300px;
-        }
-        
+        .lookbook-caption h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; }
+        .lookbook-caption p { font-size: 0.8rem; color: var(--text-dim); }
         /* FOOTER */
-        footer {
-            padding: 4rem 3rem;
-            border-top: 1px solid #222;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.85rem;
-        }
+        footer { padding: 3rem; text-align: center; border-top: 1px solid #222; }
+        footer p { color: var(--text-dim); font-size: 0.85rem; }
     </style>
 </head>
 <body>
-    <!-- NAV -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
     <nav>
         <img src="images/logos/vefilm_eye.png" alt="VEFILM" class="logo">
         <div class="nav-links">
-            <a href="#work">Work</a>
-            <a href="#tools">Tools</a>
+            <a href="#greyhouse">Grey House</a>
+            <a href="#knockknock">Knock Knock</a>
+            <a href="#projects">Projects</a>
             <a href="#about">About</a>
-            <a href="mailto:vefilm@gmail.com">Contact</a>
         </div>
     </nav>
 
-    <!-- HERO -->
-    <section class="hero">
-        <h1>AI-NATIVE<br><span>PRODUCTION</span></h1>
-        <p class="hero-sub">Cinematic pre-visualization tools and AI workflows built by a working Director of Photography. From storyboard to screen.</p>
-        <div class="hero-cta">
-            <a href="#work" class="btn btn-primary">View Work</a>
-            <a href="#tools" class="btn btn-outline">Try Tools</a>
+    <!-- GREY HOUSE INCIDENT - HERO -->
+    <section id="greyhouse" class="hero-video">
+        <video autoplay muted loop playsinline>
+            <source src="videos/GreyHouse/TheGreyHouse_compressed.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay">
+            <p class="section-label">AI Generated Horror</p>
+            <h1>The Grey House<br>Incident</h1>
+            <p>Scotland, 1967. A psychological thriller built entirely with AI. MidJourney stills, Veo sequences, ElevenLabs voiceover.</p>
+        </div>
+    </section>
+
+    <!-- GREY HOUSE LOOKBOOK -->
+    <section>
+        <div class="lookbook-grid">
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/08_callum.png" alt="Callum">
+                <div class="lookbook-caption"><h4>Callum</h4><p>The Innkeeper</p></div>
+            </div>
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/02_sign.png" alt="Sign">
+                <div class="lookbook-caption"><h4>Grey House</h4><p>The Sign</p></div>
+            </div>
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/04_inn_exterior.png" alt="The Inn">
+                <div class="lookbook-caption"><h4>The House of Gray</h4><p>Dundee, Scotland</p></div>
+            </div>
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/05_eyeball.png" alt="Eye">
+                <div class="lookbook-caption"><h4>The Possession</h4><p>Eyes rolled back</p></div>
+            </div>
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/03_police.png" alt="Police">
+                <div class="lookbook-caption"><h4>The Arrival</h4><p>Police lights in rain</p></div>
+            </div>
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/06_arrest.png" alt="Arrest">
+                <div class="lookbook-caption"><h4>The Arrest</h4><p>Through the glass</p></div>
+            </div>
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/07_blood.png" alt="Blood">
+                <div class="lookbook-caption"><h4>The Aftermath</h4><p>What he found</p></div>
+            </div>
+            <div class="lookbook-item">
+                <img src="images/GreyHouse/01_shock.png" alt="Detective">
+                <div class="lookbook-caption"><h4>Detective Rennie</h4><p>The Discovery</p></div>
+            </div>
         </div>
     </section>
 
     <!-- KNOCK KNOCK -->
-    <section id="knock-knock">
-        <div class="section-header">
-            <p class="section-label">Case Study</p>
-            <h2 class="section-title">Knock Knock</h2>
-            <p style="color: var(--text-dim); margin-top: 1rem; max-width: 600px;">1990s Bronx crime drama. Storyboard sketches transformed into photorealistic pre-visualization using a custom AI pipeline.</p>
-        </div>
+    <section id="knockknock" class="slider-section">
+        <p class="section-label">Case Study</p>
+        <h2 class="section-title">Knock Knock</h2>
+        <p class="section-desc">1990s Bronx crime drama. Storyboard sketches transformed into photorealistic pre-visualization using a custom AI pipeline. Drag the slider to compare.</p>
         
-        <div class="slider-container" id="knockSlider">
-            <img src="images/KnockKnock/Screenshot 2026-03-29 232855.png" alt="Storyboard" class="slider-before">
-            <img src="images/KnockKnock/Gemini_Generated_Image_uxvh85uxvh85uxvh.png" alt="AI Generated" class="slider-after">
-            <div class="slider-handle"></div>
-        </div>
-        <p style="text-align: center; color: var(--text-dim); margin-top: 1rem; font-size: 0.85rem;">Drag to compare: Storyboard sketch â†’ AI render</p>
-    </section>
-
-    <!-- GREY HOUSE INCIDENT -->
-    <section id="grey-house">
-        <div class="section-header">
-            <p class="section-label">Lookbook</p>
-            <h2 class="section-title">The Grey House Incident</h2>
-            <p style="color: var(--text-dim); margin-top: 1rem; max-width: 600px;">1960s Scotland suspense. Complete visual bible built with MidJourney prompt engineering and Veo/Kling video generation.</p>
-        </div>
-        
-        <div class="lookbook-grid">
-            <div class="lookbook-featured">
-                <img src="images/GreyHouse/ichibankiller_A_hyper-realistic_cinematic_8K_image_capturing_a__23757abe-557f-4212-9266-5f4159c1179b.png" alt="Inn Exterior">
+        <div class="slider-grid">
+            <!-- Slider 1: Drone -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/01_drone_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/01_drone_render.png" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
             </div>
-            <img src="images/GreyHouse/Make_the_mans_hair_red_and_shirt_cream_colored_2k_delpmaspu.png" alt="Callum">
-            <img src="images/GreyHouse/ichibankiller_A_dimly_lit_narrow_hallway_in_an_old_Irish_inn__e4460c7b-8af2-4ce1-826b-a98188280aed_1.png" alt="Hallway">
-            <img src="images/GreyHouse/ichibankiller_A_close-up_dynamic_portrait_of_two_detectives_s_0172af07-de93-41ef-a7ac-3502384608be_0.png" alt="Officers">
+            <!-- Slider 2: Dulce -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/02_dulce_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/02_dulce_render.png" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
+            </div>
+            <!-- Slider 3: Car -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/03_car_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/03_car_render.jpg" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
+            </div>
+            <!-- Slider 4: Gun -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/04_gun_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/04_gun_render.jpg" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
+            </div>
+            <!-- Slider 5: Closeup -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/05_closeup_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/05_closeup_render.jpg" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
+            </div>
+            <!-- Slider 6: The Draw -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/06_draw_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/06_draw_render.png" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
+            </div>
+            <!-- Slider 7: The Kiss -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/07_kiss_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/07_kiss_render.jpg" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
+            </div>
+            <!-- Slider 8: Hallway -->
+            <div class="slider-container" data-slider>
+                <img src="images/KnockKnock/pairs/08_hallway_sketch.png" alt="Sketch" class="before">
+                <img src="images/KnockKnock/pairs/08_hallway_render.png" alt="Render" class="after">
+                <div class="slider-handle"></div>
+                <span class="slider-label left">Sketch</span>
+                <span class="slider-label right">AI Render</span>
+            </div>
         </div>
     </section>
 
-    <!-- AI SPEC WORK -->
-    <section id="work">
-        <div class="section-header">
-            <p class="section-label">AI Spec Work</p>
-            <h2 class="section-title">Generated Films</h2>
-        </div>
-        
+    <!-- OTHER PROJECTS -->
+    <section id="projects">
+        <p class="section-label">More Work</p>
+        <h2 class="section-title">AI Productions</h2>
         <div class="project-grid">
-            <!-- ARCH MOTORCYCLES -->
             <div class="project-card">
                 <video autoplay muted loop playsinline>
                     <source src="videos/ArchMotorcycles/Arch_compressed.mp4" type="video/mp4">
                 </video>
                 <div class="project-info">
                     <h3>Arch Motorcycles</h3>
-                    <p>Spec commercial for Keanu Reeves' custom motorcycle company. AI-generated cinematography showcasing product and rider.</p>
+                    <p>Spec commercial for Keanu Reeves' custom motorcycle company. AI generated cinematography.</p>
                     <span class="project-tag">Veo 3 + MidJourney</span>
                 </div>
             </div>
-            
-            <!-- FLY AWAY -->
             <div class="project-card">
                 <video autoplay muted loop playsinline>
-                    <source src="videos/FlyAway/FlyAway.mov" type="video/mp4">
-                </video>
-                <div class="project-info">
-                    <h3>Fly Away</h3>
-                    <p>Vertical story format. Atmospheric piece exploring movement and transition.</p>
-                    <span class="project-tag">AI Generated</span>
-                </div>
-            </div>
-
-            <!-- BEAUTY BAR -->
-            <div class="project-card">
-                <video autoplay muted loop playsinline>
-                    <source src="videos/BeautyBar/bartender_01.mp4" type="video/mp4">
+                    <source src="videos/Bar/Bar_compressed.mp4" type="video/mp4">
                 </video>
                 <div class="project-info">
                     <h3>Bar</h3>
-                    <p>Neon-lit atmosphere piece. Character study in a late-night setting.</p>
+                    <p>Neon lit atmosphere piece. Exploring texture, light, and mood through AI generation.</p>
                     <span class="project-tag">AI Generated</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- GENERATOR TOOLS -->
-    <section id="tools">
-        <div class="section-header">
-            <p class="section-label">Live Tools</p>
-            <h2 class="section-title">AI Generators</h2>
-            <p style="color: var(--text-dim); margin-top: 1rem; max-width: 600px;">Production-ready prompting tools. Describe your shot and get formatted output for Veo, MidJourney, and other generators.</p>
-        </div>
-        
-        <div class="tools-grid">
-            <!-- TOOL 1: CINEMATIC ENGINE -->
-            <div class="tool-card">
-                <div class="tool-number">01</div>
-                <h3 class="tool-name">Cinematic Engine</h3>
-                <p class="tool-desc">Upload a storyboard or describe a shot. Get a Veo 3 optimized prompt with camera movement, equipment specs, and NO_MORPH continuity tokens.</p>
-                <textarea class="tool-input" id="tool1-input" placeholder="Describe your shot: A slow dolly push into a dimly lit kitchen, woman at table, 1990s Bronx..."></textarea>
-                <button class="btn btn-primary" onclick="runTool1()" style="width: 100%; margin-bottom: 1rem;">Generate Prompt</button>
-                <div class="tool-output" id="tool1-output">Output will appear here...</div>
-            </div>
-
-            <!-- TOOL 2: IMAGE GENERATOR -->
-            <div class="tool-card">
-                <div class="tool-number">02</div>
-                <h3 class="tool-name">Image Generator</h3>
-                <p class="tool-desc">Scene description to cinematic still. Wraps your concept in VEFILM's signature Kodachrome look with proper aspect ratio and lens specs.</p>
-                <textarea class="tool-input" id="tool2-input" placeholder="Describe your scene: Two detectives stand at the entrance of an old Scottish inn, fog rolling in..."></textarea>
-                <button class="btn btn-primary" onclick="runTool2()" style="width: 100%; margin-bottom: 1rem;">Generate Prompt</button>
-                <div class="tool-output" id="tool2-output">Output will appear here...</div>
-            </div>
-            
-            <!-- TOOL 3: VECTOR-DP -->
-            <div class="tool-card" style="border-color: #00f2ff33;">
-                <div class="tool-number" style="color: var(--accent-teal);">03</div>
-                <h3 class="tool-name">Vector-DP</h3>
-                <p class="tool-desc">Upload a location photo or describe a space. Get spatial analysis with lighting vectors, camera plates, and blocking coordinates.</p>
-                <textarea class="tool-input" id="tool3-input" placeholder="Describe the location: A narrow hallway in an old inn, wooden floors, tungsten wall sconces..."></textarea>
-                <button class="btn btn-primary" onclick="runTool3()" style="width: 100%; margin-bottom: 1rem; background: var(--accent-teal);">Analyze Space</button>
-                <div class="tool-output" id="tool3-output">Output will appear here...</div>
-            </div>
-
-            <!-- TOOL 4: CHARACTER SHEET -->
-            <div class="tool-card" style="border-color: #00f2ff33;">
-                <div class="tool-number" style="color: var(--accent-teal);">04</div>
-                <h3 class="tool-name">Character Sheet</h3>
-                <p class="tool-desc">Text description to character bible. Get wardrobe specs, expression sheets, consistency parameters for multi-shot generation.</p>
-                <textarea class="tool-input" id="tool4-input" placeholder="Describe your character: Callum, 22, lean build, short auburn-red wavy hair, heavy freckles..."></textarea>
-                <button class="btn btn-primary" onclick="runTool4()" style="width: 100%; margin-bottom: 1rem; background: var(--accent-teal);">Generate Sheet</button>
-                <div class="tool-output" id="tool4-output">Output will appear here...</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section id="about" style="max-width: 800px; margin: 0 auto;">
-        <div class="section-header">
-            <p class="section-label">About</p>
-            <h2 class="section-title">Pedro Feria Pino</h2>
-        </div>
-        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.8;">
-            Director of Photography and Camera Operator based in Brooklyn, NY. SOC member with 20+ years shooting unscripted television, documentary, and narrative film for Netflix, Disney, VH1, TLC, MTV, VICE, and ABC.
-        </p>
-        <p style="color: var(--text-dim); font-size: 1.1rem; line-height: 1.8; margin-top: 1.5rem;">
-            Now building AI-native production pipelines that bridge traditional cinematography with generative tools. These workflows power real pre-production, from storyboard visualization to location scouting to character design.
-        </p>
-        <div style="margin-top: 3rem;">
-            <a href="https://pedroferiapino.com" class="btn btn-outline" target="_blank">Main Portfolio</a>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
     <footer>
-        <p>Â© 2026 VEFILM. Built by Pedro Feria Pino.</p>
+        <p>&copy; 2026 VEFILM. AI Production Pipeline by Pedro Feria Pino.</p>
     </footer>
 
     <script>
-        // KNOCK KNOCK SLIDER
-        const slider = document.getElementById('knockSlider');
-        const handle = slider.querySelector('.slider-handle');
-        const afterImg = slider.querySelector('.slider-after');
-        
-        let isDragging = false;
-        
-        function updateSlider(x) {
-            const rect = slider.getBoundingClientRect();
-            let pos = (x - rect.left) / rect.width;
-            pos = Math.max(0, Math.min(1, pos));
-            handle.style.left = (pos * 100) + '%';
-            afterImg.style.clipPath = `inset(0 ${(1 - pos) * 100}% 0 0)`;
-        }
-        
-        handle.addEventListener('mousedown', () => isDragging = true);
-        document.addEventListener('mouseup', () => isDragging = false);
+        // Custom Cursor
+        const dot = document.querySelector('.cursor-dot');
+        const ring = document.querySelector('.cursor-ring');
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
         document.addEventListener('mousemove', (e) => {
-            if (isDragging) updateSlider(e.clientX);
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
         });
-        
-        slider.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            updateSlider(e.touches[0].clientX);
-        });
-        slider.addEventListener('touchmove', (e) => {
-            if (isDragging) updateSlider(e.touches[0].clientX);
-        });
-        slider.addEventListener('touchend', () => isDragging = false);
 
-        // GEMINI API CONFIG
-        const GEMINI_API_KEY = 'AIzaSyATotffPI43llg-6uNxqQ1GaoD4Izf6bss';
-        const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
-        
-        async function callGemini(prompt) {
-            const response = await fetch(GEMINI_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }]
-                })
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.left = ringX + 'px';
+            ring.style.top = ringY + 'px';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        document.querySelectorAll('a, button, .slider-handle, video').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+        });
+
+        // Comparison Sliders
+        document.querySelectorAll('[data-slider]').forEach(container => {
+            const handle = container.querySelector('.slider-handle');
+            const afterImg = container.querySelector('.after');
+            let isDragging = false;
+
+            function updateSlider(x) {
+                const rect = container.getBoundingClientRect();
+                let pos = (x - rect.left) / rect.width * 100;
+                pos = Math.max(0, Math.min(100, pos));
+                handle.style.left = pos + '%';
+                afterImg.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+            }
+
+            handle.addEventListener('mousedown', () => isDragging = true);
+            document.addEventListener('mouseup', () => isDragging = false);
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) updateSlider(e.clientX);
             });
-            const data = await response.json();
-            return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error generating response';
-        }
 
-        // TOOL 1: CINEMATIC ENGINE
-        async function runTool1() {
-            const input = document.getElementById('tool1-input').value;
-            const output = document.getElementById('tool1-output');
-            if (!input.trim()) return;
-            
-            output.textContent = 'Generating...';
-            
-            const prompt = `You are a cinematography AI specializing in Veo 3 video generation prompts. Given this shot description, output a structured prompt optimized for Veo 3.
-
-Shot description: ${input}
-
-Output format:
-SHOT TITLE: [descriptive title]
-CAMERA: [movement type, lens, equipment]
-MARK A â†’ VECTOR â†’ MARK B: [start position, movement, end position]
-VEO 3 PROMPT: [detailed prompt with NO_MORPH token for character continuity, Kodachrome look, 2.39:1 aspect ratio, 24fps]
-
-Keep the prompt under 500 characters. Use physical camera rigs only (dolly, steadicam, crane). S35 sensor, Zeiss Master Primes.`;
-
-            const result = await callGemini(prompt);
-            output.textContent = result;
-        }
-
-        // TOOL 2: IMAGE GENERATOR
-        async function runTool2() {
-            const input = document.getElementById('tool2-input').value;
-            const output = document.getElementById('tool2-output');
-            if (!input.trim()) return;
-            
-            output.textContent = 'Generating...';
-            
-            const prompt = `You are a MidJourney prompt engineer specializing in cinematic stills. Transform this scene description into a detailed MidJourney prompt.
-
-Scene: ${input}
-
-Output a single MidJourney prompt with:
-- Kodachrome 64 film emulation
-- 2.39:1 cinemascope aspect ratio (--ar 239:100)
-- Specific lens (Zeiss Master Prime or anamorphic)
-- Practical lighting only
-- Period-accurate textures
-- Hyper-realistic, 8K quality
-- --v 6.1 --style raw
-
-Output ONLY the prompt, no explanation.`;
-
-            const result = await callGemini(prompt);
-            output.textContent = result;
-        }
-
-        // TOOL 3: VECTOR-DP
-        async function runTool3() {
-            const input = document.getElementById('tool3-input').value;
-            const output = document.getElementById('tool3-output');
-            if (!input.trim()) return;
-            
-            output.textContent = 'Analyzing...';
-            
-            const prompt = `You are VECTOR-DP, a spatial analysis engine for cinematographers. Analyze this location and output a spatial manifest.
-
-Location: ${input}
-
-Output JSON format:
-{
-  "bounding_box": {"x": 0, "y": 0, "z": 0, "units": "feet"},
-  "camera_plate": {"position": "description", "lens_suggestion": "mm"},
-  "lighting_vectors": [
-    {"source": "name", "position": "coordinates", "intensity": "description"}
-  ],
-  "blocking_zones": ["zone descriptions"],
-  "practical_sources": ["available light sources"]
-}
-
-Be specific about dimensions and positions for light stand placement.`;
-
-            const result = await callGemini(prompt);
-            output.textContent = result;
-        }
-
-        // TOOL 4: CHARACTER SHEET
-        async function runTool4() {
-            const input = document.getElementById('tool4-input').value;
-            const output = document.getElementById('tool4-output');
-            if (!input.trim()) return;
-            
-            output.textContent = 'Generating...';
-            
-            const prompt = `You are a character design specialist for AI image generation. Create a character consistency sheet.
-
-Character: ${input}
-
-Output format:
-CHARACTER BIBLE
----------------
-NAME: [name]
-PHYSICAL: [age, build, height, distinguishing features]
-SKIN/HAIR/EYES: [specific descriptions for AI consistency]
-WARDROBE: [primary outfit with colors and textures]
-EXPRESSION RANGE: [3-4 key expressions]
-CONSISTENCY TOKENS: [repeatable phrases for multi-shot generation]
-PROMPT FRAGMENT: [copy-paste ready description for MidJourney]
-
-Focus on details that ensure the same character appears across multiple generations.`;
-
-            const result = await callGemini(prompt);
-            output.textContent = result;
-        }
+            container.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                updateSlider(e.touches[0].clientX);
+            });
+            container.addEventListener('touchmove', (e) => {
+                if (isDragging) updateSlider(e.touches[0].clientX);
+            });
+            container.addEventListener('touchend', () => isDragging = false);
+        });
     </script>
 </body>
 </html>
