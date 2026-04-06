@@ -72,16 +72,13 @@
         footer p { color: var(--text-dim); font-size: 0.85rem; }
         /* TIMECODE */
         .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: #2563eb; color: #fff; padding: 0.5rem 1.25rem; border-radius: 4px; }
-        /* VERTICAL LINE */
-        .vertical-line { position: fixed; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent 0%, var(--accent) 15%, var(--accent) 85%, transparent 100%); z-index: 100; pointer-events: none; }
-        @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } .vertical-line { display: none; } }
+        @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
     <div class="timecode" id="timecode">00:00:00:00</div>
-    <div class="vertical-line"></div>
     <nav>
         <img src="images/logos/vefilm_eye.png" alt="VEFILM" class="logo">
         <div class="nav-links">
