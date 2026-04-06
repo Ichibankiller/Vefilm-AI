@@ -8,15 +8,38 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0a0a0a; --bg-card: #111; --text: #fff; --text-dim: #888; --accent: #ff6b00; --accent-teal: #00f2ff; --border: rgba(255,255,255,0.08); }
+        :root { 
+            --bg: #0a0a0a; 
+            --bg-card: #111; 
+            --text: #fff; 
+            --text-dim: #888; 
+            --accent: #ff6b00; 
+            --accent-teal: #00f2ff; 
+            --border: rgba(255,255,255,0.08); 
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; cursor: none; }
+        /* CINEMATIC FILM GRAIN OVERLAY */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Grain_Noise.png');
+            opacity: 0.04; pointer-events: none; z-index: 10000;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6; 
+            overflow-x: hidden; 
+            cursor: none; 
+        }
         a, button, .thumb, .gen-card, .lookbook-item, .nav-links a { cursor: none; }
         video { cursor: default !important; }
+        /* CUSTOM CURSOR */
         .cursor-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
         .cursor-ring { width: 40px; height: 40px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, border-color 0.2s; }
         .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(1.5); background: var(--accent-teal); }
         .cursor-hover .cursor-ring { width: 50px; height: 50px; border-color: var(--accent-teal); }
+        /* NAVIGATION */
         nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent); }
         .logo { height: 50px; }
         .nav-links { display: flex; gap: 2.5rem; }
@@ -26,19 +49,17 @@
         .section-label { font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace; }
         .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1; }
         .section-desc { color: var(--text-dim); max-width: 600px; margin-top: 1rem; font-size: 0.95rem; }
-        /* HERO */
+        /* HERO & VIDEO */
         .hero-video { position: relative; width: 100%; margin-top: 80px; padding: 0 3rem; }
-        .hero-video video { width: 100%; max-height: 75vh; object-fit: contain; background: #000; display: block; border-radius: 8px; }
+        .hero-video video { width: 100%; max-height: 75vh; object-fit: contain; background: #000; display: block; border-radius: 8px; border: 1px solid var(--border); }
         .hero-info { padding: 2rem 3rem; }
-        .hero-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); line-height: 0.95; }
-        .hero-info .section-label { margin-bottom: 0.5rem; }
-        .hero-info p { color: var(--text-dim); max-width: 500px; margin-top: 0.75rem; font-size: 0.9rem; }
-        /* LOOKBOOK */
+        /* LOOKBOOK GRID */
         .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
-        .lookbook-item { position: relative; overflow: hidden; aspect-ratio: 16/9; }
-        .lookbook-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s, filter 0.5s; filter: grayscale(0.4); }
-        .lookbook-item:hover img { transform: scale(1.05); filter: grayscale(0); }
-        .lookbook-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); }
+        .lookbook-item { position: relative; overflow: hidden; aspect-ratio: 16/9; border: 1px solid var(--border); }
+        .lookbook-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s; filter: grayscale(0.4); }
+        .lookbook-item:hover img { transform: scale(1.08); filter: grayscale(0); }
+        .lookbook-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); transform: translateY(10px); transition: 0.3s; }
+        .lookbook-item:hover .lookbook-caption { transform: translateY(0); }
         .lookbook-caption h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; }
         .lookbook-caption p { font-size: 0.75rem; color: var(--text-dim); }
         /* CONSOLE SLIDER */
@@ -47,42 +68,53 @@
         .frame-before, .frame-after { position: absolute; inset: 0; background-size: cover; background-position: center; transition: background-image 0.4s ease; }
         .frame-after { clip-path: inset(0 0 0 50%); z-index: 2; border-left: 2px solid var(--accent); }
         .label-view { position: absolute; top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; text-transform: uppercase; color: rgba(255,255,255,0.5); z-index: 10; pointer-events: none; letter-spacing: 0.1em; }
-        .filmstrip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; width: 100%; max-width: 1100px; margin-top: 2rem; }
+        .filmstrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 1100px; margin-top: 2rem; }
         .thumb { aspect-ratio: 16/9; background-size: cover; background-position: center; cursor: pointer; opacity: 0.35; transition: 0.3s; border: 2px solid transparent; }
-        .thumb:hover { opacity: 0.7; }
         .thumb.active { opacity: 1; border-color: var(--accent); transform: translateY(-4px); }
         /* PROJECTS */
         .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .project-card { background: var(--bg-card); overflow: hidden; }
+        .project-card { background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; transition: 0.3s; }
+        .project-card:hover { border-color: var(--accent-teal); }
         .project-card video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
         .project-info { padding: 1.5rem; }
-        .project-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem; }
-        .project-info p { color: var(--text-dim); font-size: 0.9rem; }
-        .project-tag { display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255,107,0,0.15); color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; }
+        .project-tag { display: inline-block; padding: 0.25rem 0.75rem; background: rgba(0,242,255,0.1); color: var(--accent-teal); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; }
         /* GENERATORS */
         .gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .gen-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; transition: border-color 0.3s, transform 0.3s; backdrop-filter: blur(12px); }
-        .gen-card:hover { border-color: rgba(255,255,255,0.25); transform: translateY(-5px); }
+        .gen-card { background: rgba(17,17,17,0.6); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; transition: 0.3s; backdrop-filter: blur(12px); display: flex; flex-direction: column; }
+        .gen-card:hover { border-color: var(--accent); background: rgba(20,20,20,0.8); }
         .gen-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; margin-bottom: 0.75rem; }
-        .gen-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
-        .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 100px; margin-top: 1rem; }
-        .gen-card textarea:focus { outline: none; border-color: var(--accent); }
-        .gen-card button { width: 100%; background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px); }
-        .gen-card button:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
-        .gen-output { background: rgba(0,0,0,0.8); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-teal); max-height: 200px; overflow-y: auto; white-space: pre-wrap; display: none; }
-        footer { padding: 3rem; text-align: center; border-top: 1px solid #222; }
-        footer p { color: var(--text-dim); font-size: 0.85rem; }
-        /* TIMECODE */
-        .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: rgba(0,0,0,0.7); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-        /* AUDIO TOGGLE */
-        .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.5rem 1rem; cursor: pointer; transition: all 0.3s; }
-        .audio-toggle:hover { background: var(--accent); color: #000; }
-        .audio-toggle.playing { background: var(--accent); color: #000; }
+        .gen-card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem; }
+        .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 80px; }
+        .gen-card button { width: 100%; background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; margin-top: 1rem; transition: 0.3s; }
+        .gen-card button:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+        /* GENERATOR OUTPUT & SETTINGS */
+        .gen-output { background: #000; border: 1px solid var(--accent-teal); border-radius: 8px; padding: 1rem; margin-top: 1rem; display: none; position: relative; }
+        .gen-output img { width: 100%; border-radius: 6px; display: block; }
+        .gen-loader { text-align: center; padding: 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        .gen-loader { animation: blink 1.2s ease-in-out infinite; }
+        .prompt-used { font-size: 0.6rem; color: #444; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; line-height: 1.5; border-top: 1px solid #1a1a1a; padding-top: 0.75rem; }
+        .gen-actions { display: flex; gap: 8px; margin-top: 0.75rem; }
+        .copy-btn { background: var(--accent-teal); color: #000; border: none; padding: 5px 10px; font-size: 0.6rem; font-weight: bold; border-radius: 4px; }
+        .regen-btn { background: transparent; border: 1px solid #333; color: #666; padding: 5px 10px; font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; border-radius: 4px; }
+        .regen-btn:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
 
-        /* BIO SECTION */
-        .bio { max-width: 700px; margin: 0 auto 2rem; text-align: center; }
+        #apiSettings { display:none; background:rgba(255,107,0,0.05); border:1px dashed var(--accent); padding:1.5rem; margin-top:1rem; border-radius:12px; }
+        .style-select { width:100%; background:rgba(0,0,0,0.6); border:1px solid var(--border); border-radius:8px; color:var(--accent-teal); padding:0.6rem 0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; margin-top:0.75rem; appearance:none; cursor:pointer; }
+        .style-select:focus { outline:none; border-color:var(--accent); }
+        .fp-mode-btn { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; color:var(--text-dim); padding:0.6rem 0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.08em; cursor:pointer; transition:0.2s; }
+        .fp-mode-btn:hover { border-color:var(--accent); color:var(--accent); }
+        .fp-mode-btn.fp-active { background:var(--accent); color:#000; border-color:var(--accent); font-weight:bold; }
+        .engine-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 7px; border-radius:3px; margin-bottom:0.75rem; }
+        .badge-gemini { background:rgba(0,242,255,0.1); color:var(--accent-teal); border:1px solid rgba(0,242,255,0.2); }
+        .badge-flux { background:rgba(255,107,0,0.1); color:var(--accent); border:1px solid rgba(255,107,0,0.2); }
+        /* UTILS */
+        .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: rgba(0,0,0,0.8); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.6rem 1.2rem; cursor: pointer; }
+        
+        footer { padding: 5rem 3rem; text-align: center; border-top: 1px solid var(--border); background: #050505; }
         .bio h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: 1rem; color: var(--accent); }
-        .bio p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.8; }
+        .bio p { color: var(--text-dim); max-width: 700px; margin: 0 auto; font-size: 0.9rem; }
         @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -91,7 +123,6 @@
     <div class="cursor-ring"></div>
     <div class="timecode" id="timecode">00:00:00:00</div>
     
-    <!-- AMBIENT AUDIO -->
     <audio id="ambience" loop>
         <source src="audio/ambience.mp3" type="audio/mpeg">
     </audio>
@@ -106,8 +137,7 @@
             <a href="#generators">Generators</a>
         </div>
     </nav>
-
-    <!-- GREY HOUSE HERO -->
+    <!-- SECTION: GREY HOUSE -->
     <section id="greyhouse" class="hero-video">
         <video autoplay muted loop playsinline controls preload="auto">
             <source src="videos/GreyHouse/TheGreyHouse_compressed.mp4" type="video/mp4">
@@ -118,8 +148,7 @@
             <p>Scotland, 1967. A psychological thriller built entirely with AI. MidJourney stills, Veo sequences, ElevenLabs voiceover.</p>
         </div>
     </section>
-
-    <!-- GREY HOUSE LOOKBOOK -->
+    <!-- SECTION: LOOKBOOK -->
     <section>
         <div class="lookbook-grid">
             <div class="lookbook-item"><img src="images/GreyHouse/08_callum.png" alt="Callum"><div class="lookbook-caption"><h4>Callum</h4><p>The Innkeeper</p></div></div>
@@ -133,8 +162,7 @@
             <div class="lookbook-item"><img src="images/GreyHouse/10%20Who%20is%20the%20killer.png" alt="Killer"><div class="lookbook-caption"><h4>Who Is The Killer?</h4><p>The Mystery</p></div></div>
         </div>
     </section>
-
-    <!-- KNOCK KNOCK - BIG CONSOLE + THUMBNAILS -->
+    <!-- SECTION: KNOCK KNOCK CONSOLE -->
     <section id="knockknock" class="console-section">
         <p class="section-label">Case Study</p>
         <h2 class="section-title">Knock Knock</h2>
@@ -146,28 +174,16 @@
             <div class="frame-before" id="sBefore" style="background-image: url('images/KnockKnock/Screenshot%202026-03-29%20232855.png');"></div>
             <div class="frame-after" id="sAfter" style="background-image: url('images/KnockKnock/Car_at_night_202603302050.jpeg');"></div>
         </div>
-
-        <div class="filmstrip" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="filmstrip">
             <div class="thumb active" onclick="upd('Screenshot%202026-03-29%20232855.png', 'Car_at_night_202603302050.jpeg', this)" style="background-image: url('images/KnockKnock/Screenshot%202026-03-29%20232855.png');"></div>
             <div class="thumb" onclick="upd('Drone.png', 'Drone_2.png', this)" style="background-image: url('images/KnockKnock/Drone.png');"></div>
             <div class="thumb" onclick="upd('TheDraw.png', 'TheDraw2.png', this)" style="background-image: url('images/KnockKnock/TheDraw.png');"></div>
             <div class="thumb" onclick="upd('Screenshot%202026-03-30%20001406.png', 'Latino_male_looking_202603300019.jpeg', this)" style="background-image: url('images/KnockKnock/Screenshot%202026-03-30%20001406.png');"></div>
         </div>
-        
-        <!-- KNOCK KNOCK LOOKBOOK -->
-        <div class="lookbook-grid" style="margin-top: 4rem; max-width: 1100px;">
-            <div class="lookbook-item"><img src="images/KnockKnock/Car_at_night_202603302050.jpeg" alt="Car Night"><div class="lookbook-caption"><h4>Int. Car</h4><p>Night drive</p></div></div>
-            <div class="lookbook-item"><img src="images/KnockKnock/Drone_2.png" alt="Drone"><div class="lookbook-caption"><h4>The Bronx</h4><p>Establishing shot</p></div></div>
-            <div class="lookbook-item"><img src="images/KnockKnock/TheDraw2.png" alt="Draw"><div class="lookbook-caption"><h4>The Draw</h4><p>Moment of truth</p></div></div>
-            <div class="lookbook-item"><img src="images/KnockKnock/Latino_male_looking_202603300019.jpeg" alt="Standoff"><div class="lookbook-caption"><h4>Standoff</h4><p>High contrast</p></div></div>
-            <div class="lookbook-item"><img src="images/KnockKnock/both_legs_crossed_202603310955.png" alt="Dulce"><div class="lookbook-caption"><h4>Dulce</h4><p>Character study</p></div></div>
-            <div class="lookbook-item"><img src="images/KnockKnock/have_the_charater_202603302151.png" alt="Neon"><div class="lookbook-caption"><h4>Neon Interior</h4><p>Vision3 500T</p></div></div>
-        </div>
     </section>
-
-    <!-- PROJECTS -->
+    <!-- SECTION: PROJECTS -->
     <section id="projects">
-        <p class="section-label">More Work</p>
+        <p class="section-label">Selected Works</p>
         <h2 class="section-title">AI Productions</h2>
         <div class="project-grid">
             <div class="project-card">
@@ -176,7 +192,7 @@
                 </video>
                 <div class="project-info">
                     <h3>Arch Motorcycles</h3>
-                    <p>Spec commercial for Keanu Reeves' custom motorcycle company. AI generated cinematography.</p>
+                    <p>Spec commercial for Keanu Reeves' custom motorcycle company.</p>
                     <span class="project-tag">Veo 3 + MidJourney</span>
                 </div>
             </div>
@@ -186,8 +202,8 @@
                 </video>
                 <div class="project-info">
                     <h3>Fly Away</h3>
-                    <p>Vertical story format. Atmospheric piece exploring movement and transition.</p>
-                    <span class="project-tag">AI Generated</span>
+                    <p>Atmospheric piece exploring movement and transition via generative video.</p>
+                    <span class="project-tag">AI Production</span>
                 </div>
             </div>
             <div class="project-card">
@@ -196,77 +212,236 @@
                 </video>
                 <div class="project-info">
                     <h3>Bar</h3>
-                    <p>Neon lit atmosphere piece. Exploring texture, light, and mood through AI generation.</p>
-                    <span class="project-tag">AI Generated</span>
+                    <p>Neon lit atmosphere piece. Exploring texture, light, and mood.</p>
+                    <span class="project-tag">AI Cinematography</span>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- AI GENERATORS -->
+    <!-- SECTION: GENERATORS -->
     <section id="generators">
-        <p class="section-label">Try It Yourself</p>
-        <h2 class="section-title">AI Generators</h2>
-        <p class="section-desc" style="max-width: 800px;">These tools are built on my personal prompt engineering formulas. They're designed to give you that cinematic film look I use in my own work. Upload an image for reference or just describe what you're imagining. The output is a prompt you can copy and paste directly into MidJourney or Gemini. No AI experience needed.</p>
-        
+        <p class="section-label">Production Tools</p>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <h2 class="section-title">AI Generators</h2>
+            <button onclick="toggleSettings()" style="background:none; border:1px solid var(--border); color:var(--text-dim); padding: 5px 10px; font-family:'JetBrains Mono'; font-size:10px; border-radius:4px;">⚙️ API SETTINGS</button>
+        </div>
+
+        <!-- SECTION INTRO -->
+        <div style="margin: 1.5rem 0 2.5rem 0; max-width: 780px;">
+            <p style="font-size: 1.05rem; color: #ccc; line-height: 1.8; margin-bottom: 1rem;">
+                These tools were built the same way I approach a camera setup — every parameter intentional, nothing left to chance. If you've never used AI for production before, or you're skeptical of what it can actually do, this is the right place to start.
+            </p>
+            <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.75;">
+                You don't need to know anything technical. Describe what you want to see — a scene, a character, a lighting setup — and the generator handles the rest. The style, the camera spec, the lighting logic: it's already built in. You're just providing the subject.
+            </p>
+            <p style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; margin-top: 0.85rem; padding-left: 1rem; border-left: 2px solid var(--accent); font-style: italic;">
+                The VEFILM Generator and all image tools run on <strong style="color:#fff;">FLUX.1</strong> — one of the most capable open-source image models available. It's free to use. No subscriptions. You just need a free Hugging Face account to unlock the full engine. Instructions are in ⚙️ API Settings above.
+            </p>
+        </div>
+
+        <div id="apiSettings" style="display:none;">
+            <div style="background: rgba(255,107,0,0.06); border: 1px solid rgba(255,107,0,0.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                <p style="font-size:0.9rem; color:#fff; font-weight:600; margin-bottom:0.5rem;">How to activate the full image engine — takes 2 minutes</p>
+                <ol style="font-size:0.8rem; color:var(--text-dim); line-height:2; padding-left:1.2rem; margin-bottom:0;">
+                    <li>Go to <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-teal);">huggingface.co/settings/tokens</a> — create a free account if you don't have one</li>
+                    <li>Click <strong style="color:#fff;">New Token</strong> → set access to <strong style="color:#fff;">Read</strong> → copy the token (it starts with <code style="color:var(--accent);">hf_</code>)</li>
+                    <li>Paste it into the field below and hit <strong style="color:#fff;">Save HF Token</strong></li>
+                    <li>That's it. Your key stays on your device — it never touches our server.</li>
+                </ol>
+            </div>
+
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
+                <strong style="color:#fff;">HUGGING FACE TOKEN</strong> — unlocks FLUX.1 image generation across all tools. Free.
+            </p>
+            <input type="password" id="hfKeyInput" placeholder="Paste HF Token (hf_...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+            <div style="display:flex; gap:8px; margin-bottom:1.25rem; align-items:center;">
+                <button onclick="saveHFKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE HF TOKEN</button>
+                <button onclick="clearHFKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                <span id="hfStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+            </div>
+
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
+                <strong style="color:#fff;">GEMINI KEY</strong> <span style="color:#555;">(optional)</span> — enables sketch-to-image analysis when you upload a photo or drawing. Free key at
+                <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal);">aistudio.google.com</a> → Get API Key.
+            </p>
+            <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE GEMINI KEY</button>
+                <button onclick="clearUserKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                <span id="keyStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+            </div>
+        </div>
+        <!-- VEFILM SIGNATURE GENERATOR -->
+        <div style="margin: 3rem 0; border: 1px solid var(--accent); border-radius: 20px; padding: 2.5rem; background: linear-gradient(135deg, rgba(255,107,0,0.05) 0%, rgba(0,0,0,0.6) 100%); backdrop-filter: blur(12px);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                <div>
+                    <p style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--accent); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">SIGNATURE GENERATOR</p>
+                    <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; color:#fff; margin-bottom:0.5rem;">THE VEFILM GENERATOR</h3>
+                    <p style="color:var(--text-dim); font-size:0.85rem; max-width:600px; line-height:1.7;">This is the most personal tool on the page. Every mode is built from my actual visual language — how I light, how I frame, what I expose for. You describe a subject or situation. The generator handles the rest: the camera, the light direction, the texture, the mood. Pick a mode below, type what you want to see, and generate.</p>
+                </div>
+                <span class="engine-badge" id="badge_feriapino" style="align-self:flex-start; margin-top:0.25rem;">LOADING...</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom:1.5rem;">
+                <button onclick="setFPMode('street', this)" class="fp-mode-btn fp-active">STREET</button>
+                <button onclick="setFPMode('cinematic', this)" class="fp-mode-btn">CINEMATIC</button>
+                <button onclick="setFPMode('nighturban', this)" class="fp-mode-btn">NIGHT URBAN</button>
+                <button onclick="setFPMode('portrait', this)" class="fp-mode-btn">PORTRAIT</button>
+            </div>
+
+            <div id="fp_mode_desc" style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--accent); letter-spacing:0.05em; margin-bottom:1rem; padding:0.75rem; background:rgba(255,107,0,0.08); border-radius:8px; border-left:2px solid var(--accent); line-height:1.6;"></div>
+
+            <textarea id="feriaPinoInput" placeholder="Describe your subject or scene: a man waiting at a crosswalk in rain, two fishermen at dawn, empty diner at 3am, detective in a doorway..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1.2rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; resize:vertical; min-height:100px;"></textarea>
+
+            <button onclick="handleFeriaPino()" style="width:100%; background:var(--accent); color:#000; border:none; border-radius:12px; padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; transition:0.3s;">GENERATE IN MY STYLE</button>
+
+            <div class="gen-output" id="feriaPinoOutput" style="margin-top:1rem;"></div>
+        </div>
+
+        <!-- CHARACTER DEPTH DECONSTRUCTION -->
+        <div style="margin: 0 0 3rem 0; background:rgba(17,17,17,0.6); border:1px solid var(--border); border-radius:20px; padding:2.5rem; backdrop-filter:blur(12px);">
+            <p style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--accent-teal); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">CHARACTER TOOL</p>
+            <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2rem; color:#fff; margin-bottom:0.5rem;">Character Depth Deconstruction</h3>
+            <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:0.75rem; line-height:1.75;">In production, a character isn't just a face — it's layered. How they dress, what they carry, how their clothes fit after years of wear. This tool builds that out from a description. You give it basic traits and context; it returns a full breakdown: body type, clothing layers, fabrics, personal inventory, and production notes. The kind of detail that makes wardrobe, casting, and continuity conversations actually useful.</p>
+            <p style="font-size:0.78rem; color:#666; margin-bottom:1.5rem;">No image generation needed — this is text output, structured for production use.</p>
+            <textarea id="charDeconInput" placeholder="Describe physical traits, wardrobe, personality, era, role in story..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; resize:vertical; min-height:80px;"></textarea>
+            <button onclick="handleCharDeconstruct()" style="margin-top:1rem; background:transparent; color:var(--accent-teal); border:1px solid var(--accent-teal); border-radius:10px; padding:0.7rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.08em; transition:0.3s;">Generate Deconstruction</button>
+            <div class="gen-output" id="charDeconOutput" style="margin-top:1rem;"></div>
+        </div>
+
         <div class="gen-grid">
-            <!-- SKETCH TO SCREEN -->
             <div class="gen-card">
+                <span class="engine-badge" id="badge_sketch">LOADING...</span>
                 <h3>Sketch to Screen</h3>
-                <p>Got a rough sketch or storyboard? Upload it or describe your shot. This tool converts your vision into a detailed cinematic prompt with proper camera specs, lighting ratios, and film stock references. Perfect for pre-viz.</p>
-                <p style="font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem;">HOW TO USE: Upload an image OR type a description. Click generate. Copy the output into MidJourney.</p>
-                <input type="file" id="sketchFile" accept="image/*" style="margin-top:1rem; color: var(--text-dim);">
-                <textarea id="sketchInput" placeholder="Describe your shot: Wide shot, man sitting in car at night, rain on windshield, neon signs reflecting, 1990s Bronx"></textarea>
-                <button onclick="generateSketch()">Generate Prompt</button>
+                <p style="line-height:1.65;">Got a rough sketch, a phone photo of a drawing, or just a shot idea in your head? Drop it here. The engine reads what you've drawn or described and translates it into a finished cinematic frame — camera spec, focal length, light direction. It doesn't correct your vision; it executes it at production quality.</p>
+                <select class="style-select" id="sketchStyle">
+                    <option value="greyhouse">The Grey House — Scotland 1967</option>
+                    <option value="knockknock">Knock Knock — 90s Bronx</option>
+                    <option value="ichibonkiller">Ichibonkiller — Nihilistic</option>
+                    <option value="neutral">Neutral — Pure Cinematic</option>
+                </select>
+                <input type="file" id="sketchFile" accept="image/*" style="margin-top:0.75rem; font-size: 0.7rem; color: #888;">
+                <textarea id="sketchInput" placeholder="Describe the shot: framing, lighting, action, location..."></textarea>
+                <button onclick="handleGenerate('sketch')">Generate Frame</button>
                 <div class="gen-output" id="sketchOutput"></div>
             </div>
-
-            <!-- CINEMATIC IMAGE -->
             <div class="gen-card">
-                <h3>Cinematic Image Engine</h3>
-                <p>This is my signature look. Warm Kodachrome colors, ARRI camera specs, anamorphic glass, crushed blacks. Upload a reference image to match that vibe, or describe a scene and let it build out the full cinematic formula.</p>
-                <p style="font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem;">HOW TO USE: Upload a mood reference OR describe a scene. The output is ready for MidJourney with my film look baked in.</p>
-                <input type="file" id="cinematicFile" accept="image/*" style="margin-top:1rem; color: var(--text-dim);">
-                <textarea id="cinematicInput" placeholder="Describe a scene: Detective standing in doorway of old Scottish inn, warm tungsten light from inside, foggy night"></textarea>
-                <button onclick="generateCinematic()">Generate Prompt</button>
+                <span class="engine-badge" id="badge_cinematic">LOADING...</span>
+                <h3>Image Engine</h3>
+                <p style="line-height:1.65;">Select a project world — Grey House, Knock Knock, Ichibonkiller, or my general cinematic signature — then describe what you want in the frame. The visual DNA for that world is already loaded: the color science, the contrast ratio, the camera spec. You're not starting from zero. You're starting from a fully built visual system.</p>
+                <select class="style-select" id="cinematicStyle">
+                    <option value="cinematic">Feria Pino — Kodachrome Signature</option>
+                    <option value="greyhouse">The Grey House — Horror Atmosphere</option>
+                    <option value="knockknock">Knock Knock — 90s Bronx Neon</option>
+                    <option value="ichibonkiller">Ichibonkiller — Cold Nihilism</option>
+                </select>
+                <textarea id="cinematicInput" placeholder="Describe the scene, subject, or mood..."></textarea>
+                <button onclick="handleGenerate('cinematic')">Generate Image</button>
                 <div class="gen-output" id="cinematicOutput"></div>
             </div>
-
-            <!-- CHARACTER SHEET -->
             <div class="gen-card">
-                <h3>Character Sheet Generator</h3>
-                <p>The hardest part of AI filmmaking is keeping characters consistent across shots. Upload a face or describe a character and this builds a full consistency bible with physical details, wardrobe, and negative prompts to keep your character looking the same every time.</p>
-                <p style="font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem;">HOW TO USE: Upload a character image OR describe them in detail. Use the output tokens in every prompt featuring that character.</p>
-                <input type="file" id="characterFile" accept="image/*" style="margin-top:1rem; color: var(--text-dim);">
-                <textarea id="characterInput" placeholder="Describe your character: Latino male, mid-30s, leather jacket, intense eyes, scar on left cheek, slicked back hair"></textarea>
-                <button onclick="generateCharacter()">Generate Sheet</button>
+                <span class="engine-badge" id="badge_character">LOADING...</span>
+                <h3>Character Sheet</h3>
+                <p style="line-height:1.65;">Describe your character — age, build, how they carry themselves — or upload a reference image. The generator produces a photorealistic portrait consistent with the project's world. Useful for casting conversations, wardrobe, makeup, and making sure everyone on set is looking at the same version of this person.</p>
+                <select class="style-select" id="characterStyle">
+                    <option value="character_greyhouse">Grey House — Period Horror, Scotland 1967</option>
+                    <option value="character_knockknock">Knock Knock — 90s Bronx Street</option>
+                    <option value="character_ichibonkiller">Ichibonkiller — Detached / Nihilistic</option>
+                    <option value="character_neutral">Neutral — Clean Reference Sheet</option>
+                </select>
+                <input type="file" id="characterFile" accept="image/*" style="margin-top:0.75rem; font-size: 0.7rem; color: #888;">
+                <textarea id="characterInput" placeholder="Physical traits, age, wardrobe, expression, build..."></textarea>
+                <button onclick="handleGenerate('character')">Generate Character</button>
                 <div class="gen-output" id="characterOutput"></div>
             </div>
         </div>
     </section>
-
     <footer>
         <div class="bio">
             <h3>About VEFILM</h3>
-            <p>I'm Pedro Feria Pino, a Brooklyn based Director of Photography and Camera Operator with 20+ years shooting docs and unscripted TV for Netflix, Disney, VH1, MTV, and VICE. These days I'm exploring what happens when you give a DP access to AI image and video generation tools. This page is a playground for that work. Everything you see here was built with MidJourney, Veo, Gemini, and Claude. The future of pre production is here.</p>
+            <p>I'm Pedro Feria Pino, a Brooklyn based DP with 20+ years shooting for Netflix, Disney, and MTV. This is where I merge traditional camera craft with AI production tools.</p>
         </div>
-        <p>&copy; 2026 VEFILM. AI Production Pipeline by Pedro Feria Pino, SOC.</p>
+        <p style="margin-top:2rem; font-size:0.7rem; color:#444;">&copy; 2026 VEFILM. AI Pipeline by Pedro Feria Pino, SOC.</p>
     </footer>
-
     <script>
-        // Custom Cursor
+        // --- API & SETTINGS ---
+        function getGeminiKey() { return localStorage.getItem('vefilm_user_key') || ''; }
+        function getHFKey() { return localStorage.getItem('vefilm_hf_key') || ''; }
+
+        function toggleSettings() {
+            const p = document.getElementById('apiSettings');
+            p.style.display = p.style.display === 'none' ? 'block' : 'none';
+        }
+        function saveUserKey() {
+            const val = document.getElementById('userKeyInput').value.trim();
+            if (val.startsWith('AIza')) {
+                localStorage.setItem('vefilm_user_key', val);
+                updateEngineBadges();
+                document.getElementById('keyStatusBadge').textContent = '✓ GEMINI ACTIVE';
+                document.getElementById('keyStatusBadge').style.color = '#00f2ff';
+            } else { alert("Invalid key — should start with AIza..."); }
+        }
+        function clearUserKey() {
+            localStorage.removeItem('vefilm_user_key');
+            updateEngineBadges();
+            document.getElementById('keyStatusBadge').textContent = '';
+        }
+        function saveHFKey() {
+            const val = document.getElementById('hfKeyInput').value.trim();
+            if (val.startsWith('hf_')) {
+                localStorage.setItem('vefilm_hf_key', val);
+                updateEngineBadges();
+                document.getElementById('hfStatusBadge').textContent = '✓ HF TOKEN ACTIVE';
+                document.getElementById('hfStatusBadge').style.color = '#00f2ff';
+            } else { alert("Invalid token — should start with hf_..."); }
+        }
+        function clearHFKey() {
+            localStorage.removeItem('vefilm_hf_key');
+            updateEngineBadges();
+            document.getElementById('hfStatusBadge').textContent = '';
+        }
+        function updateEngineBadges() {
+            const hasHF = !!getHFKey();
+            const hasGemini = !!getGeminiKey();
+            ['sketch','cinematic','character','feriapino'].forEach(t => {
+                const b = document.getElementById(`badge_${t}`);
+                if (!b) return;
+                if (hasHF) {
+                    b.textContent = 'FLUX.1 · HF ENGINE';
+                    b.className = 'engine-badge badge-gemini';
+                } else if (hasGemini) {
+                    b.textContent = 'GEMINI IMAGEN';
+                    b.className = 'engine-badge badge-gemini';
+                } else {
+                    b.textContent = 'FLUX · NO KEY NEEDED';
+                    b.className = 'engine-badge badge-flux';
+                }
+            });
+            // restore HF badge text on load if key exists
+            if (hasHF) {
+                document.getElementById('hfStatusBadge') && (document.getElementById('hfStatusBadge').textContent = '✓ HF TOKEN ACTIVE', document.getElementById('hfStatusBadge').style.color = '#00f2ff');
+            }
+        }
+        updateEngineBadges();
+        // --- CURSOR ---
         const dot = document.querySelector('.cursor-dot');
         const ring = document.querySelector('.cursor-ring');
         let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
-        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; });
-        function animateRing() { ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15; ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; requestAnimationFrame(animateRing); }
+        document.addEventListener('mousemove', (e) => { 
+            mouseX = e.clientX; mouseY = e.clientY; 
+            dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; 
+        });
+        function animateRing() { 
+            ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15; 
+            ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; 
+            requestAnimationFrame(animateRing); 
+        }
         animateRing();
-        document.querySelectorAll('a, button, .thumb, video, .gen-card').forEach(el => {
+        document.querySelectorAll('a, button, .thumb, .gen-card').forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
-
-        // Console Slider
+        // --- CONSOLE SLIDER ---
         const canvas = document.getElementById('canvas');
         const sAfter = document.getElementById('sAfter');
         const moveHandler = (e) => {
@@ -277,7 +452,6 @@
         };
         canvas.addEventListener('mousemove', moveHandler);
         canvas.addEventListener('touchmove', moveHandler);
-
         function upd(sketch, render, el) {
             document.getElementById('sBefore').style.backgroundImage = `url('images/KnockKnock/${sketch}')`;
             document.getElementById('sAfter').style.backgroundImage = `url('images/KnockKnock/${render}')`;
@@ -285,154 +459,287 @@
             el.classList.add('active');
             sAfter.style.clipPath = 'inset(0 0 0 50%)';
         }
+        // --- STYLE DNA — Pedro Feria Pino Visual Language ---
+        const STYLE_DNA = {
+            // PROJECT LOOKS
+            greyhouse: `Scotland 1967 period psychological horror, cold blue-grey diffused fog light, motivated tungsten interior warmth against frigid exterior, practical candle and fireplace sources, stone walls with moisture and age, Victorian inn architecture, Kodak Vision3 500T film stock, ARRI Alexa 35, 35mm Master Prime, 2.39:1 anamorphic widescreen, shallow depth of field, inverse square law falloff creating deep shadow pools, heavy 35mm film grain, desaturated blues and slate greens with isolated warm amber split tones, surface imperfection on every texture — cracked plaster, worn wood, damp stone, photorealistic cinematic film still, no CGI quality, no watermarks`,
 
-        // GENERATOR FUNCTIONS
-        const GEMINI_KEY = 'AIzaSyATotffPI43llg-6uNxqQ1GaoD4Izf6bss';
+            knockknock: `1990s South Bronx New York crime drama, amber sodium vapor streetlight at 2200K saturating everything in orange-gold, opposing deep navy blue shadows with zero fill, wet pavement reflections of neon signs, chain-link fences, graffiti-covered brick, urban decay texture, Kodak Vision3 500T, 35mm Master Prime, 2.39:1, high contrast motivated practical sources only, deep crushed blacks, no ambient fill, film grain heavy, gritty tactile surfaces, era-accurate wardrobe and props, photorealistic cinematic film still, no watermarks`,
 
+            ichibonkiller: `cold detached nihilistic atmosphere, extreme ratio lighting 8:1 or higher, single hard source creating sharp shadow geometry, near-black void backgrounds with no detail, philosophical dread, deliberately desaturated palette approaching monochrome, isolated subject commanding empty negative space, clinical observational framing, no warmth no comfort, slow implied movement, existential weight, Kodak Double-X film stock aesthetic, 2.39:1, deep focus or extreme shallow focus no middle ground, photorealistic, no watermarks`,
+
+            neutral: `cinematic photorealistic film still, ARRI Alexa 35 camera, 35mm ARRI Master Prime lens, Kodak Vision3 500T film stock, 2.39:1 anamorphic aspect ratio, shallow depth of field with natural focus breathing, motivated practical lighting sources only, inverse square law falloff, warm to cool lighting contrast, film grain texture, imperfect surfaces with pores dust wear haze, hyper-detailed, no CGI quality, no watermarks`,
+
+            // IMAGE ENGINE
+            cinematic: `Pedro Feria Pino signature cinematic look, Kodachrome 64 film stock color science, warm golden highlights at 3200K, deeply crushed blacks with no detail in shadows, anamorphic horizontal lens character and subtle barrel distortion, slight horizontal flares from practical sources, controlled vignette, 2.39:1 widescreen, motivated practical lighting, heavy 35mm film grain texture, imperfect surfaces everywhere — scratches dust fingerprints, hyper-detailed photorealistic, cinematic depth layers, no digital look, no watermarks`,
+
+            // CHARACTER SHEETS
+            character_greyhouse: `character reference portrait for 1967 Scotland period horror production, three-quarter medium shot from waist up, photorealistic face with full skin texture — pores lines asymmetry, practical tungsten rim light with cold blue ambient fill creating warm-cold split, dark stone wall background slightly out of focus, era-accurate wardrobe in detail, neutral expression holding subtext, sharp full-face focus, film grain, Kodak Vision3 500T color science, ARRI Alexa 35, no motion blur, production reference quality, no watermarks`,
+
+            character_knockknock: `character reference portrait for 1990s Bronx crime drama production, three-quarter medium shot, photorealistic skin texture and facial detail, amber sodium vapor key light at 2200K, deep navy shadow side with zero fill, urban background slightly defocused, era-accurate 90s wardrobe in full detail, neutral watchful expression, sharp focus face and wardrobe, heavy film grain, Kodak Vision3 500T color, no motion blur, production reference quality, no watermarks`,
+
+            character_ichibonkiller: `character reference portrait for nihilistic philosophical narrative, three-quarter medium shot, photorealistic face with clinical detail, single hard directional key light 90 degrees off axis, complete shadow on opposite side, near-black void background, detached blank expression, contemporary wardrobe in muted tones, sharp focus on face, deliberately desaturated palette, no warmth in color grade, film grain, no motion blur, production reference quality, no watermarks`,
+
+            character_neutral: `character consistency reference sheet, three-quarter medium shot waist up, photorealistic face with full skin texture — pores asymmetry natural imperfection, clean cinematic studio lighting key and subtle rim, neutral dark background, sharp focus across entire frame, wardrobe fully visible and detailed, neutral expression, no motion blur, production reference quality, ARRI Alexa aesthetic, no watermarks`
+        };
+
+        // --- GENERATOR ENGINE ---
         async function getBase64(file) {
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
             });
         }
 
-        async function callGeminiWithImage(systemPrompt, userInput, imageFile) {
-            try {
-                const parts = [{ text: systemPrompt + '\n\nUser Input: ' + (userInput || 'Analyze this image.') }];
-                
-                if (imageFile) {
-                    const base64 = await getBase64(imageFile);
-                    parts.push({
-                        inline_data: {
-                            mime_type: imageFile.type,
-                            data: base64
-                        }
-                    });
+        // HuggingFace FLUX.1-schnell — direct API, user's own token
+        async function generateWithHF(prompt) {
+            const token = getHFKey();
+            if (!token) return null;
+            const resp = await fetch(
+                'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+                {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inputs: prompt })
                 }
-                
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+            );
+            if (!resp.ok) throw new Error(`HF API error ${resp.status} — check token or wait 10s`);
+            const blob = await resp.blob();
+            return URL.createObjectURL(blob);
+        }
+
+        // Gemini 2.0 Flash — actual image generation (requires key)
+        async function generateWithGemini(prompt, imageFile) {
+            const key = getGeminiKey();
+            if (!key) return null;
+            const parts = [{ text: `Generate a photorealistic image: ${prompt}` }];
+            if (imageFile) {
+                const b64 = await getBase64(imageFile);
+                parts.push({ inline_data: { mime_type: imageFile.type, data: b64 } });
+            }
+            const resp = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${key}`,
+                {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: parts }]
+                        contents: [{ parts }],
+                        generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
                     })
-                });
-                const data = await response.json();
-                if (data.error) {
-                    return 'API Error: ' + (data.error.message || 'Unknown error');
                 }
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated. Try again.';
-            } catch (err) {
-                return 'Error: ' + err.message;
+            );
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error.message);
+            const imgPart = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+            if (!imgPart) throw new Error('No image returned from Gemini.');
+            return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
+        }
+
+        // Pollinations FLUX — fallback, no key needed
+        function buildPollinationsUrl(prompt, isPortrait) {
+            const seed = Math.floor(Math.random() * 999999);
+            const w = isPortrait ? 720 : 1280;
+            const h = isPortrait ? 960 : 720;
+            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}`;
+        }
+
+        // Build full styled prompt from input + style DNA
+        function buildPrompt(type, userText, styleDNAKey) {
+            const dna = STYLE_DNA[styleDNAKey] || '';
+            if (type === 'sketch') {
+                return `${userText ? userText + ', ' : ''}${dna}`;
+            } else if (type === 'cinematic') {
+                return `${userText ? userText + ', ' : ''}${dna}`;
+            } else {
+                // character — portrait
+                return `${userText ? userText + ', ' : ''}${dna}`;
             }
         }
 
-        async function generateSketch() {
-            const input = document.getElementById('sketchInput').value;
-            const fileInput = document.getElementById('sketchFile');
-            const imageFile = fileInput.files[0];
-            const output = document.getElementById('sketchOutput');
-            
-            if (!input && !imageFile) {
-                output.style.display = 'block';
-                output.textContent = 'Please enter a description or upload an image.';
-                return;
+        function renderOutput(type, imgSrc, prompt, isDataUrl) {
+            const outputDiv = document.getElementById(`${type}Output`);
+            if (isDataUrl) {
+                outputDiv.innerHTML = `
+                    <img src="${imgSrc}" alt="Generated" style="width:100%; border-radius:6px; display:block;">
+                    <div class="prompt-used" id="prompt_${type}">${prompt}</div>
+                    <div class="gen-actions" id="actions_${type}">
+                        <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
+                        <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
+                    </div>`;
+            } else {
+                outputDiv.innerHTML = `
+                    <div class="gen-loader" id="loader_${type}">DEVELOPING FRAME...</div>
+                    <img src="${imgSrc}" alt="Generated" style="width:100%; border-radius:6px; display:none;"
+                        onload="document.getElementById('loader_${type}').style.display='none'; this.style.display='block';"
+                        onerror="document.getElementById('loader_${type}').textContent='Generation failed — try again.'; document.getElementById('loader_${type}').style.color='#c45c3e';">
+                    <div class="prompt-used" id="prompt_${type}">${prompt}</div>
+                    <div class="gen-actions" id="actions_${type}">
+                        <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
+                        <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
+                    </div>`;
             }
-            
-            output.style.display = 'block';
-            output.textContent = 'Generating...';
-            
-            const systemPrompt = `You are a cinematic pre-visualization expert. ${imageFile ? 'Analyze this storyboard sketch and' : ''} Convert the input into a detailed image generation prompt.
-
-OUTPUT FORMAT (copy-paste ready for Gemini/MidJourney):
-- Start with shot type and framing
-- Include camera specs: "Shot on ARRI Alexa, Zeiss Master Prime 35mm"
-- Film stock: "Kodachrome 64 color palette" or "Kodak Vision3 500T"
-- Lighting ratios and practical sources
-- Atmospheric elements: fog, rain, neon reflections
-- End with "--ar 2.39:1 --v 6.1" for MidJourney
-
-Keep it under 150 words. No explanations, just the prompt.`;
-
-            const result = await callGeminiWithImage(systemPrompt, input, imageFile);
-            output.textContent = result;
         }
 
-        async function generateCinematic() {
-            const input = document.getElementById('cinematicInput').value;
-            const fileInput = document.getElementById('cinematicFile');
-            const imageFile = fileInput.files[0];
-            const output = document.getElementById('cinematicOutput');
-            
-            if (!input && !imageFile) {
-                output.style.display = 'block';
-                output.textContent = 'Please enter a description or upload an image.';
-                return;
+        async function handleGenerate(type) {
+            const inputEl = document.getElementById(`${type}Input`);
+            const fileInput = document.getElementById(`${type}File`);
+            const styleEl = document.getElementById(`${type}Style`);
+            const file = fileInput ? fileInput.files[0] : null;
+            const outputDiv = document.getElementById(`${type}Output`);
+            const styleDNAKey = styleEl ? styleEl.value : type;
+            const isPortrait = type === 'character';
+
+            if (!inputEl.value && !file) return alert('Enter a description or upload an image.');
+
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = '<div class="gen-loader">DEVELOPING FRAME...</div>';
+
+            const styledPrompt = buildPrompt(type, inputEl.value, styleDNAKey);
+
+            // Priority: HF → Gemini → Pollinations
+            if (getHFKey()) {
+                try {
+                    const imgUrl = await generateWithHF(styledPrompt);
+                    renderOutput(type, imgUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">HF error: ${e.message.substring(0,60)} — trying Gemini...</div>`;
+                    await new Promise(r => setTimeout(r, 1200));
+                }
             }
-            
-            output.style.display = 'block';
-            output.textContent = 'Generating...';
-            
-            const systemPrompt = `You are Pedro Feria Pino's custom cinematic image generator. ${imageFile ? 'Analyze this reference image and' : ''} Create a MidJourney prompt with his signature Kodachrome film look.
-
-MANDATORY ELEMENTS:
-- "Hyper-realistic cinematic still"
-- Camera: "ARRI Alexa Mini LF, anamorphic lens"
-- Film stock: "Kodachrome 64 film emulation, warm highlights, crushed blacks"
-- Lighting: Always specify ratios (4:1, 6:1) and practical sources
-- Skin tone preservation for any ethnicity mentioned
-- Atmospheric depth: haze, fog, volumetric light
-- Period accuracy if era is specified
-
-END WITH: "--ar 2.39:1 --style raw --v 6.1"
-
-Output ONLY the prompt. No explanations. Under 120 words.`;
-
-            const result = await callGeminiWithImage(systemPrompt, input, imageFile);
-            output.textContent = result;
+            if (getGeminiKey()) {
+                try {
+                    const imgDataUrl = await generateWithGemini(styledPrompt, file);
+                    renderOutput(type, imgDataUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">Gemini failed — switching to FLUX...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            // Fallback: Pollinations
+            const imgUrl = buildPollinationsUrl(styledPrompt, isPortrait);
+            renderOutput(type, imgUrl, styledPrompt, false);
         }
 
-        async function generateCharacter() {
-            const input = document.getElementById('characterInput').value;
-            const fileInput = document.getElementById('characterFile');
-            const imageFile = fileInput.files[0];
-            const output = document.getElementById('characterOutput');
-            
-            if (!input && !imageFile) {
-                output.style.display = 'block';
-                output.textContent = 'Please enter a description or upload an image.';
-                return;
+        // --- FERIA PINO SIGNATURE GENERATOR ---
+        const FP_MODES = {
+            street: {
+                label: 'B&W · Available light · Diagonal composition · Candid · Tri-X grain · Deep crushed blacks',
+                dna: `black and white, high contrast photojournalism, deep crushed blacks with zero shadow detail, rich dense midtones, clean bright whites on highlights, available overcast diffused daylight only — no fill no bounce no flash, strong diagonal leading lines created by urban infrastructure, human figure observed candidly within architectural context — subject unaware, long lens compression 85-135mm equivalent, selective shallow focus with natural background separation, heavy Kodak Tri-X 400 film grain throughout, street level observational perspective, worn urban surfaces — concrete iron glass aged metal, weight and density in every frame, photorealistic documentary quality, no studio quality no digital rendering, 3:2 portrait or square crop, no watermarks`
+            },
+            cinematic: {
+                label: 'Kodachrome · Warm/cool split · 2.39:1 · Anamorphic · Practical sources only · Vision3 500T',
+                dna: `Pedro Feria Pino cinematic signature, Kodachrome 64 color science, warm amber highlights at 3200K tungsten practical sources, deep cool blue shadow fill with high contrast ratio 6:1 minimum, no softbox no studio light — motivated practical sources only, anamorphic horizontal lens character with subtle barrel distortion and horizontal bokeh, 2.39:1 widescreen cinematic framing, 35mm film grain texture throughout, ARRI Alexa 35 rendering quality, Kodak Vision3 500T film stock color, natural imperfection in surfaces — scratches pores dust wear, cinematic depth layers foreground sharp background falls away, inverse square law light falloff, photorealistic not CGI not digital look, no watermarks`
+            },
+            nighturban: {
+                label: 'Sodium vapor 2200K · Navy shadows · Wet pavement · Neon contamination · No fill',
+                dna: `urban night photography, sodium vapor street lighting at 2200K creating saturated amber-orange key light, deep navy blue ambient shadows with no fill detail — shadows are void, wet pavement reflections creating amber light pools, neon sign color contamination on surfaces, urban decay textures — graffiti brick chain link concrete rust, single motivated light source mentality — everything else falls to black, extreme lighting ratio 8:1 or higher, film grain heavy, photorealistic, no digital clean look, Kodak Vision3 500T night sensitivity color rendering, isolated human figures under pools of light, deep depth layering — bright foreground dark atmospheric middle deep black background, no watermarks`
+            },
+            portrait: {
+                label: 'Motivated single source · Warm/cool face split · Natural skin texture · Character over beauty',
+                dna: `cinematic portrait not commercial portrait, single motivated practical light source — window light or lamp, warm tungsten key on one side of face at 2700-3200K, cool ambient fill from opposite side creating warm-cool color split on skin, lighting ratio 4:1 — character defined by shadow, natural skin texture — pores lines asymmetry freckles, photorealistic human face not retouched not smoothed, character visible in expression — not posed not commercial, selective focus sharp on eyes natural defocus on background, 35mm lens equivalent rendering, Kodak Vision3 500T skin tone color science, slight film grain, three-quarter face angle preferred, no beauty retouching no digital smoothing, no watermarks`
             }
-            
-            output.style.display = 'block';
-            output.textContent = 'Generating...';
-            
-            const systemPrompt = `You are a character consistency bible generator for film production. ${imageFile ? 'Analyze this reference image and' : ''} Create a detailed character sheet for maintaining visual consistency across AI-generated shots.
+        };
 
-OUTPUT FORMAT:
-**CHARACTER PROFILE**
-- Full physical description (face shape, skin tone, hair, eyes, distinguishing features)
-- Default wardrobe with specific colors and materials
-- Age range and build
+        let fpCurrentMode = 'street';
 
-**CONSISTENCY TOKENS** (for prompt injection):
-- 3 different angle prompts (front, 3/4, profile)
-- Lighting variations (warm, cool, dramatic)
-
-**NEGATIVE PROMPTS:**
-- What to exclude to maintain consistency
-
-**MIDJOURNEY SREF SEED:** Generate a suggested --sref value
-
-Keep output under 200 words. Professional format.`;
-
-            const result = await callGeminiWithImage(systemPrompt, input, imageFile);
-            output.textContent = result;
+        function setFPMode(mode, btn) {
+            fpCurrentMode = mode;
+            document.querySelectorAll('.fp-mode-btn').forEach(b => b.classList.remove('fp-active'));
+            btn.classList.add('fp-active');
+            document.getElementById('fp_mode_desc').textContent = FP_MODES[mode].label;
         }
 
-        // TIMECODE
+        async function handleFeriaPino() {
+            const inputEl = document.getElementById('feriaPinoInput');
+            const outputDiv = document.getElementById('feriaPinoOutput');
+            if (!inputEl.value.trim()) return alert('Describe what you want to shoot.');
+
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = '<div class="gen-loader">DEVELOPING IN YOUR STYLE...</div>';
+
+            const mode = FP_MODES[fpCurrentMode];
+            const isPortrait = fpCurrentMode === 'portrait';
+            const isStreet = fpCurrentMode === 'street';
+            const styledPrompt = `${inputEl.value.trim()}, ${mode.dna}`;
+
+            if (getHFKey()) {
+                try {
+                    const imgUrl = await generateWithHF(styledPrompt);
+                    renderOutput('feriaPino', imgUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">HF error — trying Gemini...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            if (getGeminiKey()) {
+                try {
+                    const imgDataUrl = await generateWithGemini(styledPrompt, null);
+                    renderOutput('feriaPino', imgDataUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">Switching to FLUX...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            const w = isPortrait ? 768 : isStreet ? 768 : 1280;
+            const h = isPortrait ? 1024 : isStreet ? 1024 : 720;
+            const seed = Math.floor(Math.random() * 999999);
+            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(styledPrompt)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}`;
+            renderOutput('feriaPino', imgUrl, styledPrompt, false);
+        }
+
+        async function handleCharDeconstruct() {
+            const inputEl = document.getElementById('charDeconInput');
+            const outputDiv = document.getElementById('charDeconOutput');
+            if (!inputEl.value.trim()) return alert('Describe the character.');
+
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = '<div class="gen-loader">DECONSTRUCTING CHARACTER...</div>';
+
+            const charPrompt = `Character depth deconstruction reference sheet, full body portrait centered, exploded view annotations of clothing layers and personal items, daily carry inventory diagram, handwritten technical notes, cinematic concept art quality, ${inputEl.value.trim()}, Pedro Feria Pino production style, motivated practical lighting, film grain, photorealistic, no watermarks`;
+
+            if (getHFKey()) {
+                try {
+                    const imgUrl = await generateWithHF(charPrompt);
+                    renderOutput('charDecon', imgUrl, charPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">HF error — switching to Gemini...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            if (getGeminiKey()) {
+                try {
+                    const imgDataUrl = await generateWithGemini(charPrompt, null);
+                    renderOutput('charDecon', imgDataUrl, charPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">Switching to FLUX...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            const seed = Math.floor(Math.random() * 999999);
+            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(charPrompt)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
+            renderOutput('charDecon', imgUrl, charPrompt, false);
+        }
+
+        // init mode description on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fp_mode_desc').textContent = FP_MODES['street'].label;
+        });
+
+        function copyPrompt(type) {
+            const el = document.getElementById(`prompt_${type}`);
+            if (!el) return;
+            navigator.clipboard.writeText(el.textContent);
+            const btn = document.querySelector(`#actions_${type} .copy-btn`);
+            if (btn) { btn.textContent = 'COPIED'; setTimeout(() => btn.textContent = 'COPY PROMPT', 2000); }
+        }
+        // --- UTILS ---
         const tcEl = document.getElementById('timecode');
         const startTime = Date.now();
         function updateTimecode() {
@@ -445,22 +752,12 @@ Keep output under 200 words. Professional format.`;
             requestAnimationFrame(updateTimecode);
         }
         updateTimecode();
-
-        // AUDIO TOGGLE
         const ambience = document.getElementById('ambience');
         const audioBtn = document.getElementById('audioToggle');
         let audioPlaying = false;
         function toggleAudio() {
-            if (audioPlaying) {
-                ambience.pause();
-                audioBtn.textContent = '🔇 SOUND';
-                audioBtn.classList.remove('playing');
-            } else {
-                ambience.volume = 0.3;
-                ambience.play();
-                audioBtn.textContent = '🔊 SOUND';
-                audioBtn.classList.add('playing');
-            }
+            if (audioPlaying) { ambience.pause(); audioBtn.textContent = '🔇 SOUND'; }
+            else { ambience.volume = 0.3; ambience.play(); audioBtn.textContent = '🔊 SOUND'; }
             audioPlaying = !audioPlaying;
         }
     </script>
