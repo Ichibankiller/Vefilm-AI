@@ -60,7 +60,7 @@
         .gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
         .gen-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid var(--border); padding: 2rem; transition: border-color 0.3s, transform 0.3s; }
         .gen-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .gen-icon { width: 48px; height: 48px; background: rgba(255,107,0,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 1.5rem; }
+        .gen-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 1.5rem; }
         .gen-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; margin-bottom: 0.75rem; }
         .gen-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
         .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 100px; margin-top: 1rem; }
@@ -73,7 +73,7 @@
         /* TIMECODE */
         .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: #2563eb; color: #fff; padding: 0.5rem 1.25rem; border-radius: 4px; }
         /* VERTICAL LINE */
-        .vertical-line { position: fixed; left: 60px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent 0%, var(--accent) 15%, var(--accent) 85%, transparent 100%); z-index: 100; pointer-events: none; }
+        .vertical-line { position: fixed; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent 0%, var(--accent) 15%, var(--accent) 85%, transparent 100%); z-index: 100; pointer-events: none; }
         @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } .vertical-line { display: none; } }
     </style>
 </head>
