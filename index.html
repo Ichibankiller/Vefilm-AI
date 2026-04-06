@@ -58,8 +58,8 @@
         .project-tag { display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255,107,0,0.15); color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; }
         /* GENERATORS */
         .gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .gen-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; transition: border-color 0.3s, transform 0.3s; }
-        .gen-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .gen-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; transition: border-color 0.3s, transform 0.3s; backdrop-filter: blur(12px); }
+        .gen-card:hover { border-color: rgba(255,255,255,0.25); transform: translateY(-5px); }
         .gen-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; margin-bottom: 0.75rem; }
         .gen-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
         .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 100px; margin-top: 1rem; }
@@ -75,9 +75,7 @@
         .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.5rem 1rem; cursor: pointer; transition: all 0.3s; }
         .audio-toggle:hover { background: var(--accent); color: #000; }
         .audio-toggle.playing { background: var(--accent); color: #000; }
-        /* SCANLINE EFFECT */
-        .scanline { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, var(--accent-teal), transparent); z-index: 9997; pointer-events: none; animation: scanDown 3s linear infinite; opacity: 0.6; }
-        @keyframes scanDown { 0% { top: -4px; } 100% { top: 100vh; } }
+
         /* BIO SECTION */
         .bio { max-width: 700px; margin: 0 auto 2rem; text-align: center; }
         .bio h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: 1rem; color: var(--accent); }
@@ -88,7 +86,6 @@
 <body>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
-    <div class="scanline"></div>
     <div class="timecode" id="timecode">00:00:00:00</div>
     
     <!-- AMBIENT AUDIO -->
