@@ -102,6 +102,9 @@
         #apiSettings { display:none; background:rgba(255,107,0,0.05); border:1px dashed var(--accent); padding:1.5rem; margin-top:1rem; border-radius:12px; }
         .style-select { width:100%; background:rgba(0,0,0,0.6); border:1px solid var(--border); border-radius:8px; color:var(--accent-teal); padding:0.6rem 0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; margin-top:0.75rem; appearance:none; cursor:pointer; }
         .style-select:focus { outline:none; border-color:var(--accent); }
+        .fp-mode-btn { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; color:var(--text-dim); padding:0.6rem 0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.08em; cursor:pointer; transition:0.2s; }
+        .fp-mode-btn:hover { border-color:var(--accent); color:var(--accent); }
+        .fp-mode-btn.fp-active { background:var(--accent); color:#000; border-color:var(--accent); font-weight:bold; }
         .engine-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 7px; border-radius:3px; margin-bottom:0.75rem; }
         .badge-gemini { background:rgba(0,242,255,0.1); color:var(--accent-teal); border:1px solid rgba(0,242,255,0.2); }
         .badge-flux { background:rgba(255,107,0,0.1); color:var(--accent); border:1px solid rgba(255,107,0,0.2); }
@@ -233,6 +236,33 @@
                 <span id="keyStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
             </div>
         </div>
+        <!-- FERIA PINO SIGNATURE GENERATOR -->
+        <div style="margin: 3rem 0; border: 1px solid var(--accent); border-radius: 20px; padding: 2.5rem; background: linear-gradient(135deg, rgba(255,107,0,0.05) 0%, rgba(0,0,0,0.6) 100%); backdrop-filter: blur(12px);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                <div>
+                    <p style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--accent); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">SIGNATURE GENERATOR</p>
+                    <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; color:#fff; margin-bottom:0.5rem;">THE FERIA PINO LOOK</h3>
+                    <p style="color:var(--text-dim); font-size:0.85rem; max-width:600px;">Your actual visual DNA — extracted from your portfolio and built into every prompt. High contrast. Motivated light. No apologies for darkness. Type what you want to shoot.</p>
+                </div>
+                <span class="engine-badge" id="badge_feriapino" style="align-self:flex-start; margin-top:0.25rem;">LOADING...</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom:1.5rem;">
+                <button onclick="setFPMode('street', this)" class="fp-mode-btn fp-active" data-mode="street">STREET</button>
+                <button onclick="setFPMode('cinematic', this)" class="fp-mode-btn" data-mode="cinematic">CINEMATIC</button>
+                <button onclick="setFPMode('nighturban', this)" class="fp-mode-btn" data-mode="nighturban">NIGHT URBAN</button>
+                <button onclick="setFPMode('portrait', this)" class="fp-mode-btn" data-mode="portrait">PORTRAIT</button>
+            </div>
+
+            <div id="fp_mode_desc" style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--accent); letter-spacing:0.05em; margin-bottom:1rem; padding:0.75rem; background:rgba(255,107,0,0.08); border-radius:8px; line-height:1.6;"></div>
+
+            <textarea id="feriaPinoInput" placeholder="Describe your subject or scene: a man waiting at a crosswalk in rain, two fishermen at dawn, empty diner at 3am, detective in a doorway..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; resize:vertical; min-height:80px;"></textarea>
+
+            <button onclick="handleFeriaPino()" style="width:100%; background:var(--accent); color:#000; border:none; border-radius:12px; padding:0.85rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; transition:0.3s;">GENERATE IN MY STYLE</button>
+
+            <div class="gen-output" id="feriaPinoOutput" style="margin-top:1rem;"></div>
+        </div>
+
         <div class="gen-grid">
             <div class="gen-card">
                 <span class="engine-badge" id="badge_sketch">LOADING...</span>
@@ -310,7 +340,7 @@
         }
         function updateEngineBadges() {
             const hasKey = !!getGeminiKey();
-            ['sketch','cinematic','character'].forEach(t => {
+            ['sketch','cinematic','character','feriapino'].forEach(t => {
                 const b = document.getElementById(`badge_${t}`);
                 if (hasKey) {
                     b.textContent = 'GEMINI IMAGEN';
@@ -496,6 +526,71 @@
             const imgUrl = buildPollinationsUrl(styledPrompt, isPortrait);
             renderOutput(type, imgUrl, styledPrompt, false);
         }
+
+        // --- FERIA PINO SIGNATURE GENERATOR ---
+        const FP_MODES = {
+            street: {
+                label: 'B&W · Available light · Diagonal composition · Candid · Tri-X grain · Deep crushed blacks',
+                dna: `black and white, high contrast photojournalism, deep crushed blacks with zero shadow detail, rich dense midtones, clean bright whites on highlights, available overcast diffused daylight only — no fill no bounce no flash, strong diagonal leading lines created by urban infrastructure, human figure observed candidly within architectural context — subject unaware, long lens compression 85-135mm equivalent, selective shallow focus with natural background separation, heavy Kodak Tri-X 400 film grain throughout, street level observational perspective, worn urban surfaces — concrete iron glass aged metal, weight and density in every frame, photorealistic documentary quality, no studio quality no digital rendering, 3:2 portrait or square crop, no watermarks`
+            },
+            cinematic: {
+                label: 'Kodachrome · Warm/cool split · 2.39:1 · Anamorphic · Practical sources only · Vision3 500T',
+                dna: `Pedro Feria Pino cinematic signature, Kodachrome 64 color science, warm amber highlights at 3200K tungsten practical sources, deep cool blue shadow fill with high contrast ratio 6:1 minimum, no softbox no studio light — motivated practical sources only, anamorphic horizontal lens character with subtle barrel distortion and horizontal bokeh, 2.39:1 widescreen cinematic framing, 35mm film grain texture throughout, ARRI Alexa 35 rendering quality, Kodak Vision3 500T film stock color, natural imperfection in surfaces — scratches pores dust wear, cinematic depth layers foreground sharp background falls away, inverse square law light falloff, photorealistic not CGI not digital look, no watermarks`
+            },
+            nighturban: {
+                label: 'Sodium vapor 2200K · Navy shadows · Wet pavement · Neon contamination · No fill',
+                dna: `urban night photography, sodium vapor street lighting at 2200K creating saturated amber-orange key light, deep navy blue ambient shadows with no fill detail — shadows are void, wet pavement reflections creating amber light pools, neon sign color contamination on surfaces, urban decay textures — graffiti brick chain link concrete rust, single motivated light source mentality — everything else falls to black, extreme lighting ratio 8:1 or higher, film grain heavy, photorealistic, no digital clean look, Kodak Vision3 500T night sensitivity color rendering, isolated human figures under pools of light, deep depth layering — bright foreground dark atmospheric middle deep black background, no watermarks`
+            },
+            portrait: {
+                label: 'Motivated single source · Warm/cool face split · Natural skin texture · Character over beauty',
+                dna: `cinematic portrait not commercial portrait, single motivated practical light source — window light or lamp, warm tungsten key on one side of face at 2700-3200K, cool ambient fill from opposite side creating warm-cool color split on skin, lighting ratio 4:1 — character defined by shadow, natural skin texture — pores lines asymmetry freckles, photorealistic human face not retouched not smoothed, character visible in expression — not posed not commercial, selective focus sharp on eyes natural defocus on background, 35mm lens equivalent rendering, Kodak Vision3 500T skin tone color science, slight film grain, three-quarter face angle preferred, no beauty retouching no digital smoothing, no watermarks`
+            }
+        };
+
+        let fpCurrentMode = 'street';
+
+        function setFPMode(mode, btn) {
+            fpCurrentMode = mode;
+            document.querySelectorAll('.fp-mode-btn').forEach(b => b.classList.remove('fp-active'));
+            btn.classList.add('fp-active');
+            document.getElementById('fp_mode_desc').textContent = FP_MODES[mode].label;
+        }
+
+        async function handleFeriaPino() {
+            const inputEl = document.getElementById('feriaPinoInput');
+            const outputDiv = document.getElementById('feriaPinoOutput');
+            if (!inputEl.value.trim()) return alert('Describe what you want to shoot.');
+
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = '<div class="gen-loader">DEVELOPING IN YOUR STYLE...</div>';
+
+            const mode = FP_MODES[fpCurrentMode];
+            const isPortrait = fpCurrentMode === 'portrait';
+            const isStreet = fpCurrentMode === 'street';
+            const styledPrompt = `${inputEl.value.trim()}, ${mode.dna}`;
+
+            if (getGeminiKey()) {
+                try {
+                    const imgDataUrl = await generateWithGemini(styledPrompt, null);
+                    renderOutput('feriaPino', imgDataUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">Switching to FLUX...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+
+            const w = isPortrait ? 768 : isStreet ? 768 : 1280;
+            const h = isPortrait ? 1024 : isStreet ? 1024 : 720;
+            const seed = Math.floor(Math.random() * 999999);
+            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(styledPrompt)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}`;
+            renderOutput('feriaPino', imgUrl, styledPrompt, false);
+        }
+
+        // init mode description on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fp_mode_desc').textContent = FP_MODES['street'].label;
+        });
 
         function copyPrompt(type) {
             const el = document.getElementById(`prompt_${type}`);
