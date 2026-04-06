@@ -40,28 +40,118 @@
         .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(1.5); background: var(--accent-teal); }
         .cursor-hover .cursor-ring { width: 50px; height: 50px; border-color: var(--accent-teal); }
         /* NAVIGATION */
-        nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent); }
-        .logo { height: 50px; }
+        nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            padding: 1.25rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.6) 70%, transparent 100%);
+            backdrop-filter: blur(0px);
+        }
+        .logo { height: 44px; opacity: 0.92; transition: opacity 0.2s; }
+        .logo:hover { opacity: 1; }
         .nav-links { display: flex; gap: 2.5rem; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; transition: color 0.3s; }
-        .nav-links a:hover { color: var(--text); }
-        section { padding: 4rem 3rem; }
-        .section-label { font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace; }
-        .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1; }
-        .section-desc { color: var(--text-dim); max-width: 600px; margin-top: 1rem; font-size: 0.95rem; }
+        .nav-links a {
+            color: rgba(255,255,255,0.35);
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transition: color 0.25s;
+        }
+        .nav-links a:hover { color: rgba(255,255,255,0.85); }
+        section { padding: 5rem 3rem; }
+        .section-label {
+            font-size: 0.6rem;
+            color: var(--accent);
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            margin-bottom: 0.65rem;
+            font-family: 'JetBrains Mono', monospace;
+            opacity: 0.85;
+        }
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.8rem, 6vw, 4.5rem);
+            line-height: 0.95;
+            letter-spacing: 0.02em;
+        }
+        .section-desc { color: rgba(255,255,255,0.38); max-width: 600px; margin-top: 1rem; font-size: 0.88rem; line-height: 1.7; }
         /* HERO & VIDEO */
         .hero-video { position: relative; width: 100%; margin-top: 80px; padding: 0 3rem; }
-        .hero-video video { width: 100%; max-height: 75vh; object-fit: contain; background: #000; display: block; border-radius: 8px; border: 1px solid var(--border); }
-        .hero-info { padding: 2rem 3rem; }
+        .hero-video video {
+            width: 100%; max-height: 75vh; object-fit: contain;
+            background: #000; display: block;
+            border-radius: 0;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .hero-info {
+            padding: 2.5rem 3rem 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .hero-info img { filter: brightness(0.95); }
+        .hero-info p:last-child {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.88rem;
+            line-height: 1.7;
+            max-width: 520px;
+            margin-top: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.03em;
+        }
         /* LOOKBOOK GRID */
-        .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
-        .lookbook-item { position: relative; overflow: hidden; aspect-ratio: 16/9; border: 1px solid var(--border); }
-        .lookbook-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s; filter: grayscale(0.4); }
-        .lookbook-item:hover img { transform: scale(1.08); filter: grayscale(0); }
-        .lookbook-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); transform: translateY(10px); transition: 0.3s; }
-        .lookbook-item:hover .lookbook-caption { transform: translateY(0); }
-        .lookbook-caption h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; }
-        .lookbook-caption p { font-size: 0.75rem; color: var(--text-dim); }
+        .lookbook-section {
+            position: relative;
+            padding: 4rem 3rem;
+            overflow: hidden;
+        }
+        .lookbook-section::before {
+            content: '';
+            position: absolute;
+            inset: -10%;
+            background: url('images/GreyHouse/crime_scene_card.png') center / cover no-repeat;
+            opacity: 0.12;
+            z-index: 0;
+            transform: scale(1.05);
+            filter: blur(2px) saturate(0.6);
+        }
+        .lookbook-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to bottom, var(--bg) 0%, transparent 12%, transparent 88%, var(--bg) 100%),
+                linear-gradient(to right, var(--bg) 0%, transparent 8%, transparent 92%, var(--bg) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .lookbook-section .lookbook-grid { position: relative; z-index: 2; }
+        .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2px; margin-top: 0; }
+        .lookbook-item {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            border: none;
+        }
+        .lookbook-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s;
+            filter: grayscale(0.5) brightness(0.85);
+        }
+        .lookbook-item:hover img { transform: scale(1.06); filter: grayscale(0) brightness(1); }
+        .lookbook-caption {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 1.5rem 1.25rem 1rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+            transform: translateY(6px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .lookbook-item:hover .lookbook-caption { transform: translateY(0); opacity: 1; }
+        .lookbook-caption h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: 0.06em; }
+        .lookbook-caption p { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 2px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; }
         /* CONSOLE SLIDER */
         .console-section { padding: 4rem 3rem; display: flex; flex-direction: column; align-items: center; }
         .console { width: 100%; max-width: 1100px; aspect-ratio: 2.39/1; position: relative; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8); touch-action: none; }
@@ -72,12 +162,15 @@
         .thumb { aspect-ratio: 16/9; background-size: cover; background-position: center; cursor: pointer; opacity: 0.35; transition: 0.3s; border: 2px solid transparent; }
         .thumb.active { opacity: 1; border-color: var(--accent); transform: translateY(-4px); }
         /* PROJECTS */
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .project-card { background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; transition: 0.3s; }
-        .project-card:hover { border-color: var(--accent-teal); }
-        .project-card video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
-        .project-info { padding: 1.5rem; }
-        .project-tag { display: inline-block; padding: 0.25rem 0.75rem; background: rgba(0,242,255,0.1); color: var(--accent-teal); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; }
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1px; margin-top: 2.5rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.04); }
+        .project-card { background: var(--bg); overflow: hidden; transition: background 0.3s; }
+        .project-card:hover { background: #0f0f0f; }
+        .project-card video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; filter: brightness(0.9); transition: filter 0.4s; }
+        .project-card:hover video { filter: brightness(1); }
+        .project-info { padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.04); }
+        .project-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
+        .project-info p { color: rgba(255,255,255,0.4); font-size: 0.82rem; line-height: 1.6; }
+        .project-tag { display: inline-block; padding: 0.2rem 0.7rem; background: transparent; color: var(--accent-teal); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(0,242,255,0.2); }
         /* GENERATORS */
         .gen-grid {
             display: grid;
@@ -317,8 +410,8 @@
             <p>Scotland, 1967. A psychological thriller built entirely with AI. MidJourney stills, Veo sequences, ElevenLabs voiceover.</p>
         </div>
     </section>
-    <!-- SECTION: LOOKBOOK -->
-    <section>
+    <!-- SECTION: GREY HOUSE LOOKBOOK -->
+    <section class="lookbook-section" style="padding: 3rem;">
         <div class="lookbook-grid">
             <div class="lookbook-item"><img src="images/GreyHouse/08_callum.png" alt="Callum"><div class="lookbook-caption"><h4>Callum</h4><p>The Innkeeper</p></div></div>
             <div class="lookbook-item"><img src="images/GreyHouse/02_sign.png" alt="Sign"><div class="lookbook-caption"><h4>Grey House</h4><p>The Sign</p></div></div>
