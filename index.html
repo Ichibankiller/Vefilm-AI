@@ -530,7 +530,9 @@
             character_neutral: `character consistency reference sheet, three-quarter medium shot waist up, photorealistic face with full skin texture — pores asymmetry natural imperfection, clean cinematic studio lighting key and subtle rim, neutral dark background, sharp focus across entire frame, wardrobe fully visible and detailed, neutral expression, no motion blur, production reference quality, ARRI Alexa aesthetic, no watermarks`
         };
 
-        // --- GENERATOR ENGINE ---
+        // --- GENERATOR ENGINE — All generation via VEFILM Vercel backend (FLUX 1.1 Pro) ---
+        const VEFILM_API = 'https://vefilm-character-sheet.vercel.app/api';
+
         async function getBase64(file) {
             return new Promise(resolve => {
                 const reader = new FileReader();
@@ -539,146 +541,15 @@
             });
         }
 
-        // --- fal.ai FLUX 1.1 Pro Ultra — TIER 1, best quality
-        async function generateWithFal(prompt, isPortrait) {
-            const key = getFalKey();
-            if (!key) return null;
-            const aspect = isPortrait ? '2:3' : '16:9';
-            const submitResp = await fetch('https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra', {
-                method: 'POST',
-                headers: { 'Authorization': `Key ${key}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt, aspect_ratio: aspect, output_format: 'jpeg', safety_tolerance: '5' })
-            });
-            if (!submitResp.ok) throw new Error(`fal.ai ${submitResp.status}`);
-            const job = await submitResp.json();
-            const reqId = job.request_id;
-            for (let i = 0; i < 36; i++) {
-                await new Promise(r => setTimeout(r, 2500));
-                const sr = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${reqId}/status`, {
-                    headers: { 'Authorization': `Key ${key}` }
-                });
-                const s = await sr.json();
-                if (s.status === 'COMPLETED') {
-                    const rr = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${reqId}`, {
-                        headers: { 'Authorization': `Key ${key}` }
-                    });
-                    const result = await rr.json();
-                    return result.images?.[0]?.url || null;
-                }
-                if (s.status === 'FAILED') throw new Error('fal.ai generation failed');
-            }
-            throw new Error('fal.ai timeout');
-        }
-
-        // --- Together.ai FLUX.1-dev — TIER 2, fast + high quality
-        async function generateWithTogether(prompt, isPortrait) {
-            const key = getTogetherKey();
-            if (!key) return null;
-            const width = isPortrait ? 720 : 1280;
-            const height = isPortrait ? 1024 : 720;
-            const resp = await fetch('https://api.together.xyz/v1/images/generations', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: 'black-forest-labs/FLUX.1-dev', prompt, width, height, steps: 28, n: 1 })
-            });
-            if (!resp.ok) throw new Error(`Together.ai ${resp.status}`);
-            const data = await resp.json();
-            return data.data?.[0]?.url || null;
-        }
-
-        // --- HuggingFace FLUX.1-dev — TIER 3, free with HF token
-        async function generateWithHF(prompt) {
-            const token = getHFKey();
-            if (!token) return null;
-            const resp = await fetch(
-                'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',
-                {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ inputs: prompt })
-                }
-            );
-            if (!resp.ok) throw new Error(`HF ${resp.status} — accept FLUX.1-dev license at huggingface.co/black-forest-labs/FLUX.1-dev`);
-            const blob = await resp.blob();
-            return URL.createObjectURL(blob);
-        }
-
-        // Gemini 2.0 Flash — actual image generation (requires key)
-        async function generateWithGemini(prompt, imageFile) {
-            const key = getGeminiKey();
-            if (!key) return null;
-            const parts = [{ text: `Generate a photorealistic image: ${prompt}` }];
-            if (imageFile) {
-                const b64 = await getBase64(imageFile);
-                parts.push({ inline_data: { mime_type: imageFile.type, data: b64 } });
-            }
-            const resp = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${key}`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts }],
-                        generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
-                    })
-                }
-            );
-            const data = await resp.json();
-            if (data.error) throw new Error(data.error.message);
-            const imgPart = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-            if (!imgPart) throw new Error('No image returned from Gemini.');
-            return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
-        }
-
-        // Pollinations FLUX — fallback, no key needed, fetch-based for reliability
-        async function generateWithPollinations(prompt, isPortrait) {
-            const seed = Math.floor(Math.random() * 999999);
-            const w = isPortrait ? 720 : 1280;
-            const h = isPortrait ? 960 : 720;
-            // Trim prompt to avoid URL length failures (keep first 500 chars of DNA)
-            const trimmed = prompt.length > 500 ? prompt.substring(0, 500) : prompt;
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(trimmed)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}&enhance=true`;
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error(`Pollinations ${resp.status}`);
-            const blob = await resp.blob();
-            return URL.createObjectURL(blob);
-        }
-
-        // Build full styled prompt from input + style DNA
-        function buildPrompt(type, userText, styleDNAKey) {
-            const dna = STYLE_DNA[styleDNAKey] || '';
-            if (type === 'sketch') {
-                return `${userText ? userText + ', ' : ''}${dna}`;
-            } else if (type === 'cinematic') {
-                return `${userText ? userText + ', ' : ''}${dna}`;
-            } else {
-                // character — portrait
-                return `${userText ? userText + ', ' : ''}${dna}`;
-            }
-        }
-
-        function renderOutput(type, imgSrc, prompt, isDataUrl) {
+        function renderOutput(type, imgSrc, prompt) {
             const outputDiv = document.getElementById(`${type}Output`);
-            if (isDataUrl) {
-                outputDiv.innerHTML = `
-                    <img src="${imgSrc}" alt="Generated" style="width:100%; border-radius:6px; display:block;">
-                    <div class="prompt-used" id="prompt_${type}">${prompt}</div>
-                    <div class="gen-actions" id="actions_${type}">
-                        <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
-                        <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
-                    </div>`;
-            } else {
-                outputDiv.innerHTML = `
-                    <div class="gen-loader" id="loader_${type}">DEVELOPING FRAME...</div>
-                    <img src="${imgSrc}" alt="Generated" style="width:100%; border-radius:6px; display:none;"
-                        onload="document.getElementById('loader_${type}').style.display='none'; this.style.display='block';"
-                        onerror="document.getElementById('loader_${type}').textContent='Generation failed — try again.'; document.getElementById('loader_${type}').style.color='#c45c3e';">
-                    <div class="prompt-used" id="prompt_${type}">${prompt}</div>
-                    <div class="gen-actions" id="actions_${type}">
-                        <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
-                        <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
-                    </div>`;
-            }
+            outputDiv.innerHTML = `
+                <img src="${imgSrc}" alt="Generated" style="width:100%; border-radius:6px; display:block;">
+                <div class="prompt-used" id="prompt_${type}">${prompt}</div>
+                <div class="gen-actions" id="actions_${type}">
+                    <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
+                    <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
+                </div>`;
         }
 
         async function handleGenerate(type) {
@@ -687,65 +558,42 @@
             const styleEl = document.getElementById(`${type}Style`);
             const file = fileInput ? fileInput.files[0] : null;
             const outputDiv = document.getElementById(`${type}Output`);
-            const styleDNAKey = styleEl ? styleEl.value : type;
-            const isPortrait = type === 'character';
+            const style = styleEl ? styleEl.value : type;
 
-            if (!inputEl.value && !file) return alert('Enter a description or upload an image.');
+            if (!inputEl.value.trim() && !file) return alert('Enter a description or upload an image.');
 
             outputDiv.style.display = 'block';
-            outputDiv.innerHTML = '<div class="gen-loader">DEVELOPING FRAME...</div>';
+            outputDiv.innerHTML = '<div class="gen-loader">GEMINI ENGINEERING PROMPT — FLUX 1.1 PRO RENDERING...</div>';
 
-            const styledPrompt = buildPrompt(type, inputEl.value, styleDNAKey);
-
-            // Priority: fal.ai → Together → HF-dev → Gemini → Pollinations
-            if (getFalKey()) {
-                outputDiv.innerHTML = '<div class="gen-loader">FLUX 1.1 PRO ULTRA · FAL.AI — DEVELOPING FRAME...</div>';
-                try {
-                    const imgUrl = await generateWithFal(styledPrompt, isPortrait);
-                    if (imgUrl) { renderOutput(type, imgUrl, styledPrompt, false); return; }
-                } catch(e) {
-                    outputDiv.innerHTML = `<div class="gen-loader">fal.ai error — trying Together.ai...</div>`;
-                    await new Promise(r => setTimeout(r, 800));
-                }
-            }
-            if (getTogetherKey()) {
-                outputDiv.innerHTML = '<div class="gen-loader">FLUX.1-DEV · TOGETHER.AI — DEVELOPING FRAME...</div>';
-                try {
-                    const imgUrl = await generateWithTogether(styledPrompt, isPortrait);
-                    if (imgUrl) { renderOutput(type, imgUrl, styledPrompt, false); return; }
-                } catch(e) {
-                    outputDiv.innerHTML = `<div class="gen-loader">Together error — trying HuggingFace...</div>`;
-                    await new Promise(r => setTimeout(r, 800));
-                }
-            }
-            if (getHFKey()) {
-                outputDiv.innerHTML = '<div class="gen-loader">FLUX.1-DEV · HUGGING FACE — DEVELOPING FRAME...</div>';
-                try {
-                    const imgUrl = await generateWithHF(styledPrompt);
-                    if (imgUrl) { renderOutput(type, imgUrl, styledPrompt, true); return; }
-                } catch(e) {
-                    outputDiv.innerHTML = `<div class="gen-loader">HF error — switching to Gemini...</div>`;
-                    await new Promise(r => setTimeout(r, 800));
-                }
-            }
-            if (getGeminiKey()) {
-                outputDiv.innerHTML = '<div class="gen-loader">GEMINI ENGINE — DEVELOPING FRAME...</div>';
-                try {
-                    const imgDataUrl = await generateWithGemini(styledPrompt, file);
-                    renderOutput(type, imgDataUrl, styledPrompt, true);
-                    return;
-                } catch(e) {
-                    outputDiv.innerHTML = `<div class="gen-loader">Gemini failed — switching to FLUX...</div>`;
-                    await new Promise(r => setTimeout(r, 800));
-                }
-            }
-            // Fallback: Pollinations (no key required)
-            outputDiv.innerHTML = '<div class="gen-loader">FLUX · FREE ENGINE — Generating... (15–30 sec)</div>';
             try {
-                const imgUrl = await generateWithPollinations(styledPrompt, isPortrait);
-                renderOutput(type, imgUrl, styledPrompt, true);
+                let body = {};
+                let endpoint = '';
+
+                if (type === 'sketch') {
+                    endpoint = `${VEFILM_API}/sketch`;
+                    body = { description: inputEl.value.trim(), style };
+                    if (file) {
+                        body.imageBase64 = await getBase64(file);
+                        body.imageMimeType = file.type;
+                    }
+                } else if (type === 'cinematic') {
+                    endpoint = `${VEFILM_API}/signature`;
+                    body = { description: inputEl.value.trim(), style };
+                }
+
+                const resp = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.error || `Server error ${resp.status}`);
+
+                renderOutput(type, data.imageUrl, data.engineeredPrompt);
+
             } catch(e) {
-                outputDiv.innerHTML = `<div class="gen-loader" style="color:#c45c3e;">Generation failed — check connection or try again. (${e.message})</div>`;
+                outputDiv.innerHTML = `<div class="gen-loader" style="color:#c45c3e;">Generation failed — ${e.message}</div>`;
             }
         }
 
