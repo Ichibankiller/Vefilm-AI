@@ -699,41 +699,6 @@
             }
         }
 
-        async function handleCharDeconstruct() {
-            const inputEl = document.getElementById('charDeconInput');
-            const outputDiv = document.getElementById('charDeconOutput');
-            if (!inputEl.value.trim()) return alert('Describe the character.');
-
-            outputDiv.style.display = 'block';
-            outputDiv.innerHTML = '<div class="gen-loader">DECONSTRUCTING CHARACTER...</div>';
-
-            const charPrompt = `Character depth deconstruction reference sheet, full body portrait centered, exploded view annotations of clothing layers and personal items, daily carry inventory diagram, handwritten technical notes, cinematic concept art quality, ${inputEl.value.trim()}, Pedro Feria Pino production style, motivated practical lighting, film grain, photorealistic, no watermarks`;
-
-            if (getHFKey()) {
-                try {
-                    const imgUrl = await generateWithHF(charPrompt);
-                    renderOutput('charDecon', imgUrl, charPrompt, true);
-                    return;
-                } catch(e) {
-                    outputDiv.innerHTML = `<div class="gen-loader">HF error — switching to Gemini...</div>`;
-                    await new Promise(r => setTimeout(r, 1000));
-                }
-            }
-            if (getGeminiKey()) {
-                try {
-                    const imgDataUrl = await generateWithGemini(charPrompt, null);
-                    renderOutput('charDecon', imgDataUrl, charPrompt, true);
-                    return;
-                } catch(e) {
-                    outputDiv.innerHTML = `<div class="gen-loader">Switching to FLUX...</div>`;
-                    await new Promise(r => setTimeout(r, 1000));
-                }
-            }
-            const seed = Math.floor(Math.random() * 999999);
-            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(charPrompt)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
-            renderOutput('charDecon', imgUrl, charPrompt, false);
-        }
-
         // init mode description immediately (script is at end of body, DOM is ready)
         (function() {
             const modeDesc = document.getElementById('fp_mode_desc');
