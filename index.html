@@ -26,10 +26,11 @@
         .section-desc { color: var(--text-dim); max-width: 600px; margin-top: 1rem; font-size: 0.95rem; }
         /* HERO */
         .hero-video { position: relative; width: 100%; margin-top: 80px; }
-        .hero-video video { width: 100%; max-height: 80vh; object-fit: cover; position: relative; z-index: 10; cursor: pointer; }
-        .hero-overlay { position: absolute; bottom: 80px; left: 0; right: 0; padding: 4rem 3rem 2rem; background: linear-gradient(to top, rgba(10,10,10,0.9), transparent); pointer-events: none; z-index: 5; }
-        .hero-overlay h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95; }
-        .hero-overlay p { color: var(--text-dim); max-width: 500px; margin-top: 1rem; }
+        .hero-video video { width: 100%; max-height: 70vh; object-fit: contain; background: #000; display: block; }
+        .hero-info { padding: 2rem 3rem; background: var(--bg); }
+        .hero-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 5rem); line-height: 0.95; }
+        .hero-info .section-label { margin-bottom: 0.5rem; }
+        .hero-info p { color: var(--text-dim); max-width: 500px; margin-top: 1rem; }
         /* LOOKBOOK */
         .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
         .lookbook-item { position: relative; overflow: hidden; aspect-ratio: 16/9; }
@@ -109,7 +110,7 @@
         <video autoplay muted loop playsinline controls preload="auto">
             <source src="videos/GreyHouse/TheGreyHouse_compressed.mp4" type="video/mp4">
         </video>
-        <div class="hero-overlay">
+        <div class="hero-info">
             <p class="section-label">AI Generated Horror</p>
             <h1>The House of Grey<br>Incident</h1>
             <p>Scotland, 1967. A psychological thriller built entirely with AI. MidJourney stills, Veo sequences, ElevenLabs voiceover.</p>
