@@ -88,9 +88,17 @@
         .gen-card button { width: 100%; background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; margin-top: 1rem; transition: 0.3s; }
         .gen-card button:hover { background: var(--accent); color: #000; border-color: var(--accent); }
         /* GENERATOR OUTPUT & SETTINGS */
-        .gen-output { background: #000; border: 1px solid var(--accent-teal); border-radius: 8px; padding: 1.5rem; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent-teal); white-space: pre-wrap; display: none; position: relative; }
-        .copy-btn { position: absolute; top: 10px; right: 10px; background: var(--accent-teal); color: #000; border: none; padding: 4px 8px; font-size: 0.6rem; font-weight: bold; cursor: pointer; border-radius: 4px; display: none; }
-        
+        .gen-output { background: #000; border: 1px solid var(--accent-teal); border-radius: 8px; padding: 1rem; margin-top: 1rem; display: none; position: relative; }
+        .gen-output img { width: 100%; border-radius: 6px; display: block; }
+        .gen-loader { text-align: center; padding: 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        .gen-loader { animation: blink 1.2s ease-in-out infinite; }
+        .prompt-used { font-size: 0.6rem; color: #444; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; line-height: 1.5; border-top: 1px solid #1a1a1a; padding-top: 0.75rem; }
+        .gen-actions { display: flex; gap: 8px; margin-top: 0.75rem; }
+        .copy-btn { background: var(--accent-teal); color: #000; border: none; padding: 5px 10px; font-size: 0.6rem; font-weight: bold; border-radius: 4px; }
+        .regen-btn { background: transparent; border: 1px solid #333; color: #666; padding: 5px 10px; font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; border-radius: 4px; }
+        .regen-btn:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+
         #apiSettings { display:none; background:rgba(255,107,0,0.05); border:1px dashed var(--accent); padding:1.5rem; margin-top:1rem; border-radius:12px; }
         /* UTILS */
         .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: rgba(0,0,0,0.8); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
@@ -210,44 +218,37 @@
             <button onclick="toggleSettings()" style="background:none; border:1px solid var(--border); color:var(--text-dim); padding: 5px 10px; font-family:'JetBrains Mono'; font-size:10px; border-radius:4px;">⚙️ API SETTINGS</button>
         </div>
         <div id="apiSettings">
-            <p style="font-size:0.8rem; color:var(--accent);"><strong>FREE TIER MANAGEMENT:</strong> If internal limits are hit, paste your own free Gemini API key below. Get one at <a href="https://aistudio.google.com/" target="_blank" style="color:var(--text); text-decoration:underline;">Google AI Studio</a>.</p>
-            <input type="password" id="userKeyInput" placeholder="Paste AI Studio Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-top:10px; font-family:'JetBrains Mono';">
-            <button onclick="saveUserKey()" style="margin-top:10px; width:auto; padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px;">SAVE PERSONAL KEY</button>
-            <button onclick="clearUserKey()" style="margin-top:10px; width:auto; padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px;">RESET TO INTERNAL</button>
+            <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.75rem;"><strong>IMAGE GENERATION:</strong> Powered by Pollinations.ai — free, no key needed.</p>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:1rem;">To unlock <strong>sketch analysis</strong> (upload a storyboard image and have it read automatically), paste a free Gemini key below. Get one free at <a href="https://aistudio.google.com/" target="_blank" style="color:var(--text); text-decoration:underline;">aistudio.google.com</a> → Get API key.</p>
+            <input type="password" id="userKeyInput" placeholder="Optional: Gemini Key for sketch analysis (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-top:5px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+            <div style="display:flex; gap:8px; margin-top:10px;">
+                <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE KEY</button>
+                <button onclick="clearUserKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+            </div>
         </div>
         <div class="gen-grid">
             <div class="gen-card">
                 <h3>Sketch to Screen</h3>
-                <p>Convert storyboards into cinematic prompts with ARRI/Zeiss specs.</p>
+                <p>Upload a storyboard sketch or describe your shot. Generates a photorealistic cinematic render.</p>
                 <input type="file" id="sketchFile" accept="image/*" style="margin-top:1rem; font-size: 0.7rem; color: #888;">
-                <textarea id="sketchInput" placeholder="Describe shot framing, lighting, and action..."></textarea>
-                <button onclick="handleGenerate('sketch')">Generate Prompt</button>
-                <div class="gen-output" id="sketchOutput">
-                    <button class="copy-btn" onclick="copyPrompt('sketchOutput')">COPY</button>
-                    <span class="content"></span>
-                </div>
+                <textarea id="sketchInput" placeholder="Describe the shot: framing, lighting, location, action..."></textarea>
+                <button onclick="handleGenerate('sketch')">Generate Image</button>
+                <div class="gen-output" id="sketchOutput"></div>
             </div>
             <div class="gen-card">
                 <h3>Image Engine</h3>
-                <p>Signature Kodachrome look. Warm highlights, anamorphic glass.</p>
-                <input type="file" id="cinematicFile" accept="image/*" style="margin-top:1rem; font-size: 0.7rem; color: #888;">
+                <p>Signature Kodachrome look. Warm highlights, crushed blacks, anamorphic glass. Describe the scene.</p>
                 <textarea id="cinematicInput" placeholder="Describe a scene for the 'Feria Pino' look..."></textarea>
-                <button onclick="handleGenerate('cinematic')">Generate Prompt</button>
-                <div class="gen-output" id="cinematicOutput">
-                    <button class="copy-btn" onclick="copyPrompt('cinematicOutput')">COPY</button>
-                    <span class="content"></span>
-                </div>
+                <button onclick="handleGenerate('cinematic')">Generate Image</button>
+                <div class="gen-output" id="cinematicOutput"></div>
             </div>
             <div class="gen-card">
                 <h3>Character Sheet</h3>
-                <p>Consistency bibles to keep characters looking the same across scenes.</p>
+                <p>Describe a character and generate a photorealistic reference image for production consistency.</p>
                 <input type="file" id="characterFile" accept="image/*" style="margin-top:1rem; font-size: 0.7rem; color: #888;">
-                <textarea id="characterInput" placeholder="Describe physical traits and wardrobe..."></textarea>
-                <button onclick="handleGenerate('character')">Generate Sheet</button>
-                <div class="gen-output" id="characterOutput">
-                    <button class="copy-btn" onclick="copyPrompt('characterOutput')">COPY</button>
-                    <span class="content"></span>
-                </div>
+                <textarea id="characterInput" placeholder="Describe physical traits, wardrobe, age, expression..."></textarea>
+                <button onclick="handleGenerate('character')">Generate Character</button>
+                <div class="gen-output" id="characterOutput"></div>
             </div>
         </div>
     </section>
@@ -260,9 +261,8 @@
     </footer>
     <script>
         // --- API & SETTINGS LOGIC ---
-        const INTERNAL_KEY = 'AIzaSyATotffPI43llg-6uNxqQ1GaoD4Izf6bss';
-        function getActiveKey() {
-            return localStorage.getItem('vefilm_user_key') || INTERNAL_KEY;
+        function getGeminiKey() {
+            return localStorage.getItem('vefilm_user_key') || '';
         }
         function toggleSettings() {
             const p = document.getElementById('apiSettings');
@@ -272,13 +272,12 @@
             const val = document.getElementById('userKeyInput').value;
             if(val.startsWith('AIza')) {
                 localStorage.setItem('vefilm_user_key', val);
-                alert("Using Personal Key.");
-                location.reload();
-            } else { alert("Invalid Format."); }
+                alert("Gemini key saved. Sketch analysis enabled.");
+            } else { alert("Invalid key format. Should start with AIza..."); }
         }
         function clearUserKey() {
             localStorage.removeItem('vefilm_user_key');
-            location.reload();
+            alert("Key cleared.");
         }
         // --- CURSOR ---
         const dot = document.querySelector('.cursor-dot');
@@ -324,52 +323,78 @@
                 reader.onload = () => resolve(reader.result.split(',')[1]);
             });
         }
-        async function handleGenerate(type) {
-            const input = document.getElementById(`${type}Input`);
-            const file = document.getElementById(`${type}File`).files[0];
-            const outputDiv = document.getElementById(`${type}Output`);
-            const outputText = outputDiv.querySelector('.content');
-            const copyBtn = outputDiv.querySelector('.copy-btn');
-            const activeKey = getActiveKey();
-            if (!input.value && !file) return alert("Input required.");
-            outputDiv.style.display = 'block';
-            outputText.textContent = 'DEVELOPING FRAME...';
-            copyBtn.style.display = 'none';
-            let systemPrompt = "";
-            if(type === 'sketch') systemPrompt = "Role: Professional DP. Task: Convert storyboard sketch into MidJourney V6.1 prompt. Technicals: ARRI Alexa, 35mm Master Prime, Vision3 500T, --ar 2.39:1";
-            if(type === 'cinematic') systemPrompt = "Role: Pedro Feria Pino Custom Style. Task: Create Kodachrome cinematic prompt. Technicals: Warm highlights, crushed blacks, anamorphic glass, --ar 2.39:1 --style raw";
-            if(type === 'character') systemPrompt = "Role: Consistency Bible Architect. Task: Build physical attribute tokens and wardrobe specs to maintain character likeness.";
-            try {
-                const parts = [{ text: systemPrompt + "\nUser Input: " + input.value }];
-                if (file) {
-                    const base64 = await getBase64(file);
-                    parts.push({ inline_data: { mime_type: file.type, data: base64 } });
-                }
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts }] })
-                });
-                
-                const data = await response.json();
-                
-                if(data.error) {
-                    outputText.textContent = "API LIMIT: " + data.error.message + "\n\nTry again in 60s or use personal API key.";
-                    return;
-                }
-                const result = data.candidates[0].content.parts[0].text;
-                outputText.textContent = result;
-                copyBtn.style.display = 'block';
-            } catch (e) {
-                outputText.textContent = "Connection Error. Check API status.";
-            }
+
+        function buildImageUrl(prompt) {
+            const seed = Math.floor(Math.random() * 999999);
+            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
         }
-        function copyPrompt(divId) {
-            const text = document.getElementById(divId).querySelector('.content').textContent;
+
+        async function handleGenerate(type) {
+            const inputEl = document.getElementById(`${type}Input`);
+            const fileInput = document.getElementById(`${type}File`);
+            const file = fileInput ? fileInput.files[0] : null;
+            const outputDiv = document.getElementById(`${type}Output`);
+
+            if (!inputEl.value && !file) return alert("Enter a description or upload an image.");
+
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = '<div class="gen-loader">DEVELOPING FRAME...</div>';
+
+            let finalPrompt = inputEl.value;
+
+            // If sketch uploaded AND user has a Gemini key, analyze the sketch
+            if (file && getGeminiKey()) {
+                try {
+                    const base64 = await getBase64(file);
+                    const sysText = type === 'sketch'
+                        ? "You are a professional DP. Analyze this storyboard sketch and write a detailed image generation prompt describing exactly what is shown. Include: shot framing, subject position, lighting direction, mood, location details. Be specific and visual. End with: photorealistic, cinematic, ARRI Alexa, 35mm Master Prime, Vision3 500T film stock, 2.39:1 anamorphic."
+                        : "Analyze this reference image and describe it as a detailed character consistency sheet: physical features, skin tone, hair, wardrobe, build, expression. Be precise and tokenized.";
+                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${getGeminiKey()}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [
+                            { text: sysText + (inputEl.value ? " Additional context: " + inputEl.value : "") },
+                            { inline_data: { mime_type: file.type, data: base64 } }
+                        ]}]})
+                    });
+                    const data = await resp.json();
+                    if (!data.error) {
+                        finalPrompt = data.candidates[0].content.parts[0].text;
+                    }
+                } catch(e) { /* fallback to text input */ }
+            }
+
+            // Style-specific prompt wrapping
+            let styledPrompt = finalPrompt;
+            if (type === 'sketch') {
+                styledPrompt = `Photorealistic cinematic film still, ARRI Alexa 35, 35mm Master Prime lens, Kodak Vision3 500T film stock, ${finalPrompt}, hyper-detailed, 2.39:1 anamorphic, shallow depth of field, motivated practical lighting, film grain, no text, no watermarks`;
+            } else if (type === 'cinematic') {
+                styledPrompt = `Pedro Feria Pino signature look, Kodachrome film stock, warm golden highlights, crushed blacks, anamorphic lens flares, ${finalPrompt}, cinematic realism, 35mm film grain, photorealistic, hyper-detailed, high contrast, 2.39:1, no text`;
+            } else if (type === 'character') {
+                styledPrompt = `Character reference portrait, photorealistic, cinematic studio lighting, ${finalPrompt}, detailed facial features, full wardrobe visible, sharp focus, film still quality, neutral dark background, no text, no watermarks`;
+            }
+
+            const imgUrl = buildImageUrl(styledPrompt);
+
+            outputDiv.innerHTML = `
+                <div class="gen-loader" id="loader_${type}">DEVELOPING FRAME...</div>
+                <img src="${imgUrl}" alt="Generated" style="width:100%; border-radius:6px; display:none;"
+                    onload="document.getElementById('loader_${type}').style.display='none'; this.style.display='block'; document.getElementById('actions_${type}').style.display='flex';"
+                    onerror="document.getElementById('loader_${type}').textContent='Generation failed — try again.'; document.getElementById('loader_${type}').style.color='#c45c3e';">
+                <div class="prompt-used" id="prompt_${type}">${styledPrompt}</div>
+                <div class="gen-actions" id="actions_${type}" style="display:none;">
+                    <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
+                    <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
+                </div>
+            `;
+        }
+
+        function copyPrompt(type) {
+            const text = document.getElementById(`prompt_${type}`).textContent;
             navigator.clipboard.writeText(text);
-            const btn = document.getElementById(divId).querySelector('.copy-btn');
+            const btn = document.querySelector(`#actions_${type} .copy-btn`);
             btn.textContent = "COPIED";
-            setTimeout(() => btn.textContent = "COPY", 2000);
+            setTimeout(() => btn.textContent = "COPY PROMPT", 2000);
         }
         // --- UTILS ---
         const tcEl = document.getElementById('timecode');
