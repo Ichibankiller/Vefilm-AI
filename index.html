@@ -75,12 +75,20 @@
         .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.5rem 1rem; cursor: pointer; transition: all 0.3s; }
         .audio-toggle:hover { background: var(--accent); color: #000; }
         .audio-toggle.playing { background: var(--accent); color: #000; }
+        /* SCANLINE EFFECT */
+        .scanline { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, var(--accent-teal), transparent); z-index: 9997; pointer-events: none; animation: scanDown 3s linear infinite; opacity: 0.6; }
+        @keyframes scanDown { 0% { top: -4px; } 100% { top: 100vh; } }
+        /* BIO SECTION */
+        .bio { max-width: 700px; margin: 0 auto 2rem; text-align: center; }
+        .bio h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: 1rem; color: var(--accent); }
+        .bio p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.8; }
         @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
+    <div class="scanline"></div>
     <div class="timecode" id="timecode">00:00:00:00</div>
     
     <!-- AMBIENT AUDIO -->
@@ -233,6 +241,10 @@
     </section>
 
     <footer>
+        <div class="bio">
+            <h3>About VEFILM</h3>
+            <p>I'm Pedro Feria Pino, a Brooklyn based Director of Photography and Camera Operator with 20+ years shooting docs and unscripted TV for Netflix, Disney, VH1, MTV, and VICE. These days I'm exploring what happens when you give a DP access to AI image and video generation tools. This page is a playground for that work. Everything you see here was built with MidJourney, Veo, Gemini, and Claude. The future of pre production is here.</p>
+        </div>
         <p>&copy; 2026 VEFILM. AI Production Pipeline by Pedro Feria Pino, SOC.</p>
     </footer>
 
