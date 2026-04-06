@@ -236,41 +236,72 @@
                 You don't need to know anything technical. Describe what you want to see — a scene, a character, a lighting setup — and the generator handles the rest. The style, the camera spec, the lighting logic: it's already built in. You're just providing the subject.
             </p>
             <p style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; margin-top: 0.85rem; padding-left: 1rem; border-left: 2px solid var(--accent); font-style: italic;">
-                The VEFILM Generator and all image tools run on <strong style="color:#fff;">FLUX.1</strong> — one of the most capable open-source image models available. It's free to use. No subscriptions. You just need a free Hugging Face account to unlock the full engine. Instructions are in ⚙️ API Settings above.
+                The generators run on a tiered engine stack — from <strong style="color:#fff;">FLUX 1.1 Pro Ultra</strong> (the top of the public stack) down to a free no-key fallback. The engine used is shown on each card. Add your own API keys in ⚙️ Settings to unlock higher quality tiers — keys stay on your device only.
             </p>
         </div>
 
         <div id="apiSettings" style="display:none;">
-            <div style="background: rgba(255,107,0,0.06); border: 1px solid rgba(255,107,0,0.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                <p style="font-size:0.9rem; color:#fff; font-weight:600; margin-bottom:0.5rem;">How to activate the full image engine — takes 2 minutes</p>
-                <ol style="font-size:0.8rem; color:var(--text-dim); line-height:2; padding-left:1.2rem; margin-bottom:0;">
-                    <li>Go to <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-teal);">huggingface.co/settings/tokens</a> — create a free account if you don't have one</li>
-                    <li>Click <strong style="color:#fff;">New Token</strong> → set access to <strong style="color:#fff;">Read</strong> → copy the token (it starts with <code style="color:var(--accent);">hf_</code>)</li>
-                    <li>Paste it into the field below and hit <strong style="color:#fff;">Save HF Token</strong></li>
-                    <li>That's it. Your key stays on your device — it never touches our server.</li>
-                </ol>
+
+            <!-- TIER 1: fal.ai -->
+            <div style="background:rgba(0,242,255,0.04); border:1px solid rgba(0,242,255,0.15); border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                    <strong style="color:#fff; font-size:0.85rem;">TIER 1 — fal.ai · FLUX 1.1 Pro Ultra</strong>
+                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:var(--accent); background:rgba(255,107,0,0.1); padding:2px 7px; border-radius:3px;">BEST QUALITY · ~$0.06/image</span>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">The absolute top of the public stack right now. Get a free key at <a href="https://fal.ai/dashboard/keys" target="_blank" style="color:var(--accent-teal);">fal.ai/dashboard/keys</a> → Create Key. Free credits on signup.</p>
+                <input type="password" id="falKeyInput" placeholder="Paste fal.ai Key (starts with key-...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button onclick="saveFalKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
+                    <button onclick="clearFalKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                    <span id="falStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+                </div>
             </div>
 
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
-                <strong style="color:#fff;">HUGGING FACE TOKEN</strong> — unlocks FLUX.1 image generation across all tools. Free.
-            </p>
-            <input type="password" id="hfKeyInput" placeholder="Paste HF Token (hf_...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-            <div style="display:flex; gap:8px; margin-bottom:1.25rem; align-items:center;">
-                <button onclick="saveHFKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE HF TOKEN</button>
-                <button onclick="clearHFKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
-                <span id="hfStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+            <!-- TIER 2: Together.ai -->
+            <div style="background:rgba(0,242,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                    <strong style="color:#fff; font-size:0.85rem;">TIER 2 — Together.ai · FLUX.1-dev</strong>
+                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:var(--accent-teal); background:rgba(0,242,255,0.08); padding:2px 7px; border-radius:3px;">HIGH QUALITY · ~$0.013/image</span>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">Same FLUX.1-dev model but on dedicated fast GPU. Get a key at <a href="https://api.together.ai/settings/api-keys" target="_blank" style="color:var(--accent-teal);">api.together.ai</a> → API Keys. Free $1 credit on signup.</p>
+                <input type="password" id="togetherKeyInput" placeholder="Paste Together.ai Key" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button onclick="saveTogetherKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
+                    <button onclick="clearTogetherKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                    <span id="togetherStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+                </div>
             </div>
 
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
-                <strong style="color:#fff;">GEMINI KEY</strong> <span style="color:#555;">(optional)</span> — enables sketch-to-image analysis when you upload a photo or drawing. Free key at
-                <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal);">aistudio.google.com</a> → Get API Key.
-            </p>
-            <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-            <div style="display:flex; gap:8px; align-items:center;">
-                <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE GEMINI KEY</button>
-                <button onclick="clearUserKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
-                <span id="keyStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+            <!-- TIER 3: HuggingFace -->
+            <div style="background:rgba(0,242,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                    <strong style="color:#fff; font-size:0.85rem;">TIER 3 — HuggingFace · FLUX.1-dev</strong>
+                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#aaa; background:rgba(255,255,255,0.05); padding:2px 7px; border-radius:3px;">FREE · Slower</span>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">Free with an HF account. Get a token at <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-teal);">huggingface.co/settings/tokens</a> → New Token → Read. Then <strong style="color:#fff;">accept the model license</strong> at <a href="https://huggingface.co/black-forest-labs/FLUX.1-dev" target="_blank" style="color:var(--accent-teal);">FLUX.1-dev page</a>.</p>
+                <input type="password" id="hfKeyInput" placeholder="Paste HF Token (hf_...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button onclick="saveHFKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
+                    <button onclick="clearHFKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                    <span id="hfStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+                </div>
             </div>
+
+            <!-- TIER 4: Gemini -->
+            <div style="background:rgba(0,242,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:1.25rem; margin-bottom:0.5rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                    <strong style="color:#fff; font-size:0.85rem;">TIER 4 — Google Gemini · Image Analysis</strong>
+                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#aaa; background:rgba(255,255,255,0.05); padding:2px 7px; border-radius:3px;">FREE · Sketch uploads</span>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">Enables sketch/photo analysis when uploading reference images. Free key at <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal);">aistudio.google.com</a> → Get API Key.</p>
+                <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
+                    <button onclick="clearUserKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                    <span id="keyStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+                </div>
+            </div>
+            <p style="font-size:0.65rem; color:#444; margin-top:0.75rem;">All keys stored locally on your device only. Never sent to any server other than the respective AI provider.</p>
         </div>
         <div class="gen-grid" style="margin-top:2rem;">
             <div class="gen-card">
@@ -337,8 +368,10 @@
     </footer>
     <script>
         // --- API & SETTINGS ---
-        function getGeminiKey() { return localStorage.getItem('vefilm_user_key') || ''; }
-        function getHFKey() { return localStorage.getItem('vefilm_hf_key') || ''; }
+        function getGeminiKey()   { return localStorage.getItem('vefilm_user_key') || ''; }
+        function getHFKey()       { return localStorage.getItem('vefilm_hf_key') || ''; }
+        function getFalKey()      { return localStorage.getItem('vefilm_fal_key') || ''; }
+        function getTogetherKey() { return localStorage.getItem('vefilm_together_key') || ''; }
 
         function toggleSettings() {
             const p = document.getElementById('apiSettings');
@@ -358,6 +391,34 @@
             updateEngineBadges();
             document.getElementById('keyStatusBadge').textContent = '';
         }
+        function saveFalKey() {
+            const val = document.getElementById('falKeyInput').value.trim();
+            if (val) {
+                localStorage.setItem('vefilm_fal_key', val);
+                updateEngineBadges();
+                document.getElementById('falStatusBadge').textContent = '✓ FAL.AI ACTIVE';
+                document.getElementById('falStatusBadge').style.color = '#00f2ff';
+            }
+        }
+        function clearFalKey() {
+            localStorage.removeItem('vefilm_fal_key');
+            updateEngineBadges();
+            document.getElementById('falStatusBadge').textContent = '';
+        }
+        function saveTogetherKey() {
+            const val = document.getElementById('togetherKeyInput').value.trim();
+            if (val) {
+                localStorage.setItem('vefilm_together_key', val);
+                updateEngineBadges();
+                document.getElementById('togetherStatusBadge').textContent = '✓ TOGETHER ACTIVE';
+                document.getElementById('togetherStatusBadge').style.color = '#00f2ff';
+            }
+        }
+        function clearTogetherKey() {
+            localStorage.removeItem('vefilm_together_key');
+            updateEngineBadges();
+            document.getElementById('togetherStatusBadge').textContent = '';
+        }
         function saveHFKey() {
             const val = document.getElementById('hfKeyInput').value.trim();
             if (val.startsWith('hf_')) {
@@ -373,13 +434,21 @@
             document.getElementById('hfStatusBadge').textContent = '';
         }
         function updateEngineBadges() {
-            const hasHF = !!getHFKey();
-            const hasGemini = !!getGeminiKey();
+            const hasFal     = !!getFalKey();
+            const hasTog     = !!getTogetherKey();
+            const hasHF      = !!getHFKey();
+            const hasGemini  = !!getGeminiKey();
             ['sketch','cinematic','character'].forEach(t => {
                 const b = document.getElementById(`badge_${t}`);
                 if (!b) return;
-                if (hasHF) {
-                    b.textContent = 'FLUX.1 · HF ENGINE';
+                if (hasFal) {
+                    b.textContent = 'FLUX 1.1 PRO ULTRA · FAL.AI';
+                    b.className = 'engine-badge badge-gemini';
+                } else if (hasTog) {
+                    b.textContent = 'FLUX.1-DEV · TOGETHER.AI';
+                    b.className = 'engine-badge badge-gemini';
+                } else if (hasHF) {
+                    b.textContent = 'FLUX.1-DEV · HUGGING FACE';
                     b.className = 'engine-badge badge-gemini';
                 } else if (hasGemini) {
                     b.textContent = 'GEMINI IMAGEN';
@@ -389,10 +458,11 @@
                     b.className = 'engine-badge badge-flux';
                 }
             });
-            // restore HF badge text on load if key exists
-            if (hasHF) {
-                document.getElementById('hfStatusBadge') && (document.getElementById('hfStatusBadge').textContent = '✓ HF TOKEN ACTIVE', document.getElementById('hfStatusBadge').style.color = '#00f2ff');
-            }
+            // restore status badges on page load
+            if (hasFal)    { const el = document.getElementById('falStatusBadge');     if(el){ el.textContent='✓ FAL.AI ACTIVE';    el.style.color='#00f2ff'; } }
+            if (hasTog)    { const el = document.getElementById('togetherStatusBadge');if(el){ el.textContent='✓ TOGETHER ACTIVE';  el.style.color='#00f2ff'; } }
+            if (hasHF)     { const el = document.getElementById('hfStatusBadge');      if(el){ el.textContent='✓ HF TOKEN ACTIVE';  el.style.color='#00f2ff'; } }
+            if (hasGemini) { const el = document.getElementById('keyStatusBadge');     if(el){ el.textContent='✓ GEMINI ACTIVE';    el.style.color='#00f2ff'; } }
         }
         updateEngineBadges();
         // --- CURSOR ---
@@ -464,19 +534,66 @@
             });
         }
 
-        // HuggingFace FLUX.1-schnell — direct API, user's own token
+        // --- fal.ai FLUX 1.1 Pro Ultra — TIER 1, best quality
+        async function generateWithFal(prompt, isPortrait) {
+            const key = getFalKey();
+            if (!key) return null;
+            const aspect = isPortrait ? '2:3' : '16:9';
+            const submitResp = await fetch('https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra', {
+                method: 'POST',
+                headers: { 'Authorization': `Key ${key}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, aspect_ratio: aspect, output_format: 'jpeg', safety_tolerance: '5' })
+            });
+            if (!submitResp.ok) throw new Error(`fal.ai ${submitResp.status}`);
+            const job = await submitResp.json();
+            const reqId = job.request_id;
+            for (let i = 0; i < 36; i++) {
+                await new Promise(r => setTimeout(r, 2500));
+                const sr = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${reqId}/status`, {
+                    headers: { 'Authorization': `Key ${key}` }
+                });
+                const s = await sr.json();
+                if (s.status === 'COMPLETED') {
+                    const rr = await fetch(`https://queue.fal.run/fal-ai/flux-pro/v1.1-ultra/requests/${reqId}`, {
+                        headers: { 'Authorization': `Key ${key}` }
+                    });
+                    const result = await rr.json();
+                    return result.images?.[0]?.url || null;
+                }
+                if (s.status === 'FAILED') throw new Error('fal.ai generation failed');
+            }
+            throw new Error('fal.ai timeout');
+        }
+
+        // --- Together.ai FLUX.1-dev — TIER 2, fast + high quality
+        async function generateWithTogether(prompt, isPortrait) {
+            const key = getTogetherKey();
+            if (!key) return null;
+            const width = isPortrait ? 720 : 1280;
+            const height = isPortrait ? 1024 : 720;
+            const resp = await fetch('https://api.together.xyz/v1/images/generations', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: 'black-forest-labs/FLUX.1-dev', prompt, width, height, steps: 28, n: 1 })
+            });
+            if (!resp.ok) throw new Error(`Together.ai ${resp.status}`);
+            const data = await resp.json();
+            return data.data?.[0]?.url || null;
+        }
+
+        // --- HuggingFace FLUX.1-dev — TIER 3, free with HF token
         async function generateWithHF(prompt) {
             const token = getHFKey();
             if (!token) return null;
             const resp = await fetch(
-                'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+                'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',
                 {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ inputs: prompt })
                 }
             );
-            if (!resp.ok) throw new Error(`HF API error ${resp.status} — check token or wait 10s`);
+            if (!resp.ok) throw new Error(`HF ${resp.status} — accept FLUX.1-dev license at huggingface.co/black-forest-labs/FLUX.1-dev`);
             const blob = await resp.blob();
             return URL.createObjectURL(blob);
         }
@@ -575,16 +692,35 @@
 
             const styledPrompt = buildPrompt(type, inputEl.value, styleDNAKey);
 
-            // Priority: HF → Gemini → Pollinations
+            // Priority: fal.ai → Together → HF-dev → Gemini → Pollinations
+            if (getFalKey()) {
+                outputDiv.innerHTML = '<div class="gen-loader">FLUX 1.1 PRO ULTRA · FAL.AI — DEVELOPING FRAME...</div>';
+                try {
+                    const imgUrl = await generateWithFal(styledPrompt, isPortrait);
+                    if (imgUrl) { renderOutput(type, imgUrl, styledPrompt, false); return; }
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">fal.ai error — trying Together.ai...</div>`;
+                    await new Promise(r => setTimeout(r, 800));
+                }
+            }
+            if (getTogetherKey()) {
+                outputDiv.innerHTML = '<div class="gen-loader">FLUX.1-DEV · TOGETHER.AI — DEVELOPING FRAME...</div>';
+                try {
+                    const imgUrl = await generateWithTogether(styledPrompt, isPortrait);
+                    if (imgUrl) { renderOutput(type, imgUrl, styledPrompt, false); return; }
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">Together error — trying HuggingFace...</div>`;
+                    await new Promise(r => setTimeout(r, 800));
+                }
+            }
             if (getHFKey()) {
-                outputDiv.innerHTML = '<div class="gen-loader">FLUX.1 ENGINE — DEVELOPING FRAME...</div>';
+                outputDiv.innerHTML = '<div class="gen-loader">FLUX.1-DEV · HUGGING FACE — DEVELOPING FRAME...</div>';
                 try {
                     const imgUrl = await generateWithHF(styledPrompt);
-                    renderOutput(type, imgUrl, styledPrompt, true);
-                    return;
+                    if (imgUrl) { renderOutput(type, imgUrl, styledPrompt, true); return; }
                 } catch(e) {
                     outputDiv.innerHTML = `<div class="gen-loader">HF error — switching to Gemini...</div>`;
-                    await new Promise(r => setTimeout(r, 1200));
+                    await new Promise(r => setTimeout(r, 800));
                 }
             }
             if (getGeminiKey()) {
@@ -595,16 +731,16 @@
                     return;
                 } catch(e) {
                     outputDiv.innerHTML = `<div class="gen-loader">Gemini failed — switching to FLUX...</div>`;
-                    await new Promise(r => setTimeout(r, 1000));
+                    await new Promise(r => setTimeout(r, 800));
                 }
             }
             // Fallback: Pollinations (no key required)
-            outputDiv.innerHTML = '<div class="gen-loader">FLUX ENGINE ACTIVE — No key needed. Generating... (15–30 sec)</div>';
+            outputDiv.innerHTML = '<div class="gen-loader">FLUX · FREE ENGINE — Generating... (15–30 sec)</div>';
             try {
                 const imgUrl = await generateWithPollinations(styledPrompt, isPortrait);
                 renderOutput(type, imgUrl, styledPrompt, true);
             } catch(e) {
-                outputDiv.innerHTML = `<div class="gen-loader" style="color:#c45c3e;">Generation failed — check your connection or try again. (${e.message})</div>`;
+                outputDiv.innerHTML = `<div class="gen-loader" style="color:#c45c3e;">Generation failed — check connection or try again. (${e.message})</div>`;
             }
         }
 
