@@ -202,17 +202,18 @@
 
     <!-- AI GENERATORS -->
     <section id="generators">
-        <p class="section-label">Tools</p>
+        <p class="section-label">Try It Yourself</p>
         <h2 class="section-title">AI Generators</h2>
-        <p class="section-desc">Production tools built on top of my custom prompt engineering. Upload an image or enter text, get cinematic output.</p>
+        <p class="section-desc" style="max-width: 800px;">These tools are built on my personal prompt engineering formulas. They're designed to give you that cinematic film look I use in my own work. Upload an image for reference or just describe what you're imagining. The output is a prompt you can copy and paste directly into MidJourney or Gemini. No AI experience needed.</p>
         
         <div class="gen-grid">
             <!-- SKETCH TO SCREEN -->
             <div class="gen-card">
                 <h3>Sketch to Screen</h3>
-                <p>Transform rough storyboard descriptions into photorealistic cinematic pre-viz prompts for Gemini or MidJourney.</p>
+                <p>Got a rough sketch or storyboard? Upload it or describe your shot. This tool converts your vision into a detailed cinematic prompt with proper camera specs, lighting ratios, and film stock references. Perfect for pre-viz.</p>
+                <p style="font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem;">HOW TO USE: Upload an image OR type a description. Click generate. Copy the output into MidJourney.</p>
                 <input type="file" id="sketchFile" accept="image/*" style="margin-top:1rem; color: var(--text-dim);">
-                <textarea id="sketchInput" placeholder="Or describe your shot: Wide shot, man sitting in car at night, rain on windshield, neon signs reflecting, 1990s Bronx"></textarea>
+                <textarea id="sketchInput" placeholder="Describe your shot: Wide shot, man sitting in car at night, rain on windshield, neon signs reflecting, 1990s Bronx"></textarea>
                 <button onclick="generateSketch()">Generate Prompt</button>
                 <div class="gen-output" id="sketchOutput"></div>
             </div>
@@ -220,9 +221,10 @@
             <!-- CINEMATIC IMAGE -->
             <div class="gen-card">
                 <h3>Cinematic Image Engine</h3>
-                <p>My custom prompt formula for photorealistic Kodachrome film look. Upload a reference or describe a scene.</p>
+                <p>This is my signature look. Warm Kodachrome colors, ARRI camera specs, anamorphic glass, crushed blacks. Upload a reference image to match that vibe, or describe a scene and let it build out the full cinematic formula.</p>
+                <p style="font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem;">HOW TO USE: Upload a mood reference OR describe a scene. The output is ready for MidJourney with my film look baked in.</p>
                 <input type="file" id="cinematicFile" accept="image/*" style="margin-top:1rem; color: var(--text-dim);">
-                <textarea id="cinematicInput" placeholder="Or describe: Detective standing in doorway of old Scottish inn, warm tungsten light from inside, foggy night"></textarea>
+                <textarea id="cinematicInput" placeholder="Describe a scene: Detective standing in doorway of old Scottish inn, warm tungsten light from inside, foggy night"></textarea>
                 <button onclick="generateCinematic()">Generate Prompt</button>
                 <div class="gen-output" id="cinematicOutput"></div>
             </div>
@@ -230,9 +232,10 @@
             <!-- CHARACTER SHEET -->
             <div class="gen-card">
                 <h3>Character Sheet Generator</h3>
-                <p>Upload a reference image or describe a character. Get a full consistency bible for maintaining character across shots.</p>
+                <p>The hardest part of AI filmmaking is keeping characters consistent across shots. Upload a face or describe a character and this builds a full consistency bible with physical details, wardrobe, and negative prompts to keep your character looking the same every time.</p>
+                <p style="font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem;">HOW TO USE: Upload a character image OR describe them in detail. Use the output tokens in every prompt featuring that character.</p>
                 <input type="file" id="characterFile" accept="image/*" style="margin-top:1rem; color: var(--text-dim);">
-                <textarea id="characterInput" placeholder="Or describe: Latino male, mid-30s, leather jacket, intense eyes, scar on left cheek, slicked back hair"></textarea>
+                <textarea id="characterInput" placeholder="Describe your character: Latino male, mid-30s, leather jacket, intense eyes, scar on left cheek, slicked back hair"></textarea>
                 <button onclick="generateCharacter()">Generate Sheet</button>
                 <div class="gen-output" id="characterOutput"></div>
             </div>
