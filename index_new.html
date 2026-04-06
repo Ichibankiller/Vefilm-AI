@@ -100,6 +100,11 @@
         .regen-btn:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
 
         #apiSettings { display:none; background:rgba(255,107,0,0.05); border:1px dashed var(--accent); padding:1.5rem; margin-top:1rem; border-radius:12px; }
+        .style-select { width:100%; background:rgba(0,0,0,0.6); border:1px solid var(--border); border-radius:8px; color:var(--accent-teal); padding:0.6rem 0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; margin-top:0.75rem; appearance:none; cursor:pointer; }
+        .style-select:focus { outline:none; border-color:var(--accent); }
+        .engine-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 7px; border-radius:3px; margin-bottom:0.75rem; }
+        .badge-gemini { background:rgba(0,242,255,0.1); color:var(--accent-teal); border:1px solid rgba(0,242,255,0.2); }
+        .badge-flux { background:rgba(255,107,0,0.1); color:var(--accent); border:1px solid rgba(255,107,0,0.2); }
         /* UTILS */
         .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: rgba(0,0,0,0.8); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
         .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.6rem 1.2rem; cursor: pointer; }
@@ -218,35 +223,58 @@
             <button onclick="toggleSettings()" style="background:none; border:1px solid var(--border); color:var(--text-dim); padding: 5px 10px; font-family:'JetBrains Mono'; font-size:10px; border-radius:4px;">⚙️ API SETTINGS</button>
         </div>
         <div id="apiSettings">
-            <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.75rem;"><strong>IMAGE GENERATION:</strong> Powered by Pollinations.ai — free, no key needed.</p>
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:1rem;">To unlock <strong>sketch analysis</strong> (upload a storyboard image and have it read automatically), paste a free Gemini key below. Get one free at <a href="https://aistudio.google.com/" target="_blank" style="color:var(--text); text-decoration:underline;">aistudio.google.com</a> → Get API key.</p>
-            <input type="password" id="userKeyInput" placeholder="Optional: Gemini Key for sketch analysis (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-top:5px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-            <div style="display:flex; gap:8px; margin-top:10px;">
+            <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.5rem;"><strong>ENGINE UPGRADE:</strong> Paste your free Gemini key to unlock Google's Imagen engine for all three generators.</p>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.25rem;">Without key: FLUX via Pollinations — generates real images, fast, no sign-up.</p>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:1rem;">With Gemini key: Google Imagen — superior photorealism, understands uploaded sketches, runs all three generators. Free key at <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal); text-decoration:underline;">aistudio.google.com</a> → Get API key → Copy key.</p>
+            <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-top:5px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+            <div style="display:flex; gap:8px; margin-top:10px; align-items:center;">
                 <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE KEY</button>
                 <button onclick="clearUserKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                <span id="keyStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
             </div>
         </div>
         <div class="gen-grid">
             <div class="gen-card">
+                <span class="engine-badge" id="badge_sketch">LOADING...</span>
                 <h3>Sketch to Screen</h3>
-                <p>Upload a storyboard sketch or describe your shot. Generates a photorealistic cinematic render.</p>
-                <input type="file" id="sketchFile" accept="image/*" style="margin-top:1rem; font-size: 0.7rem; color: #888;">
-                <textarea id="sketchInput" placeholder="Describe the shot: framing, lighting, location, action..."></textarea>
-                <button onclick="handleGenerate('sketch')">Generate Image</button>
+                <p>Upload a storyboard or describe your shot. Translates into a photorealistic cinematic frame with full ARRI/Zeiss spec baked in.</p>
+                <select class="style-select" id="sketchStyle">
+                    <option value="greyhouse">The Grey House — Scotland 1967</option>
+                    <option value="knockknock">Knock Knock — 90s Bronx</option>
+                    <option value="ichibonkiller">Ichibonkiller — Nihilistic</option>
+                    <option value="neutral">Neutral — Pure Cinematic</option>
+                </select>
+                <input type="file" id="sketchFile" accept="image/*" style="margin-top:0.75rem; font-size: 0.7rem; color: #888;">
+                <textarea id="sketchInput" placeholder="Describe the shot: framing, lighting, action, location..."></textarea>
+                <button onclick="handleGenerate('sketch')">Generate Frame</button>
                 <div class="gen-output" id="sketchOutput"></div>
             </div>
             <div class="gen-card">
+                <span class="engine-badge" id="badge_cinematic">LOADING...</span>
                 <h3>Image Engine</h3>
-                <p>Signature Kodachrome look. Warm highlights, crushed blacks, anamorphic glass. Describe the scene.</p>
-                <textarea id="cinematicInput" placeholder="Describe a scene for the 'Feria Pino' look..."></textarea>
+                <p>Pedro Feria Pino signature look. Select your project's visual DNA — every parameter is pre-loaded.</p>
+                <select class="style-select" id="cinematicStyle">
+                    <option value="cinematic">Feria Pino — Kodachrome Signature</option>
+                    <option value="greyhouse">The Grey House — Horror Atmosphere</option>
+                    <option value="knockknock">Knock Knock — 90s Bronx Neon</option>
+                    <option value="ichibonkiller">Ichibonkiller — Cold Nihilism</option>
+                </select>
+                <textarea id="cinematicInput" placeholder="Describe the scene, subject, or mood..."></textarea>
                 <button onclick="handleGenerate('cinematic')">Generate Image</button>
                 <div class="gen-output" id="cinematicOutput"></div>
             </div>
             <div class="gen-card">
+                <span class="engine-badge" id="badge_character">LOADING...</span>
                 <h3>Character Sheet</h3>
-                <p>Describe a character and generate a photorealistic reference image for production consistency.</p>
-                <input type="file" id="characterFile" accept="image/*" style="margin-top:1rem; font-size: 0.7rem; color: #888;">
-                <textarea id="characterInput" placeholder="Describe physical traits, wardrobe, age, expression..."></textarea>
+                <p>Upload a reference or describe your character. Generates a photorealistic consistency reference for wardrobe, casting, and continuity.</p>
+                <select class="style-select" id="characterStyle">
+                    <option value="character_greyhouse">Grey House — Period Horror, Scotland 1967</option>
+                    <option value="character_knockknock">Knock Knock — 90s Bronx Street</option>
+                    <option value="character_ichibonkiller">Ichibonkiller — Detached / Nihilistic</option>
+                    <option value="character_neutral">Neutral — Clean Reference Sheet</option>
+                </select>
+                <input type="file" id="characterFile" accept="image/*" style="margin-top:0.75rem; font-size: 0.7rem; color: #888;">
+                <textarea id="characterInput" placeholder="Physical traits, age, wardrobe, expression, build..."></textarea>
                 <button onclick="handleGenerate('character')">Generate Character</button>
                 <div class="gen-output" id="characterOutput"></div>
             </div>
@@ -260,25 +288,40 @@
         <p style="margin-top:2rem; font-size:0.7rem; color:#444;">&copy; 2026 VEFILM. AI Pipeline by Pedro Feria Pino, SOC.</p>
     </footer>
     <script>
-        // --- API & SETTINGS LOGIC ---
-        function getGeminiKey() {
-            return localStorage.getItem('vefilm_user_key') || '';
-        }
+        // --- API & SETTINGS ---
+        function getGeminiKey() { return localStorage.getItem('vefilm_user_key') || ''; }
         function toggleSettings() {
             const p = document.getElementById('apiSettings');
             p.style.display = p.style.display === 'none' ? 'block' : 'none';
         }
         function saveUserKey() {
-            const val = document.getElementById('userKeyInput').value;
-            if(val.startsWith('AIza')) {
+            const val = document.getElementById('userKeyInput').value.trim();
+            if (val.startsWith('AIza')) {
                 localStorage.setItem('vefilm_user_key', val);
-                alert("Gemini key saved. Sketch analysis enabled.");
-            } else { alert("Invalid key format. Should start with AIza..."); }
+                updateEngineBadges();
+                document.getElementById('keyStatusBadge').textContent = '✓ GEMINI ACTIVE';
+                document.getElementById('keyStatusBadge').style.color = '#00f2ff';
+            } else { alert("Invalid key — should start with AIza..."); }
         }
         function clearUserKey() {
             localStorage.removeItem('vefilm_user_key');
-            alert("Key cleared.");
+            updateEngineBadges();
+            document.getElementById('keyStatusBadge').textContent = '';
         }
+        function updateEngineBadges() {
+            const hasKey = !!getGeminiKey();
+            ['sketch','cinematic','character'].forEach(t => {
+                const b = document.getElementById(`badge_${t}`);
+                if (hasKey) {
+                    b.textContent = 'GEMINI IMAGEN';
+                    b.className = 'engine-badge badge-gemini';
+                } else {
+                    b.textContent = 'FLUX · NO KEY NEEDED';
+                    b.className = 'engine-badge badge-flux';
+                }
+            });
+        }
+        updateEngineBadges();
         // --- CURSOR ---
         const dot = document.querySelector('.cursor-dot');
         const ring = document.querySelector('.cursor-ring');
@@ -315,86 +358,151 @@
             el.classList.add('active');
             sAfter.style.clipPath = 'inset(0 0 0 50%)';
         }
-        // --- GENERATORS ---
+        // --- STYLE DNA — Pedro Feria Pino Visual Language ---
+        const STYLE_DNA = {
+            // PROJECT LOOKS
+            greyhouse: `Scotland 1967 period psychological horror, cold blue-grey diffused fog light, motivated tungsten interior warmth against frigid exterior, practical candle and fireplace sources, stone walls with moisture and age, Victorian inn architecture, Kodak Vision3 500T film stock, ARRI Alexa 35, 35mm Master Prime, 2.39:1 anamorphic widescreen, shallow depth of field, inverse square law falloff creating deep shadow pools, heavy 35mm film grain, desaturated blues and slate greens with isolated warm amber split tones, surface imperfection on every texture — cracked plaster, worn wood, damp stone, photorealistic cinematic film still, no CGI quality, no watermarks`,
+
+            knockknock: `1990s South Bronx New York crime drama, amber sodium vapor streetlight at 2200K saturating everything in orange-gold, opposing deep navy blue shadows with zero fill, wet pavement reflections of neon signs, chain-link fences, graffiti-covered brick, urban decay texture, Kodak Vision3 500T, 35mm Master Prime, 2.39:1, high contrast motivated practical sources only, deep crushed blacks, no ambient fill, film grain heavy, gritty tactile surfaces, era-accurate wardrobe and props, photorealistic cinematic film still, no watermarks`,
+
+            ichibonkiller: `cold detached nihilistic atmosphere, extreme ratio lighting 8:1 or higher, single hard source creating sharp shadow geometry, near-black void backgrounds with no detail, philosophical dread, deliberately desaturated palette approaching monochrome, isolated subject commanding empty negative space, clinical observational framing, no warmth no comfort, slow implied movement, existential weight, Kodak Double-X film stock aesthetic, 2.39:1, deep focus or extreme shallow focus no middle ground, photorealistic, no watermarks`,
+
+            neutral: `cinematic photorealistic film still, ARRI Alexa 35 camera, 35mm ARRI Master Prime lens, Kodak Vision3 500T film stock, 2.39:1 anamorphic aspect ratio, shallow depth of field with natural focus breathing, motivated practical lighting sources only, inverse square law falloff, warm to cool lighting contrast, film grain texture, imperfect surfaces with pores dust wear haze, hyper-detailed, no CGI quality, no watermarks`,
+
+            // IMAGE ENGINE
+            cinematic: `Pedro Feria Pino signature cinematic look, Kodachrome 64 film stock color science, warm golden highlights at 3200K, deeply crushed blacks with no detail in shadows, anamorphic horizontal lens character and subtle barrel distortion, slight horizontal flares from practical sources, controlled vignette, 2.39:1 widescreen, motivated practical lighting, heavy 35mm film grain texture, imperfect surfaces everywhere — scratches dust fingerprints, hyper-detailed photorealistic, cinematic depth layers, no digital look, no watermarks`,
+
+            // CHARACTER SHEETS
+            character_greyhouse: `character reference portrait for 1967 Scotland period horror production, three-quarter medium shot from waist up, photorealistic face with full skin texture — pores lines asymmetry, practical tungsten rim light with cold blue ambient fill creating warm-cold split, dark stone wall background slightly out of focus, era-accurate wardrobe in detail, neutral expression holding subtext, sharp full-face focus, film grain, Kodak Vision3 500T color science, ARRI Alexa 35, no motion blur, production reference quality, no watermarks`,
+
+            character_knockknock: `character reference portrait for 1990s Bronx crime drama production, three-quarter medium shot, photorealistic skin texture and facial detail, amber sodium vapor key light at 2200K, deep navy shadow side with zero fill, urban background slightly defocused, era-accurate 90s wardrobe in full detail, neutral watchful expression, sharp focus face and wardrobe, heavy film grain, Kodak Vision3 500T color, no motion blur, production reference quality, no watermarks`,
+
+            character_ichibonkiller: `character reference portrait for nihilistic philosophical narrative, three-quarter medium shot, photorealistic face with clinical detail, single hard directional key light 90 degrees off axis, complete shadow on opposite side, near-black void background, detached blank expression, contemporary wardrobe in muted tones, sharp focus on face, deliberately desaturated palette, no warmth in color grade, film grain, no motion blur, production reference quality, no watermarks`,
+
+            character_neutral: `character consistency reference sheet, three-quarter medium shot waist up, photorealistic face with full skin texture — pores asymmetry natural imperfection, clean cinematic studio lighting key and subtle rim, neutral dark background, sharp focus across entire frame, wardrobe fully visible and detailed, neutral expression, no motion blur, production reference quality, ARRI Alexa aesthetic, no watermarks`
+        };
+
+        // --- GENERATOR ENGINE ---
         async function getBase64(file) {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => resolve(reader.result.split(',')[1]);
             });
         }
 
-        function buildImageUrl(prompt) {
+        // Gemini 2.0 Flash — actual image generation (requires key)
+        async function generateWithGemini(prompt, imageFile) {
+            const key = getGeminiKey();
+            if (!key) return null;
+            const parts = [{ text: `Generate a photorealistic image: ${prompt}` }];
+            if (imageFile) {
+                const b64 = await getBase64(imageFile);
+                parts.push({ inline_data: { mime_type: imageFile.type, data: b64 } });
+            }
+            const resp = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${key}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts }],
+                        generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
+                    })
+                }
+            );
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error.message);
+            const imgPart = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+            if (!imgPart) throw new Error('No image returned from Gemini.');
+            return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
+        }
+
+        // Pollinations FLUX — fallback, no key needed
+        function buildPollinationsUrl(prompt, isPortrait) {
             const seed = Math.floor(Math.random() * 999999);
-            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
+            const w = isPortrait ? 720 : 1280;
+            const h = isPortrait ? 960 : 720;
+            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}`;
+        }
+
+        // Build full styled prompt from input + style DNA
+        function buildPrompt(type, userText, styleDNAKey) {
+            const dna = STYLE_DNA[styleDNAKey] || '';
+            if (type === 'sketch') {
+                return `${userText ? userText + ', ' : ''}${dna}`;
+            } else if (type === 'cinematic') {
+                return `${userText ? userText + ', ' : ''}${dna}`;
+            } else {
+                // character — portrait
+                return `${userText ? userText + ', ' : ''}${dna}`;
+            }
+        }
+
+        function renderOutput(type, imgSrc, prompt, isDataUrl) {
+            const outputDiv = document.getElementById(`${type}Output`);
+            if (isDataUrl) {
+                outputDiv.innerHTML = `
+                    <img src="${imgSrc}" alt="Generated" style="width:100%; border-radius:6px; display:block;">
+                    <div class="prompt-used" id="prompt_${type}">${prompt}</div>
+                    <div class="gen-actions" id="actions_${type}">
+                        <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
+                        <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
+                    </div>`;
+            } else {
+                outputDiv.innerHTML = `
+                    <div class="gen-loader" id="loader_${type}">DEVELOPING FRAME...</div>
+                    <img src="${imgSrc}" alt="Generated" style="width:100%; border-radius:6px; display:none;"
+                        onload="document.getElementById('loader_${type}').style.display='none'; this.style.display='block';"
+                        onerror="document.getElementById('loader_${type}').textContent='Generation failed — try again.'; document.getElementById('loader_${type}').style.color='#c45c3e';">
+                    <div class="prompt-used" id="prompt_${type}">${prompt}</div>
+                    <div class="gen-actions" id="actions_${type}">
+                        <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
+                        <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
+                    </div>`;
+            }
         }
 
         async function handleGenerate(type) {
             const inputEl = document.getElementById(`${type}Input`);
             const fileInput = document.getElementById(`${type}File`);
+            const styleEl = document.getElementById(`${type}Style`);
             const file = fileInput ? fileInput.files[0] : null;
             const outputDiv = document.getElementById(`${type}Output`);
+            const styleDNAKey = styleEl ? styleEl.value : type;
+            const isPortrait = type === 'character';
 
-            if (!inputEl.value && !file) return alert("Enter a description or upload an image.");
+            if (!inputEl.value && !file) return alert('Enter a description or upload an image.');
 
             outputDiv.style.display = 'block';
             outputDiv.innerHTML = '<div class="gen-loader">DEVELOPING FRAME...</div>';
 
-            let finalPrompt = inputEl.value;
+            const styledPrompt = buildPrompt(type, inputEl.value, styleDNAKey);
 
-            // If sketch uploaded AND user has a Gemini key, analyze the sketch
-            if (file && getGeminiKey()) {
+            // Try Gemini first if key exists
+            if (getGeminiKey()) {
                 try {
-                    const base64 = await getBase64(file);
-                    const sysText = type === 'sketch'
-                        ? "You are a professional DP. Analyze this storyboard sketch and write a detailed image generation prompt describing exactly what is shown. Include: shot framing, subject position, lighting direction, mood, location details. Be specific and visual. End with: photorealistic, cinematic, ARRI Alexa, 35mm Master Prime, Vision3 500T film stock, 2.39:1 anamorphic."
-                        : "Analyze this reference image and describe it as a detailed character consistency sheet: physical features, skin tone, hair, wardrobe, build, expression. Be precise and tokenized.";
-                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${getGeminiKey()}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [
-                            { text: sysText + (inputEl.value ? " Additional context: " + inputEl.value : "") },
-                            { inline_data: { mime_type: file.type, data: base64 } }
-                        ]}]})
-                    });
-                    const data = await resp.json();
-                    if (!data.error) {
-                        finalPrompt = data.candidates[0].content.parts[0].text;
-                    }
-                } catch(e) { /* fallback to text input */ }
+                    const imgDataUrl = await generateWithGemini(styledPrompt, file);
+                    renderOutput(type, imgDataUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    console.warn('Gemini failed, falling back to Pollinations:', e.message);
+                    outputDiv.innerHTML = `<div class="gen-loader">Gemini failed (${e.message.substring(0,60)}...) — switching to FLUX...</div>`;
+                    await new Promise(r => setTimeout(r, 1500));
+                }
             }
 
-            // Style-specific prompt wrapping
-            let styledPrompt = finalPrompt;
-            if (type === 'sketch') {
-                styledPrompt = `Photorealistic cinematic film still, ARRI Alexa 35, 35mm Master Prime lens, Kodak Vision3 500T film stock, ${finalPrompt}, hyper-detailed, 2.39:1 anamorphic, shallow depth of field, motivated practical lighting, film grain, no text, no watermarks`;
-            } else if (type === 'cinematic') {
-                styledPrompt = `Pedro Feria Pino signature look, Kodachrome film stock, warm golden highlights, crushed blacks, anamorphic lens flares, ${finalPrompt}, cinematic realism, 35mm film grain, photorealistic, hyper-detailed, high contrast, 2.39:1, no text`;
-            } else if (type === 'character') {
-                styledPrompt = `Character reference portrait, photorealistic, cinematic studio lighting, ${finalPrompt}, detailed facial features, full wardrobe visible, sharp focus, film still quality, neutral dark background, no text, no watermarks`;
-            }
-
-            const imgUrl = buildImageUrl(styledPrompt);
-
-            outputDiv.innerHTML = `
-                <div class="gen-loader" id="loader_${type}">DEVELOPING FRAME...</div>
-                <img src="${imgUrl}" alt="Generated" style="width:100%; border-radius:6px; display:none;"
-                    onload="document.getElementById('loader_${type}').style.display='none'; this.style.display='block'; document.getElementById('actions_${type}').style.display='flex';"
-                    onerror="document.getElementById('loader_${type}').textContent='Generation failed — try again.'; document.getElementById('loader_${type}').style.color='#c45c3e';">
-                <div class="prompt-used" id="prompt_${type}">${styledPrompt}</div>
-                <div class="gen-actions" id="actions_${type}" style="display:none;">
-                    <button class="copy-btn" onclick="copyPrompt('${type}')">COPY PROMPT</button>
-                    <button class="regen-btn" onclick="handleGenerate('${type}')">REGENERATE</button>
-                </div>
-            `;
+            // Fallback: Pollinations FLUX
+            const imgUrl = buildPollinationsUrl(styledPrompt, isPortrait);
+            renderOutput(type, imgUrl, styledPrompt, false);
         }
 
         function copyPrompt(type) {
-            const text = document.getElementById(`prompt_${type}`).textContent;
-            navigator.clipboard.writeText(text);
+            const el = document.getElementById(`prompt_${type}`);
+            if (!el) return;
+            navigator.clipboard.writeText(el.textContent);
             const btn = document.querySelector(`#actions_${type} .copy-btn`);
-            btn.textContent = "COPIED";
-            setTimeout(() => btn.textContent = "COPY PROMPT", 2000);
+            if (btn) { btn.textContent = 'COPIED'; setTimeout(() => btn.textContent = 'COPY PROMPT', 2000); }
         }
         // --- UTILS ---
         const tcEl = document.getElementById('timecode');
