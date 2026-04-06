@@ -64,8 +64,8 @@
         .gen-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
         .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 100px; margin-top: 1rem; }
         .gen-card textarea:focus { outline: none; border-color: var(--accent); }
-        .gen-card button { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 12px; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; cursor: pointer; transition: background 0.3s; }
-        .gen-card button:hover { background: #ff8533; }
+        .gen-card button { width: 100%; background: var(--accent-teal); color: #000; border: none; border-radius: 12px; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; cursor: pointer; transition: background 0.3s; }
+        .gen-card button:hover { background: #66f9ff; }
         .gen-output { background: rgba(0,0,0,0.8); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-teal); max-height: 200px; overflow-y: auto; white-space: pre-wrap; display: none; }
         footer { padding: 3rem; text-align: center; border-top: 1px solid #222; }
         footer p { color: var(--text-dim); font-size: 0.85rem; }
@@ -90,7 +90,7 @@
     <button class="audio-toggle" id="audioToggle" onclick="toggleAudio()">🔇 SOUND</button>
     
     <nav>
-        <img src="images/logos/vefilm_eye.png" alt="VEFILM" class="logo">
+        <img src="Logo/Transparent Logo.png" alt="VEFILM" class="logo">
         <div class="nav-links">
             <a href="#greyhouse">The House of Grey</a>
             <a href="#knockknock">Knock Knock</a>
@@ -101,7 +101,7 @@
 
     <!-- GREY HOUSE HERO -->
     <section id="greyhouse" class="hero-video">
-        <video autoplay loop playsinline controls>
+        <video loop playsinline controls preload="metadata">
             <source src="videos/GreyHouse/TheGreyHouse_compressed.mp4" type="video/mp4">
         </video>
         <div class="hero-overlay">
@@ -161,7 +161,7 @@
         <h2 class="section-title">AI Productions</h2>
         <div class="project-grid">
             <div class="project-card">
-                <video autoplay muted loop playsinline>
+                <video muted loop playsinline controls preload="metadata">
                     <source src="videos/ArchMotorcycles/Arch_compressed.mp4" type="video/mp4">
                 </video>
                 <div class="project-info">
@@ -171,7 +171,7 @@
                 </div>
             </div>
             <div class="project-card">
-                <video autoplay muted loop playsinline>
+                <video muted loop playsinline controls preload="metadata">
                     <source src="videos/FlyAway/FlyAway_compressed.mp4" type="video/mp4">
                 </video>
                 <div class="project-info">
@@ -181,7 +181,7 @@
                 </div>
             </div>
             <div class="project-card">
-                <video autoplay muted loop playsinline>
+                <video muted loop playsinline controls preload="metadata">
                     <source src="videos/Bar/Bar_compressed.mp4" type="video/mp4">
                 </video>
                 <div class="project-info">
