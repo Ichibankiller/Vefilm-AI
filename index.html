@@ -70,12 +70,19 @@
         .gen-output { background: rgba(0,0,0,0.8); border: 1px solid var(--border); padding: 1rem; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-teal); max-height: 200px; overflow-y: auto; white-space: pre-wrap; display: none; }
         footer { padding: 3rem; text-align: center; border-top: 1px solid #222; }
         footer p { color: var(--text-dim); font-size: 0.85rem; }
-        @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } }
+        /* TIMECODE */
+        .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: #2563eb; color: #fff; padding: 0.5rem 1.25rem; border-radius: 4px; }
+        /* VERTICAL LINE */
+        .vertical-line { position: fixed; left: 60px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent 0%, var(--accent) 15%, var(--accent) 85%, transparent 100%); z-index: 100; pointer-events: none; }
+        .vertical-line::before { content: ''; position: absolute; top: 50%; left: -4px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; transform: translateY(-50%); }
+        @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } .vertical-line { display: none; } }
     </style>
 </head>
 <body>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
+    <div class="timecode" id="timecode">00:00:00:00</div>
+    <div class="vertical-line"></div>
     <nav>
         <img src="images/logos/vefilm_eye.png" alt="VEFILM" class="logo">
         <div class="nav-links">
@@ -341,6 +348,20 @@ Keep output under 200 words. Professional format.`;
             const result = await callGemini(systemPrompt, input);
             output.textContent = result;
         }
+
+        // TIMECODE
+        const tcEl = document.getElementById('timecode');
+        const startTime = Date.now();
+        function updateTimecode() {
+            const elapsed = Date.now() - startTime;
+            const hrs = String(Math.floor(elapsed / 3600000)).padStart(2, '0');
+            const mins = String(Math.floor((elapsed % 3600000) / 60000)).padStart(2, '0');
+            const secs = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, '0');
+            const frames = String(Math.floor((elapsed % 1000) / 41.67)).padStart(2, '0');
+            tcEl.textContent = `${hrs}:${mins}:${secs}:${frames}`;
+            requestAnimationFrame(updateTimecode);
+        }
+        updateTimecode();
     </script>
 </body>
 </html>
