@@ -225,12 +225,33 @@
             <h2 class="section-title">AI Generators</h2>
             <button onclick="toggleSettings()" style="background:none; border:1px solid var(--border); color:var(--text-dim); padding: 5px 10px; font-family:'JetBrains Mono'; font-size:10px; border-radius:4px;">⚙️ API SETTINGS</button>
         </div>
-        <div id="apiSettings">
-            <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.75rem;"><strong>API KEYS — stored locally, never in source code.</strong></p>
+
+        <!-- SECTION INTRO -->
+        <div style="margin: 1.5rem 0 2.5rem 0; max-width: 780px;">
+            <p style="font-size: 1.05rem; color: #ccc; line-height: 1.8; margin-bottom: 1rem;">
+                These tools were built the same way I approach a camera setup — every parameter intentional, nothing left to chance. If you've never used AI for production before, or you're skeptical of what it can actually do, this is the right place to start.
+            </p>
+            <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.75;">
+                You don't need to know anything technical. Describe what you want to see — a scene, a character, a lighting setup — and the generator handles the rest. The style, the camera spec, the lighting logic: it's already built in. You're just providing the subject.
+            </p>
+            <p style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; margin-top: 0.85rem; padding-left: 1rem; border-left: 2px solid var(--accent); font-style: italic;">
+                The VEFILM Generator and all image tools run on <strong style="color:#fff;">FLUX.1</strong> — one of the most capable open-source image models available. It's free to use. No subscriptions. You just need a free Hugging Face account to unlock the full engine. Instructions are in ⚙️ API Settings above.
+            </p>
+        </div>
+
+        <div id="apiSettings" style="display:none;">
+            <div style="background: rgba(255,107,0,0.06); border: 1px solid rgba(255,107,0,0.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                <p style="font-size:0.9rem; color:#fff; font-weight:600; margin-bottom:0.5rem;">How to activate the full image engine — takes 2 minutes</p>
+                <ol style="font-size:0.8rem; color:var(--text-dim); line-height:2; padding-left:1.2rem; margin-bottom:0;">
+                    <li>Go to <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-teal);">huggingface.co/settings/tokens</a> — create a free account if you don't have one</li>
+                    <li>Click <strong style="color:#fff;">New Token</strong> → set access to <strong style="color:#fff;">Read</strong> → copy the token (it starts with <code style="color:var(--accent);">hf_</code>)</li>
+                    <li>Paste it into the field below and hit <strong style="color:#fff;">Save HF Token</strong></li>
+                    <li>That's it. Your key stays on your device — it never touches our server.</li>
+                </ol>
+            </div>
 
             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
-                <strong style="color:#fff;">HUGGING FACE TOKEN</strong> — powers the VEFILM Generator and all image generation. Free token at
-                <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-teal);">huggingface.co/settings/tokens</a> → New Token → Read access.
+                <strong style="color:#fff;">HUGGING FACE TOKEN</strong> — unlocks FLUX.1 image generation across all tools. Free.
             </p>
             <input type="password" id="hfKeyInput" placeholder="Paste HF Token (hf_...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
             <div style="display:flex; gap:8px; margin-bottom:1.25rem; align-items:center;">
@@ -240,8 +261,8 @@
             </div>
 
             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
-                <strong style="color:#fff;">GEMINI KEY</strong> (optional) — enables sketch image analysis. Free key at
-                <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal);">aistudio.google.com</a> → Get API key.
+                <strong style="color:#fff;">GEMINI KEY</strong> <span style="color:#555;">(optional)</span> — enables sketch-to-image analysis when you upload a photo or drawing. Free key at
+                <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal);">aistudio.google.com</a> → Get API Key.
             </p>
             <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
             <div style="display:flex; gap:8px; align-items:center;">
@@ -256,7 +277,7 @@
                 <div>
                     <p style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--accent); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">SIGNATURE GENERATOR</p>
                     <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; color:#fff; margin-bottom:0.5rem;">THE VEFILM GENERATOR</h3>
-                    <p style="color:var(--text-dim); font-size:0.85rem; max-width:600px;">Pedro Feria Pino visual DNA — extracted from the portfolio and built into every prompt. High contrast. Motivated light. No apologies for darkness. Type what you want to shoot.</p>
+                    <p style="color:var(--text-dim); font-size:0.85rem; max-width:600px; line-height:1.7;">This is the most personal tool on the page. Every mode is built from my actual visual language — how I light, how I frame, what I expose for. You describe a subject or situation. The generator handles the rest: the camera, the light direction, the texture, the mood. Pick a mode below, type what you want to see, and generate.</p>
                 </div>
                 <span class="engine-badge" id="badge_feriapino" style="align-self:flex-start; margin-top:0.25rem;">LOADING...</span>
             </div>
@@ -281,7 +302,8 @@
         <div style="margin: 0 0 3rem 0; background:rgba(17,17,17,0.6); border:1px solid var(--border); border-radius:20px; padding:2.5rem; backdrop-filter:blur(12px);">
             <p style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--accent-teal); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">CHARACTER TOOL</p>
             <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2rem; color:#fff; margin-bottom:0.5rem;">Character Depth Deconstruction</h3>
-            <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1.5rem;">Generates a full character reference: body, clothing layers, wardrobe details, and daily carry inventory — annotated for production use.</p>
+            <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:0.75rem; line-height:1.75;">In production, a character isn't just a face — it's layered. How they dress, what they carry, how their clothes fit after years of wear. This tool builds that out from a description. You give it basic traits and context; it returns a full breakdown: body type, clothing layers, fabrics, personal inventory, and production notes. The kind of detail that makes wardrobe, casting, and continuity conversations actually useful.</p>
+            <p style="font-size:0.78rem; color:#666; margin-bottom:1.5rem;">No image generation needed — this is text output, structured for production use.</p>
             <textarea id="charDeconInput" placeholder="Describe physical traits, wardrobe, personality, era, role in story..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; resize:vertical; min-height:80px;"></textarea>
             <button onclick="handleCharDeconstruct()" style="margin-top:1rem; background:transparent; color:var(--accent-teal); border:1px solid var(--accent-teal); border-radius:10px; padding:0.7rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.08em; transition:0.3s;">Generate Deconstruction</button>
             <div class="gen-output" id="charDeconOutput" style="margin-top:1rem;"></div>
@@ -291,7 +313,7 @@
             <div class="gen-card">
                 <span class="engine-badge" id="badge_sketch">LOADING...</span>
                 <h3>Sketch to Screen</h3>
-                <p>Upload a storyboard or describe your shot. Translates into a photorealistic cinematic frame with full ARRI/Zeiss spec baked in.</p>
+                <p style="line-height:1.65;">Got a rough sketch, a phone photo of a drawing, or just a shot idea in your head? Drop it here. The engine reads what you've drawn or described and translates it into a finished cinematic frame — camera spec, focal length, light direction. It doesn't correct your vision; it executes it at production quality.</p>
                 <select class="style-select" id="sketchStyle">
                     <option value="greyhouse">The Grey House — Scotland 1967</option>
                     <option value="knockknock">Knock Knock — 90s Bronx</option>
@@ -306,7 +328,7 @@
             <div class="gen-card">
                 <span class="engine-badge" id="badge_cinematic">LOADING...</span>
                 <h3>Image Engine</h3>
-                <p>Pedro Feria Pino signature look. Select your project's visual DNA — every parameter is pre-loaded.</p>
+                <p style="line-height:1.65;">Select a project world — Grey House, Knock Knock, Ichibonkiller, or my general cinematic signature — then describe what you want in the frame. The visual DNA for that world is already loaded: the color science, the contrast ratio, the camera spec. You're not starting from zero. You're starting from a fully built visual system.</p>
                 <select class="style-select" id="cinematicStyle">
                     <option value="cinematic">Feria Pino — Kodachrome Signature</option>
                     <option value="greyhouse">The Grey House — Horror Atmosphere</option>
@@ -320,7 +342,7 @@
             <div class="gen-card">
                 <span class="engine-badge" id="badge_character">LOADING...</span>
                 <h3>Character Sheet</h3>
-                <p>Upload a reference or describe your character. Generates a photorealistic consistency reference for wardrobe, casting, and continuity.</p>
+                <p style="line-height:1.65;">Describe your character — age, build, how they carry themselves — or upload a reference image. The generator produces a photorealistic portrait consistent with the project's world. Useful for casting conversations, wardrobe, makeup, and making sure everyone on set is looking at the same version of this person.</p>
                 <select class="style-select" id="characterStyle">
                     <option value="character_greyhouse">Grey House — Period Horror, Scotland 1967</option>
                     <option value="character_knockknock">Knock Knock — 90s Bronx Street</option>
