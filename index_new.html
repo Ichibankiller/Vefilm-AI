@@ -139,7 +139,7 @@
     </nav>
     <!-- SECTION: GREY HOUSE -->
     <section id="greyhouse" class="hero-video">
-        <video autoplay muted loop playsinline controls preload="auto">
+        <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="images/GreyHouse/04_inn_exterior.png">
             <source src="videos/GreyHouse/TheGreyHouse_compressed.mp4" type="video/mp4">
         </video>
         <div class="hero-info">
@@ -298,16 +298,6 @@
             <div class="gen-output" id="feriaPinoOutput" style="margin-top:1rem;"></div>
         </div>
 
-        <!-- CHARACTER DEPTH DECONSTRUCTION -->
-        <div style="margin: 0 0 3rem 0; background:rgba(17,17,17,0.6); border:1px solid var(--border); border-radius:20px; padding:2.5rem; backdrop-filter:blur(12px);">
-            <p style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--accent-teal); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">CHARACTER TOOL</p>
-            <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2rem; color:#fff; margin-bottom:0.5rem;">Character Depth Deconstruction</h3>
-            <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:0.75rem; line-height:1.75;">In production, a character isn't just a face — it's layered. How they dress, what they carry, how their clothes fit after years of wear. This tool builds that out from a description. You give it basic traits and context; it returns a full breakdown: body type, clothing layers, fabrics, personal inventory, and production notes. The kind of detail that makes wardrobe, casting, and continuity conversations actually useful.</p>
-            <p style="font-size:0.78rem; color:#666; margin-bottom:1.5rem;">No image generation needed — this is text output, structured for production use.</p>
-            <textarea id="charDeconInput" placeholder="Describe physical traits, wardrobe, personality, era, role in story..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; resize:vertical; min-height:80px;"></textarea>
-            <button onclick="handleCharDeconstruct()" style="margin-top:1rem; background:transparent; color:var(--accent-teal); border:1px solid var(--accent-teal); border-radius:10px; padding:0.7rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.08em; transition:0.3s;">Generate Deconstruction</button>
-            <div class="gen-output" id="charDeconOutput" style="margin-top:1rem;"></div>
-        </div>
 
         <div class="gen-grid">
             <div class="gen-card">
@@ -536,12 +526,18 @@
             return `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
         }
 
-        // Pollinations FLUX — fallback, no key needed
-        function buildPollinationsUrl(prompt, isPortrait) {
+        // Pollinations FLUX — fallback, no key needed, fetch-based for reliability
+        async function generateWithPollinations(prompt, isPortrait) {
             const seed = Math.floor(Math.random() * 999999);
             const w = isPortrait ? 720 : 1280;
             const h = isPortrait ? 960 : 720;
-            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}`;
+            // Trim prompt to avoid URL length failures (keep first 500 chars of DNA)
+            const trimmed = prompt.length > 500 ? prompt.substring(0, 500) : prompt;
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(trimmed)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}&enhance=true`;
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`Pollinations ${resp.status}`);
+            const blob = await resp.blob();
+            return URL.createObjectURL(blob);
         }
 
         // Build full styled prompt from input + style DNA
@@ -599,16 +595,18 @@
 
             // Priority: HF → Gemini → Pollinations
             if (getHFKey()) {
+                outputDiv.innerHTML = '<div class="gen-loader">FLUX.1 ENGINE — DEVELOPING FRAME...</div>';
                 try {
                     const imgUrl = await generateWithHF(styledPrompt);
                     renderOutput(type, imgUrl, styledPrompt, true);
                     return;
                 } catch(e) {
-                    outputDiv.innerHTML = `<div class="gen-loader">HF error: ${e.message.substring(0,60)} — trying Gemini...</div>`;
+                    outputDiv.innerHTML = `<div class="gen-loader">HF error — switching to Gemini...</div>`;
                     await new Promise(r => setTimeout(r, 1200));
                 }
             }
             if (getGeminiKey()) {
+                outputDiv.innerHTML = '<div class="gen-loader">GEMINI ENGINE — DEVELOPING FRAME...</div>';
                 try {
                     const imgDataUrl = await generateWithGemini(styledPrompt, file);
                     renderOutput(type, imgDataUrl, styledPrompt, true);
@@ -618,9 +616,14 @@
                     await new Promise(r => setTimeout(r, 1000));
                 }
             }
-            // Fallback: Pollinations
-            const imgUrl = buildPollinationsUrl(styledPrompt, isPortrait);
-            renderOutput(type, imgUrl, styledPrompt, false);
+            // Fallback: Pollinations (no key required)
+            outputDiv.innerHTML = '<div class="gen-loader">FLUX ENGINE ACTIVE — No key needed. Generating... (15–30 sec)</div>';
+            try {
+                const imgUrl = await generateWithPollinations(styledPrompt, isPortrait);
+                renderOutput(type, imgUrl, styledPrompt, true);
+            } catch(e) {
+                outputDiv.innerHTML = `<div class="gen-loader" style="color:#c45c3e;">Generation failed — check your connection or try again. (${e.message})</div>`;
+            }
         }
 
         // --- FERIA PINO SIGNATURE GENERATOR ---
@@ -666,6 +669,7 @@
             const styledPrompt = `${inputEl.value.trim()}, ${mode.dna}`;
 
             if (getHFKey()) {
+                outputDiv.innerHTML = '<div class="gen-loader">FLUX.1 ENGINE — DEVELOPING IN YOUR STYLE...</div>';
                 try {
                     const imgUrl = await generateWithHF(styledPrompt);
                     renderOutput('feriaPino', imgUrl, styledPrompt, true);
@@ -676,6 +680,7 @@
                 }
             }
             if (getGeminiKey()) {
+                outputDiv.innerHTML = '<div class="gen-loader">GEMINI ENGINE — DEVELOPING IN YOUR STYLE...</div>';
                 try {
                     const imgDataUrl = await generateWithGemini(styledPrompt, null);
                     renderOutput('feriaPino', imgDataUrl, styledPrompt, true);
@@ -685,11 +690,13 @@
                     await new Promise(r => setTimeout(r, 1000));
                 }
             }
-            const w = isPortrait ? 768 : isStreet ? 768 : 1280;
-            const h = isPortrait ? 1024 : isStreet ? 1024 : 720;
-            const seed = Math.floor(Math.random() * 999999);
-            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(styledPrompt)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}`;
-            renderOutput('feriaPino', imgUrl, styledPrompt, false);
+            outputDiv.innerHTML = '<div class="gen-loader">FLUX ENGINE ACTIVE — No key needed. Generating... (15–30 sec)</div>';
+            try {
+                const imgUrl = await generateWithPollinations(styledPrompt, isPortrait);
+                renderOutput('feriaPino', imgUrl, styledPrompt, true);
+            } catch(e) {
+                outputDiv.innerHTML = `<div class="gen-loader" style="color:#c45c3e;">Generation failed — check your connection or try again. (${e.message})</div>`;
+            }
         }
 
         async function handleCharDeconstruct() {
@@ -727,10 +734,20 @@
             renderOutput('charDecon', imgUrl, charPrompt, false);
         }
 
-        // init mode description on load
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('fp_mode_desc').textContent = FP_MODES['street'].label;
-        });
+        // init mode description immediately (script is at end of body, DOM is ready)
+        (function() {
+            const modeDesc = document.getElementById('fp_mode_desc');
+            if (modeDesc) modeDesc.textContent = FP_MODES['street'].label;
+        })();
+
+        // Force-play hero video — handles browsers that block autoplay
+        (function() {
+            const vid = document.getElementById('heroVideo');
+            if (!vid) return;
+            const tryPlay = () => vid.play().catch(() => {});
+            vid.addEventListener('canplay', tryPlay, { once: true });
+            tryPlay();
+        })();
 
         function copyPrompt(type) {
             const el = document.getElementById(`prompt_${type}`);
