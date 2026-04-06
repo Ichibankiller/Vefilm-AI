@@ -79,36 +79,204 @@
         .project-info { padding: 1.5rem; }
         .project-tag { display: inline-block; padding: 0.25rem 0.75rem; background: rgba(0,242,255,0.1); color: var(--accent-teal); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; }
         /* GENERATORS */
-        .gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
-        .gen-card { background: rgba(17,17,17,0.6); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; transition: 0.3s; backdrop-filter: blur(12px); display: flex; flex-direction: column; }
-        .gen-card:hover { border-color: var(--accent); background: rgba(20,20,20,0.8); }
-        .gen-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; margin-bottom: 0.75rem; }
-        .gen-card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem; }
-        .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 80px; }
-        .gen-card button { width: 100%; background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; margin-top: 1rem; transition: 0.3s; }
-        .gen-card button:hover { background: var(--accent); color: #000; border-color: var(--accent); }
-        /* GENERATOR OUTPUT & SETTINGS */
-        .gen-output { background: #000; border: 1px solid var(--accent-teal); border-radius: 8px; padding: 1rem; margin-top: 1rem; display: none; position: relative; }
-        .gen-output img { width: 100%; border-radius: 6px; display: block; }
-        .gen-loader { text-align: center; padding: 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-        .gen-loader { animation: blink 1.2s ease-in-out infinite; }
-        .prompt-used { font-size: 0.6rem; color: #444; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; line-height: 1.5; border-top: 1px solid #1a1a1a; padding-top: 0.75rem; }
-        .gen-actions { display: flex; gap: 8px; margin-top: 0.75rem; }
-        .copy-btn { background: var(--accent-teal); color: #000; border: none; padding: 5px 10px; font-size: 0.6rem; font-weight: bold; border-radius: 4px; }
-        .regen-btn { background: transparent; border: 1px solid #333; color: #666; padding: 5px 10px; font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; border-radius: 4px; }
-        .regen-btn:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
-
-        #apiSettings { display:none; background:rgba(255,107,0,0.05); border:1px dashed var(--accent); padding:1.5rem; margin-top:1rem; border-radius:12px; }
-        .style-select { width:100%; background:rgba(0,0,0,0.6); border:1px solid var(--border); border-radius:8px; color:var(--accent-teal); padding:0.6rem 0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; margin-top:0.75rem; appearance:none; cursor:pointer; }
-        .style-select:focus { outline:none; border-color:var(--accent); }
-        .mic-btn { position:absolute; bottom:8px; right:8px; background:rgba(255,107,0,0.12); border:1px solid rgba(255,107,0,0.4); color:var(--accent); border-radius:50%; width:30px; height:30px; font-size:13px; padding:0; display:flex; align-items:center; justify-content:center; transition:0.2s; z-index:2; }
-        .mic-btn:hover { background:var(--accent); color:#000; border-color:var(--accent); }
-        .mic-btn.listening { background:var(--accent); color:#000; animation:blink 0.8s infinite; }
-        .textarea-wrap { position:relative; margin-top:0.75rem; }
-        .engine-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 7px; border-radius:3px; margin-bottom:0.75rem; }
-        .badge-gemini { background:rgba(0,242,255,0.1); color:var(--accent-teal); border:1px solid rgba(0,242,255,0.2); }
-        .badge-flux { background:rgba(255,107,0,0.1); color:var(--accent); border:1px solid rgba(255,107,0,0.2); }
+        .gen-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+        .gen-card {
+            background: #0e0e0e;
+            border: 1px solid rgba(255,255,255,0.07);
+            padding: 2rem 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.25s;
+        }
+        .gen-card:hover { border-color: rgba(255,107,0,0.35); }
+        .gen-card.full-width { grid-column: 1 / -1; padding: 0; overflow: hidden; border-color: rgba(255,255,255,0.05); }
+        .gen-card.accent-card { border-color: rgba(255,107,0,0.3); }
+        .gen-card-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.6rem;
+        }
+        .gen-card h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.75rem;
+            letter-spacing: 0.04em;
+            line-height: 1;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+        .gen-card .gen-desc {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            flex-grow: 0;
+        }
+        .gen-card textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            padding: 0.85rem 2.5rem 0.85rem 0.85rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 90px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .gen-card textarea:focus { border-color: rgba(255,107,0,0.4); }
+        .gen-card textarea::placeholder { color: rgba(255,255,255,0.2); }
+        .gen-btn {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.8rem 1rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 1rem;
+            cursor: none;
+            transition: all 0.2s;
+        }
+        .gen-btn:hover { background: rgba(255,107,0,0.12); border-color: var(--accent); color: #fff; }
+        .gen-btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+        .gen-btn.primary:hover { background: #e05e00; }
+        /* OUTPUT */
+        .gen-output { margin-top: 1.25rem; display: none; }
+        .gen-output img { width: 100%; display: block; }
+        .gen-loader {
+            padding: 2rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--accent);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+        .gen-loader { animation: blink 1.4s ease-in-out infinite; }
+        .prompt-used {
+            font-size: 0.58rem;
+            color: #333;
+            margin-top: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.55;
+            border-top: 1px solid #181818;
+            padding-top: 0.75rem;
+            max-height: 80px;
+            overflow: hidden;
+        }
+        .gen-actions { display: flex; gap: 8px; margin-top: 0.6rem; }
+        .copy-btn {
+            background: transparent;
+            color: var(--accent-teal);
+            border: 1px solid rgba(0,242,255,0.25);
+            padding: 5px 12px;
+            font-size: 0.58rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.08em;
+            cursor: none;
+            transition: 0.2s;
+        }
+        .copy-btn:hover { background: rgba(0,242,255,0.08); }
+        .regen-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.25);
+            padding: 5px 12px;
+            font-size: 0.58rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.08em;
+            cursor: none;
+            transition: 0.2s;
+        }
+        .regen-btn:hover { border-color: rgba(255,107,0,0.4); color: var(--accent); }
+        /* SELECTS + INPUTS */
+        .style-select {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(0,242,255,0.8);
+            padding: 0.65rem 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            appearance: none;
+            outline: none;
+            cursor: none;
+        }
+        .style-select:focus { border-color: rgba(255,107,0,0.4); }
+        .file-input-wrap {
+            margin-bottom: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .file-input-wrap input[type="file"] { display: none; }
+        .file-input-label {
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            font-size: 0.62rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+        }
+        .file-input-label:hover { border-color: var(--accent); color: var(--accent); }
+        .file-name { font-size: 0.6rem; color: var(--accent-teal); }
+        /* MIC */
+        .textarea-wrap { position: relative; }
+        .mic-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255,107,0,0.08);
+            border: 1px solid rgba(255,107,0,0.25);
+            color: var(--accent);
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            transition: 0.2s;
+            border-radius: 2px;
+        }
+        .mic-btn:hover { background: var(--accent); color: #000; }
+        .mic-btn.listening { background: var(--accent); color: #000; animation: blink 0.7s infinite; }
+        /* ENGINE BADGE */
+        .engine-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.54rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            margin-bottom: 0.85rem;
+            background: rgba(255,107,0,0.08);
+            color: var(--accent);
+            border: 1px solid rgba(255,107,0,0.2);
+        }
+        @media (max-width: 860px) { .gen-grid { grid-template-columns: 1fr; } .gen-card.full-width { grid-column: 1; } }
         /* UTILS */
         .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: rgba(0,0,0,0.8); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
         .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.6rem 1.2rem; cursor: pointer; }
@@ -233,135 +401,70 @@
         </div>
     </section>
     <!-- SECTION: GENERATORS -->
-    <section id="generators">
+    <section id="generators" style="padding: 5rem 3rem;">
         <p class="section-label">Production Tools</p>
-        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h2 class="section-title">AI Generators</h2>
-            <button onclick="toggleSettings()" style="background:none; border:1px solid var(--border); color:var(--text-dim); padding: 5px 10px; font-family:'JetBrains Mono'; font-size:10px; border-radius:4px;">⚙️ API SETTINGS</button>
+        <h2 class="section-title">AI Generators</h2>
+        <p style="color:rgba(255,255,255,0.4); font-size:0.88rem; line-height:1.7; max-width:620px; margin-top:1rem; margin-bottom:0.5rem;">
+            Powered by Gemini 2.5 Flash + FLUX 1.1 Pro. Describe what you need — the camera spec, lighting logic, and cinematic language are already loaded. No technical knowledge required.
+        </p>
+        <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:2.5rem; font-family:'JetBrains Mono',monospace; font-size:0.56rem; letter-spacing:0.15em; color:var(--accent); background:rgba(255,107,0,0.06); border:1px solid rgba(255,107,0,0.18); padding:4px 10px;">
+            GEMINI 2.5 FLASH &nbsp;+&nbsp; FLUX 1.1 PRO &nbsp;·&nbsp; VEFILM PIPELINE
         </div>
 
-        <!-- SECTION INTRO -->
-        <div style="margin: 1.5rem 0 2.5rem 0; max-width: 780px;">
-            <p style="font-size: 1.05rem; color: #ccc; line-height: 1.8; margin-bottom: 1rem;">
-                These tools were built the same way I approach a camera setup — every parameter intentional, nothing left to chance. If you've never used AI for production before, or you're skeptical of what it can actually do, this is the right place to start.
-            </p>
-            <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.75;">
-                You don't need to know anything technical. Describe what you want to see — a scene, a character, a lighting setup — and the generator handles the rest. The style, the camera spec, the lighting logic: it's already built in. You're just providing the subject.
-            </p>
-            <p style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; margin-top: 0.85rem; padding-left: 1rem; border-left: 2px solid var(--accent); font-style: italic;">
-                The generators run on a tiered engine stack — from <strong style="color:#fff;">FLUX 1.1 Pro Ultra</strong> (the top of the public stack) down to a free no-key fallback. The engine used is shown on each card. Add your own API keys in ⚙️ Settings to unlock higher quality tiers — keys stay on your device only.
-            </p>
-        </div>
+        <div class="gen-grid">
 
-        <div id="apiSettings" style="display:none;">
-
-            <!-- TIER 1: fal.ai -->
-            <div style="background:rgba(0,242,255,0.04); border:1px solid rgba(0,242,255,0.15); border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                    <strong style="color:#fff; font-size:0.85rem;">TIER 1 — fal.ai · FLUX 1.1 Pro Ultra</strong>
-                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:var(--accent); background:rgba(255,107,0,0.1); padding:2px 7px; border-radius:3px;">BEST QUALITY · ~$0.06/image</span>
-                </div>
-                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">The absolute top of the public stack right now. Get a free key at <a href="https://fal.ai/dashboard/keys" target="_blank" style="color:var(--accent-teal);">fal.ai/dashboard/keys</a> → Create Key. Free credits on signup.</p>
-                <input type="password" id="falKeyInput" placeholder="Paste fal.ai Key (starts with key-...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-                <div style="display:flex; gap:8px; align-items:center;">
-                    <button onclick="saveFalKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
-                    <button onclick="clearFalKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
-                    <span id="falStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
-                </div>
-            </div>
-
-            <!-- TIER 2: Together.ai -->
-            <div style="background:rgba(0,242,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                    <strong style="color:#fff; font-size:0.85rem;">TIER 2 — Together.ai · FLUX.1-dev</strong>
-                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:var(--accent-teal); background:rgba(0,242,255,0.08); padding:2px 7px; border-radius:3px;">HIGH QUALITY · ~$0.013/image</span>
-                </div>
-                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">Same FLUX.1-dev model but on dedicated fast GPU. Get a key at <a href="https://api.together.ai/settings/api-keys" target="_blank" style="color:var(--accent-teal);">api.together.ai</a> → API Keys. Free $1 credit on signup.</p>
-                <input type="password" id="togetherKeyInput" placeholder="Paste Together.ai Key" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-                <div style="display:flex; gap:8px; align-items:center;">
-                    <button onclick="saveTogetherKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
-                    <button onclick="clearTogetherKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
-                    <span id="togetherStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
-                </div>
-            </div>
-
-            <!-- TIER 3: HuggingFace -->
-            <div style="background:rgba(0,242,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                    <strong style="color:#fff; font-size:0.85rem;">TIER 3 — HuggingFace · FLUX.1-dev</strong>
-                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#aaa; background:rgba(255,255,255,0.05); padding:2px 7px; border-radius:3px;">FREE · Slower</span>
-                </div>
-                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">Free with an HF account. Get a token at <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-teal);">huggingface.co/settings/tokens</a> → New Token → Read. Then <strong style="color:#fff;">accept the model license</strong> at <a href="https://huggingface.co/black-forest-labs/FLUX.1-dev" target="_blank" style="color:var(--accent-teal);">FLUX.1-dev page</a>.</p>
-                <input type="password" id="hfKeyInput" placeholder="Paste HF Token (hf_...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-                <div style="display:flex; gap:8px; align-items:center;">
-                    <button onclick="saveHFKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
-                    <button onclick="clearHFKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
-                    <span id="hfStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
-                </div>
-            </div>
-
-            <!-- TIER 4: Gemini -->
-            <div style="background:rgba(0,242,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:1.25rem; margin-bottom:0.5rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                    <strong style="color:#fff; font-size:0.85rem;">TIER 4 — Google Gemini · Image Analysis</strong>
-                    <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#aaa; background:rgba(255,255,255,0.05); padding:2px 7px; border-radius:3px;">FREE · Sketch uploads</span>
-                </div>
-                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.6rem; line-height:1.6;">Enables sketch/photo analysis when uploading reference images. Free key at <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal);">aistudio.google.com</a> → Get API Key.</p>
-                <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:8px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-                <div style="display:flex; gap:8px; align-items:center;">
-                    <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE</button>
-                    <button onclick="clearUserKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
-                    <span id="keyStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
-                </div>
-            </div>
-            <p style="font-size:0.65rem; color:#444; margin-top:0.75rem;">All keys stored locally on your device only. Never sent to any server other than the respective AI provider.</p>
-        </div>
-        <div class="gen-grid" style="margin-top:2rem;">
+            <!-- SKETCH TO SCREEN -->
             <div class="gen-card">
-                <span class="engine-badge" id="badge_sketch">LOADING...</span>
-                <h3>Sketch to Screen</h3>
-                <p style="line-height:1.65; font-size:0.82rem;">Upload your rough sketch, storyboard frame, or location photo. This generator reads the composition, intent, and spatial information in your drawing and converts it into a hyper-detailed, photorealistic cinematic image — with full camera spec, motivated lighting, film stock, and lens characteristics locked in. Your sketch is the blueprint. The output is production-ready.</p>
-                <p style="font-size:0.72rem; color:var(--accent); font-family:'JetBrains Mono',monospace; margin-bottom:0.5rem; letter-spacing:0.04em;">UPLOAD YOUR SKETCH — DESCRIBE WHAT IT NEEDS</p>
+                <div class="gen-card-label">01 — Sketch to Screen</div>
+                <h3>Turn Any Sketch Into a Film Frame</h3>
+                <p class="gen-desc">Upload a rough sketch, storyboard panel, or location reference. Gemini reads the composition and spatial intent, then FLUX renders it as a fully realized cinematic frame — camera spec, motivated lighting, film stock all locked in.</p>
                 <select class="style-select" id="sketchStyle">
                     <option value="greyhouse">The Grey House — Scotland 1967</option>
                     <option value="knockknock">Knock Knock — 90s Bronx</option>
                     <option value="ichibonkiller">Ichibonkiller — Nihilistic</option>
                     <option value="neutral">Neutral — Pure Cinematic</option>
                 </select>
-                <input type="file" id="sketchFile" accept="image/*" style="margin-top:0.75rem; font-size: 0.7rem; color: #888;">
+                <div class="file-input-wrap">
+                    <label class="file-input-label" for="sketchFile" id="sketchFileLabel">+ UPLOAD SKETCH</label>
+                    <input type="file" id="sketchFile" accept="image/*" onchange="document.getElementById('sketchFileLabel').textContent = this.files[0] ? '✓ ' + this.files[0].name.slice(0,28) : '+ UPLOAD SKETCH'">
+                </div>
                 <div class="textarea-wrap">
-                    <textarea id="sketchInput" placeholder="Describe the shot: framing, lighting, action, location..."></textarea>
+                    <textarea id="sketchInput" rows="3" placeholder="Describe the shot — framing, action, location, mood..."></textarea>
                     <button class="mic-btn" onclick="startMic('sketchInput', this)" title="Speak your prompt">🎤</button>
                 </div>
-                <button onclick="handleGenerate('sketch')">Generate Frame</button>
+                <button class="gen-btn" onclick="handleGenerate('sketch')">Generate Frame</button>
                 <div class="gen-output" id="sketchOutput"></div>
             </div>
-            <div class="gen-card" style="border-color: var(--accent); box-shadow: 0 0 30px rgba(255,107,0,0.08);">
-                <span class="engine-badge" id="badge_cinematic">LOADING...</span>
-                <h3>The VEFILM Signature Generator</h3>
-                <p style="line-height:1.65; font-size:0.82rem;">Pedro Feria Pino's visual DNA is baked into every single output — Kodachrome 64 color science, motivated practical sources only, high contrast ratios, inverse square law falloff, anamorphic lens character, and cinematic imperfection throughout. You describe the subject or scene. Every technical decision is already made. Select a project world below to lock in that world's specific light and atmosphere.</p>
-                <p style="font-size:0.72rem; color:var(--accent); font-family:'JetBrains Mono',monospace; margin-bottom:0.5rem; letter-spacing:0.04em;">DESCRIBE YOUR SUBJECT — THE LOOK IS ALREADY LOADED</p>
+
+            <!-- VEFILM SIGNATURE GENERATOR -->
+            <div class="gen-card accent-card">
+                <div class="gen-card-label" style="color:var(--accent);">02 — Signature Generator</div>
+                <h3>VEFILM Signature<br>Visual DNA</h3>
+                <p class="gen-desc">Pedro Feria Pino's visual language baked into every output — Kodachrome 64 color science, inverse square law falloff, motivated practicals, anamorphic lens character. Describe your subject. Every technical decision is already made.</p>
                 <select class="style-select" id="cinematicStyle">
                     <option value="cinematic">Pedro Feria Pino — Signature DNA</option>
-                    <option value="greyhouse">The Grey House — Scotland 1967 Horror</option>
+                    <option value="greyhouse">The Grey House — Scotland 1967</option>
                     <option value="knockknock">Knock Knock — 90s Bronx Neon</option>
                     <option value="ichibonkiller">Ichibonkiller — Cold Nihilism</option>
                 </select>
                 <div class="textarea-wrap">
-                    <textarea id="cinematicInput" placeholder="Describe the scene, subject, or mood — man in a doorway, two strangers at a bar, empty street at 3am..."></textarea>
+                    <textarea id="cinematicInput" rows="3" placeholder="Describe the scene or subject — a man in a doorway, two strangers at 3am, empty street..."></textarea>
                     <button class="mic-btn" onclick="startMic('cinematicInput', this)" title="Speak your prompt">🎤</button>
                 </div>
-                <button onclick="handleGenerate('cinematic')" style="background:var(--accent); color:#000; border-color:var(--accent); font-weight:bold;">Generate in My Style</button>
+                <button class="gen-btn primary" onclick="handleGenerate('cinematic')">Generate in My Style</button>
                 <div class="gen-output" id="cinematicOutput"></div>
             </div>
-            <div class="gen-card" style="padding:0; overflow:hidden; border-color: rgba(255,255,255,0.1);">
+
+            <!-- CHARACTER SHEET — FULL WIDTH -->
+            <div class="gen-card full-width">
                 <iframe
                     src="https://vefilm-character-sheet.vercel.app"
-                    style="width:100%; height:820px; border:none; display:block; background:#0a0a0a;"
+                    style="width:100%; height:900px; border:none; display:block; background:#0a0a0a;"
                     title="VEFILM Character Sheet Generator"
                     loading="lazy"
                 ></iframe>
             </div>
+
         </div>
     </section>
     <footer>
