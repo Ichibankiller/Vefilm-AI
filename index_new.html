@@ -226,17 +226,31 @@
             <button onclick="toggleSettings()" style="background:none; border:1px solid var(--border); color:var(--text-dim); padding: 5px 10px; font-family:'JetBrains Mono'; font-size:10px; border-radius:4px;">⚙️ API SETTINGS</button>
         </div>
         <div id="apiSettings">
-            <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.5rem;"><strong>ENGINE UPGRADE:</strong> Paste your free Gemini key to unlock Google's Imagen engine for all three generators.</p>
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.25rem;">Without key: FLUX via Pollinations — generates real images, fast, no sign-up.</p>
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:1rem;">With Gemini key: Google Imagen — superior photorealism, understands uploaded sketches, runs all three generators. Free key at <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal); text-decoration:underline;">aistudio.google.com</a> → Get API key → Copy key.</p>
-            <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-top:5px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
-            <div style="display:flex; gap:8px; margin-top:10px; align-items:center;">
-                <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE KEY</button>
+            <p style="font-size:0.8rem; color:var(--accent); margin-bottom:0.75rem;"><strong>API KEYS — stored locally, never in source code.</strong></p>
+
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
+                <strong style="color:#fff;">HUGGING FACE TOKEN</strong> — powers the VEFILM Generator and all image generation. Free token at
+                <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-teal);">huggingface.co/settings/tokens</a> → New Token → Read access.
+            </p>
+            <input type="password" id="hfKeyInput" placeholder="Paste HF Token (hf_...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+            <div style="display:flex; gap:8px; margin-bottom:1.25rem; align-items:center;">
+                <button onclick="saveHFKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE HF TOKEN</button>
+                <button onclick="clearHFKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
+                <span id="hfStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
+            </div>
+
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem;">
+                <strong style="color:#fff;">GEMINI KEY</strong> (optional) — enables sketch image analysis. Free key at
+                <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-teal);">aistudio.google.com</a> → Get API key.
+            </p>
+            <input type="password" id="userKeyInput" placeholder="Paste Gemini Key (AIza...)" style="width:100%; background:#000; border:1px solid var(--border); color:var(--accent-teal); padding:10px; margin-bottom:10px; font-family:'JetBrains Mono'; font-size:0.75rem; border-radius:6px;">
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button onclick="saveUserKey()" style="padding:5px 15px; background:var(--accent); color:#000; border:none; font-weight:bold; font-size:11px; border-radius:4px;">SAVE GEMINI KEY</button>
                 <button onclick="clearUserKey()" style="padding:5px 15px; background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:11px; border-radius:4px;">CLEAR</button>
                 <span id="keyStatusBadge" style="font-family:'JetBrains Mono'; font-size:0.6rem; color:#444;"></span>
             </div>
         </div>
-        <!-- FERIA PINO SIGNATURE GENERATOR -->
+        <!-- VEFILM SIGNATURE GENERATOR -->
         <div style="margin: 3rem 0; border: 1px solid var(--accent); border-radius: 20px; padding: 2.5rem; background: linear-gradient(135deg, rgba(255,107,0,0.05) 0%, rgba(0,0,0,0.6) 100%); backdrop-filter: blur(12px);">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
                 <div>
@@ -248,19 +262,29 @@
             </div>
 
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom:1.5rem;">
-                <button onclick="setFPMode('street', this)" class="fp-mode-btn fp-active" data-mode="street">STREET</button>
-                <button onclick="setFPMode('cinematic', this)" class="fp-mode-btn" data-mode="cinematic">CINEMATIC</button>
-                <button onclick="setFPMode('nighturban', this)" class="fp-mode-btn" data-mode="nighturban">NIGHT URBAN</button>
-                <button onclick="setFPMode('portrait', this)" class="fp-mode-btn" data-mode="portrait">PORTRAIT</button>
+                <button onclick="setFPMode('street', this)" class="fp-mode-btn fp-active">STREET</button>
+                <button onclick="setFPMode('cinematic', this)" class="fp-mode-btn">CINEMATIC</button>
+                <button onclick="setFPMode('nighturban', this)" class="fp-mode-btn">NIGHT URBAN</button>
+                <button onclick="setFPMode('portrait', this)" class="fp-mode-btn">PORTRAIT</button>
             </div>
 
-            <div id="fp_mode_desc" style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--accent); letter-spacing:0.05em; margin-bottom:1rem; padding:0.75rem; background:rgba(255,107,0,0.08); border-radius:8px; line-height:1.6;"></div>
+            <div id="fp_mode_desc" style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--accent); letter-spacing:0.05em; margin-bottom:1rem; padding:0.75rem; background:rgba(255,107,0,0.08); border-radius:8px; border-left:2px solid var(--accent); line-height:1.6;"></div>
 
-            <textarea id="feriaPinoInput" placeholder="Describe your subject or scene: a man waiting at a crosswalk in rain, two fishermen at dawn, empty diner at 3am, detective in a doorway..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; resize:vertical; min-height:80px;"></textarea>
+            <textarea id="feriaPinoInput" placeholder="Describe your subject or scene: a man waiting at a crosswalk in rain, two fishermen at dawn, empty diner at 3am, detective in a doorway..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1.2rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; resize:vertical; min-height:100px;"></textarea>
 
-            <button onclick="handleFeriaPino()" style="width:100%; background:var(--accent); color:#000; border:none; border-radius:12px; padding:0.85rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; transition:0.3s;">GENERATE IN MY STYLE</button>
+            <button onclick="handleFeriaPino()" style="width:100%; background:var(--accent); color:#000; border:none; border-radius:12px; padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; transition:0.3s;">GENERATE IN MY STYLE</button>
 
             <div class="gen-output" id="feriaPinoOutput" style="margin-top:1rem;"></div>
+        </div>
+
+        <!-- CHARACTER DEPTH DECONSTRUCTION -->
+        <div style="margin: 0 0 3rem 0; background:rgba(17,17,17,0.6); border:1px solid var(--border); border-radius:20px; padding:2.5rem; backdrop-filter:blur(12px);">
+            <p style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--accent-teal); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">CHARACTER TOOL</p>
+            <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2rem; color:#fff; margin-bottom:0.5rem;">Character Depth Deconstruction</h3>
+            <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1.5rem;">Generates a full character reference: body, clothing layers, wardrobe details, and daily carry inventory — annotated for production use.</p>
+            <textarea id="charDeconInput" placeholder="Describe physical traits, wardrobe, personality, era, role in story..." style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:12px; color:var(--text); padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; resize:vertical; min-height:80px;"></textarea>
+            <button onclick="handleCharDeconstruct()" style="margin-top:1rem; background:transparent; color:var(--accent-teal); border:1px solid var(--accent-teal); border-radius:10px; padding:0.7rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.08em; transition:0.3s;">Generate Deconstruction</button>
+            <div class="gen-output" id="charDeconOutput" style="margin-top:1rem;"></div>
         </div>
 
         <div class="gen-grid">
@@ -320,6 +344,8 @@
     <script>
         // --- API & SETTINGS ---
         function getGeminiKey() { return localStorage.getItem('vefilm_user_key') || ''; }
+        function getHFKey() { return localStorage.getItem('vefilm_hf_key') || ''; }
+
         function toggleSettings() {
             const p = document.getElementById('apiSettings');
             p.style.display = p.style.display === 'none' ? 'block' : 'none';
@@ -338,11 +364,30 @@
             updateEngineBadges();
             document.getElementById('keyStatusBadge').textContent = '';
         }
+        function saveHFKey() {
+            const val = document.getElementById('hfKeyInput').value.trim();
+            if (val.startsWith('hf_')) {
+                localStorage.setItem('vefilm_hf_key', val);
+                updateEngineBadges();
+                document.getElementById('hfStatusBadge').textContent = '✓ HF TOKEN ACTIVE';
+                document.getElementById('hfStatusBadge').style.color = '#00f2ff';
+            } else { alert("Invalid token — should start with hf_..."); }
+        }
+        function clearHFKey() {
+            localStorage.removeItem('vefilm_hf_key');
+            updateEngineBadges();
+            document.getElementById('hfStatusBadge').textContent = '';
+        }
         function updateEngineBadges() {
-            const hasKey = !!getGeminiKey();
+            const hasHF = !!getHFKey();
+            const hasGemini = !!getGeminiKey();
             ['sketch','cinematic','character','feriapino'].forEach(t => {
                 const b = document.getElementById(`badge_${t}`);
-                if (hasKey) {
+                if (!b) return;
+                if (hasHF) {
+                    b.textContent = 'FLUX.1 · HF ENGINE';
+                    b.className = 'engine-badge badge-gemini';
+                } else if (hasGemini) {
                     b.textContent = 'GEMINI IMAGEN';
                     b.className = 'engine-badge badge-gemini';
                 } else {
@@ -350,6 +395,10 @@
                     b.className = 'engine-badge badge-flux';
                 }
             });
+            // restore HF badge text on load if key exists
+            if (hasHF) {
+                document.getElementById('hfStatusBadge') && (document.getElementById('hfStatusBadge').textContent = '✓ HF TOKEN ACTIVE', document.getElementById('hfStatusBadge').style.color = '#00f2ff');
+            }
         }
         updateEngineBadges();
         // --- CURSOR ---
@@ -419,6 +468,23 @@
                 reader.readAsDataURL(file);
                 reader.onload = () => resolve(reader.result.split(',')[1]);
             });
+        }
+
+        // HuggingFace FLUX.1-schnell — direct API, user's own token
+        async function generateWithHF(prompt) {
+            const token = getHFKey();
+            if (!token) return null;
+            const resp = await fetch(
+                'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+                {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inputs: prompt })
+                }
+            );
+            if (!resp.ok) throw new Error(`HF API error ${resp.status} — check token or wait 10s`);
+            const blob = await resp.blob();
+            return URL.createObjectURL(blob);
         }
 
         // Gemini 2.0 Flash — actual image generation (requires key)
@@ -509,20 +575,28 @@
 
             const styledPrompt = buildPrompt(type, inputEl.value, styleDNAKey);
 
-            // Try Gemini first if key exists
+            // Priority: HF → Gemini → Pollinations
+            if (getHFKey()) {
+                try {
+                    const imgUrl = await generateWithHF(styledPrompt);
+                    renderOutput(type, imgUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">HF error: ${e.message.substring(0,60)} — trying Gemini...</div>`;
+                    await new Promise(r => setTimeout(r, 1200));
+                }
+            }
             if (getGeminiKey()) {
                 try {
                     const imgDataUrl = await generateWithGemini(styledPrompt, file);
                     renderOutput(type, imgDataUrl, styledPrompt, true);
                     return;
                 } catch(e) {
-                    console.warn('Gemini failed, falling back to Pollinations:', e.message);
-                    outputDiv.innerHTML = `<div class="gen-loader">Gemini failed (${e.message.substring(0,60)}...) — switching to FLUX...</div>`;
-                    await new Promise(r => setTimeout(r, 1500));
+                    outputDiv.innerHTML = `<div class="gen-loader">Gemini failed — switching to FLUX...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
                 }
             }
-
-            // Fallback: Pollinations FLUX
+            // Fallback: Pollinations
             const imgUrl = buildPollinationsUrl(styledPrompt, isPortrait);
             renderOutput(type, imgUrl, styledPrompt, false);
         }
@@ -569,6 +643,16 @@
             const isStreet = fpCurrentMode === 'street';
             const styledPrompt = `${inputEl.value.trim()}, ${mode.dna}`;
 
+            if (getHFKey()) {
+                try {
+                    const imgUrl = await generateWithHF(styledPrompt);
+                    renderOutput('feriaPino', imgUrl, styledPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">HF error — trying Gemini...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
             if (getGeminiKey()) {
                 try {
                     const imgDataUrl = await generateWithGemini(styledPrompt, null);
@@ -579,12 +663,46 @@
                     await new Promise(r => setTimeout(r, 1000));
                 }
             }
-
             const w = isPortrait ? 768 : isStreet ? 768 : 1280;
             const h = isPortrait ? 1024 : isStreet ? 1024 : 720;
             const seed = Math.floor(Math.random() * 999999);
             const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(styledPrompt)}?width=${w}&height=${h}&nologo=true&model=flux&seed=${seed}`;
             renderOutput('feriaPino', imgUrl, styledPrompt, false);
+        }
+
+        async function handleCharDeconstruct() {
+            const inputEl = document.getElementById('charDeconInput');
+            const outputDiv = document.getElementById('charDeconOutput');
+            if (!inputEl.value.trim()) return alert('Describe the character.');
+
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = '<div class="gen-loader">DECONSTRUCTING CHARACTER...</div>';
+
+            const charPrompt = `Character depth deconstruction reference sheet, full body portrait centered, exploded view annotations of clothing layers and personal items, daily carry inventory diagram, handwritten technical notes, cinematic concept art quality, ${inputEl.value.trim()}, Pedro Feria Pino production style, motivated practical lighting, film grain, photorealistic, no watermarks`;
+
+            if (getHFKey()) {
+                try {
+                    const imgUrl = await generateWithHF(charPrompt);
+                    renderOutput('charDecon', imgUrl, charPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">HF error — switching to Gemini...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            if (getGeminiKey()) {
+                try {
+                    const imgDataUrl = await generateWithGemini(charPrompt, null);
+                    renderOutput('charDecon', imgDataUrl, charPrompt, true);
+                    return;
+                } catch(e) {
+                    outputDiv.innerHTML = `<div class="gen-loader">Switching to FLUX...</div>`;
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+            const seed = Math.floor(Math.random() * 999999);
+            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(charPrompt)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
+            renderOutput('charDecon', imgUrl, charPrompt, false);
         }
 
         // init mode description on load
