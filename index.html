@@ -6,161 +6,87 @@
     <title>VEFILM | AI Production Pipeline</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root { --bg: #0a0a0a; --bg-card: #111; --text: #fff; --text-dim: #888; --accent: #ff6b00; --accent-teal: #00f2ff; --border: rgba(255,255,255,0.08); }
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-        :root {
-            --bg: #0a0a0a;
-            --bg-card: #111;
-            --text: #fff;
-            --text-dim: #888;
-            --accent: #ff6b00;
-            --accent-teal: #00f2ff;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        /* CUSTOM CURSOR */
-        .cursor-dot {
-            width: 8px; height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s, background 0.2s;
-        }
-        .cursor-ring {
-            width: 40px; height: 40px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, border-color 0.2s;
-        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+        .cursor-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
+        .cursor-ring { width: 40px; height: 40px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, border-color 0.2s; }
         .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(1.5); background: var(--accent-teal); }
         .cursor-hover .cursor-ring { width: 50px; height: 50px; border-color: var(--accent-teal); }
-        /* NAV */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0;
-            padding: 1.5rem 3rem;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000;
-            background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
-        }
+        nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent); }
         .logo { height: 50px; }
         .nav-links { display: flex; gap: 2.5rem; }
-        .nav-links a {
-            color: var(--text-dim); text-decoration: none;
-            font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em;
-            transition: color 0.3s;
-        }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; transition: color 0.3s; }
         .nav-links a:hover { color: var(--text); }
-        /* SECTIONS */
-        section { padding: 6rem 3rem; }
-        .section-label {
-            font-size: 0.75rem; color: var(--accent);
-            letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem;
-        }
-        .section-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1;
-        }
-        .section-desc { color: var(--text-dim); max-width: 600px; margin-top: 1rem; }
-        /* PROJECT GRID */
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        section { padding: 4rem 3rem; }
+        .section-label { font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace; }
+        .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1; }
+        .section-desc { color: var(--text-dim); max-width: 600px; margin-top: 1rem; font-size: 0.95rem; }
+        /* HERO */
+        .hero-video { position: relative; width: 100%; margin-top: 80px; }
+        .hero-video video { width: 100%; max-height: 80vh; object-fit: cover; }
+        .hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 4rem 3rem 2rem; background: linear-gradient(to top, rgba(10,10,10,1), transparent); }
+        .hero-overlay h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95; }
+        .hero-overlay p { color: var(--text-dim); max-width: 500px; margin-top: 1rem; }
+        /* LOOKBOOK */
+        .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
+        .lookbook-item { position: relative; overflow: hidden; aspect-ratio: 16/9; }
+        .lookbook-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s, filter 0.5s; filter: grayscale(0.4); }
+        .lookbook-item:hover img { transform: scale(1.05); filter: grayscale(0); }
+        .lookbook-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); }
+        .lookbook-caption h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; }
+        .lookbook-caption p { font-size: 0.75rem; color: var(--text-dim); }
+        /* CONSOLE SLIDER */
+        .console-section { padding: 4rem 3rem; display: flex; flex-direction: column; align-items: center; }
+        .console { width: 100%; max-width: 1100px; aspect-ratio: 2.39/1; position: relative; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8); touch-action: none; }
+        .frame-before, .frame-after { position: absolute; inset: 0; background-size: cover; background-position: center; transition: background-image 0.4s ease; }
+        .frame-after { clip-path: inset(0 0 0 50%); z-index: 2; border-left: 2px solid var(--accent); }
+        .label-view { position: absolute; top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; text-transform: uppercase; color: rgba(255,255,255,0.5); z-index: 10; pointer-events: none; letter-spacing: 0.1em; }
+        .filmstrip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; width: 100%; max-width: 1100px; margin-top: 2rem; }
+        .thumb { aspect-ratio: 16/9; background-size: cover; background-position: center; cursor: pointer; opacity: 0.35; transition: 0.3s; border: 2px solid transparent; }
+        .thumb:hover { opacity: 0.7; }
+        .thumb.active { opacity: 1; border-color: var(--accent); transform: translateY(-4px); }
+        /* PROJECTS */
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
         .project-card { background: var(--bg-card); overflow: hidden; }
-        .project-card video, .project-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+        .project-card video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
         .project-info { padding: 1.5rem; }
         .project-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem; }
         .project-info p { color: var(--text-dim); font-size: 0.9rem; }
-        .project-tag {
-            display: inline-block; padding: 0.25rem 0.75rem;
-            background: rgba(255,107,0,0.15); color: var(--accent);
-            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem;
-        }
-        /* HERO VIDEO */
-        .hero-video { position: relative; width: 100%; margin-top: 80px; }
-        .hero-video video { width: 100%; max-height: 80vh; object-fit: cover; }
-        .hero-overlay {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 4rem 3rem 2rem;
-            background: linear-gradient(to top, rgba(10,10,10,1), transparent);
-        }
-        .hero-overlay h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95;
-        }
-        .hero-overlay p { color: var(--text-dim); max-width: 500px; margin-top: 1rem; }
-        /* COMPARISON SLIDER */
-        .slider-section { padding: 4rem 3rem; }
-        .slider-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .slider-container {
-            position: relative; width: 100%; aspect-ratio: 16/9;
-            overflow: hidden; background: #000; border-radius: 4px;
-        }
-        .slider-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        .slider-container .after { clip-path: inset(0 50% 0 0); }
-        .slider-handle {
-            position: absolute; top: 0; bottom: 0; left: 50%;
-            width: 4px; background: var(--accent); cursor: ew-resize; z-index: 10;
-            transform: translateX(-50%);
-        }
-        .slider-handle::before {
-            content: ''; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px; height: 40px; border-radius: 50%;
-            background: var(--accent); border: 3px solid #fff;
-        }
-        .slider-handle::after {
-            content: '⟷'; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); color: #000; font-size: 16px; font-weight: bold;
-        }
-        .slider-label {
-            position: absolute; bottom: 10px; padding: 4px 10px;
-            background: rgba(0,0,0,0.7); font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 0.1em; border-radius: 2px;
-        }
-        .slider-label.left { left: 10px; }
-        .slider-label.right { right: 10px; }
-        /* LOOKBOOK GRID */
-        .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 2rem; }
-        .lookbook-item { position: relative; overflow: hidden; }
-        .lookbook-item img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform 0.5s; }
-        .lookbook-item:hover img { transform: scale(1.05); }
-        .lookbook-caption {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        }
-        .lookbook-caption h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; }
-        .lookbook-caption p { font-size: 0.8rem; color: var(--text-dim); }
-        /* FOOTER */
+        .project-tag { display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255,107,0,0.15); color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; }
+        /* GENERATORS */
+        .gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .gen-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid var(--border); padding: 2rem; transition: border-color 0.3s, transform 0.3s; }
+        .gen-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .gen-icon { width: 48px; height: 48px; background: rgba(255,107,0,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 1.5rem; }
+        .gen-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; margin-bottom: 0.75rem; }
+        .gen-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
+        .gen-card textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--text); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: vertical; min-height: 100px; margin-top: 1rem; }
+        .gen-card textarea:focus { outline: none; border-color: var(--accent); }
+        .gen-card button { width: 100%; background: var(--accent); color: #000; border: none; padding: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1rem; cursor: pointer; transition: background 0.3s; }
+        .gen-card button:hover { background: #ff8533; }
+        .gen-output { background: rgba(0,0,0,0.8); border: 1px solid var(--border); padding: 1rem; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-teal); max-height: 200px; overflow-y: auto; white-space: pre-wrap; display: none; }
         footer { padding: 3rem; text-align: center; border-top: 1px solid #222; }
         footer p { color: var(--text-dim); font-size: 0.85rem; }
+        @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
-
     <nav>
         <img src="images/logos/vefilm_eye.png" alt="VEFILM" class="logo">
         <div class="nav-links">
             <a href="#greyhouse">Grey House</a>
             <a href="#knockknock">Knock Knock</a>
             <a href="#projects">Projects</a>
-            <a href="#about">About</a>
+            <a href="#generators">Generators</a>
         </div>
     </nav>
 
-    <!-- GREY HOUSE INCIDENT - HERO -->
+    <!-- GREY HOUSE HERO -->
     <section id="greyhouse" class="hero-video">
         <video autoplay muted loop playsinline>
             <source src="videos/GreyHouse/TheGreyHouse_compressed.mp4" type="video/mp4">
@@ -175,116 +101,43 @@
     <!-- GREY HOUSE LOOKBOOK -->
     <section>
         <div class="lookbook-grid">
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/08_callum.png" alt="Callum">
-                <div class="lookbook-caption"><h4>Callum</h4><p>The Innkeeper</p></div>
-            </div>
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/02_sign.png" alt="Sign">
-                <div class="lookbook-caption"><h4>Grey House</h4><p>The Sign</p></div>
-            </div>
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/04_inn_exterior.png" alt="The Inn">
-                <div class="lookbook-caption"><h4>The House of Gray</h4><p>Dundee, Scotland</p></div>
-            </div>
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/05_eyeball.png" alt="Eye">
-                <div class="lookbook-caption"><h4>The Possession</h4><p>Eyes rolled back</p></div>
-            </div>
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/03_police.png" alt="Police">
-                <div class="lookbook-caption"><h4>The Arrival</h4><p>Police lights in rain</p></div>
-            </div>
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/06_arrest.png" alt="Arrest">
-                <div class="lookbook-caption"><h4>The Arrest</h4><p>Through the glass</p></div>
-            </div>
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/07_blood.png" alt="Blood">
-                <div class="lookbook-caption"><h4>The Aftermath</h4><p>What he found</p></div>
-            </div>
-            <div class="lookbook-item">
-                <img src="images/GreyHouse/01_shock.png" alt="Detective">
-                <div class="lookbook-caption"><h4>Detective Rennie</h4><p>The Discovery</p></div>
-            </div>
+            <div class="lookbook-item"><img src="images/GreyHouse/08_callum.png" alt="Callum"><div class="lookbook-caption"><h4>Callum</h4><p>The Innkeeper</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/02_sign.png" alt="Sign"><div class="lookbook-caption"><h4>Grey House</h4><p>The Sign</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/04_inn_exterior.png" alt="Inn"><div class="lookbook-caption"><h4>The House of Gray</h4><p>Dundee, Scotland</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/05_eyeball.png" alt="Eye"><div class="lookbook-caption"><h4>The Possession</h4><p>Eyes rolled back</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/03_police.png" alt="Police"><div class="lookbook-caption"><h4>The Arrival</h4><p>Police lights in rain</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/06_arrest.png" alt="Arrest"><div class="lookbook-caption"><h4>The Arrest</h4><p>Through the glass</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/07_blood.png" alt="Blood"><div class="lookbook-caption"><h4>The Aftermath</h4><p>What he found</p></div></div>
+            <div class="lookbook-item"><img src="images/GreyHouse/01_shock.png" alt="Detective"><div class="lookbook-caption"><h4>Detective Rennie</h4><p>The Discovery</p></div></div>
         </div>
     </section>
 
-    <!-- KNOCK KNOCK -->
-    <section id="knockknock" class="slider-section">
+    <!-- KNOCK KNOCK - BIG CONSOLE + THUMBNAILS -->
+    <section id="knockknock" class="console-section">
         <p class="section-label">Case Study</p>
         <h2 class="section-title">Knock Knock</h2>
-        <p class="section-desc">1990s Bronx crime drama. Storyboard sketches transformed into photorealistic pre-visualization using a custom AI pipeline. Drag the slider to compare.</p>
+        <p class="section-desc">1990s Bronx crime drama. Storyboard sketches transformed into photorealistic pre-viz. Drag to compare.</p>
         
-        <div class="slider-grid">
-            <!-- Slider 1: Drone -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/01_drone_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/01_drone_render.png" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
-            <!-- Slider 2: Dulce -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/02_dulce_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/02_dulce_render.png" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
-            <!-- Slider 3: Car -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/03_car_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/03_car_render.jpg" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
-            <!-- Slider 4: Gun -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/04_gun_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/04_gun_render.jpg" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
-            <!-- Slider 5: Closeup -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/05_closeup_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/05_closeup_render.jpg" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
-            <!-- Slider 6: The Draw -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/06_draw_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/06_draw_render.png" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
-            <!-- Slider 7: The Kiss -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/07_kiss_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/07_kiss_render.jpg" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
-            <!-- Slider 8: Hallway -->
-            <div class="slider-container" data-slider>
-                <img src="images/KnockKnock/pairs/08_hallway_sketch.png" alt="Sketch" class="before">
-                <img src="images/KnockKnock/pairs/08_hallway_render.png" alt="Render" class="after">
-                <div class="slider-handle"></div>
-                <span class="slider-label left">Sketch</span>
-                <span class="slider-label right">AI Render</span>
-            </div>
+        <div class="console" id="canvas">
+            <span class="label-view" style="left: 20px;">Sketch</span>
+            <span class="label-view" style="right: 20px;">AI Render</span>
+            <div class="frame-before" id="sBefore" style="background-image: url('images/KnockKnock/pairs/01_drone_sketch.png');"></div>
+            <div class="frame-after" id="sAfter" style="background-image: url('images/KnockKnock/pairs/01_drone_render.png');"></div>
+        </div>
+
+        <div class="filmstrip">
+            <div class="thumb active" onclick="upd('01_drone_sketch.png', '01_drone_render.png', this)" style="background-image: url('images/KnockKnock/pairs/01_drone_sketch.png');"></div>
+            <div class="thumb" onclick="upd('02_dulce_sketch.png', '02_dulce_render.png', this)" style="background-image: url('images/KnockKnock/pairs/02_dulce_sketch.png');"></div>
+            <div class="thumb" onclick="upd('03_car_sketch.png', '03_car_render.jpg', this)" style="background-image: url('images/KnockKnock/pairs/03_car_sketch.png');"></div>
+            <div class="thumb" onclick="upd('04_gun_sketch.png', '04_gun_render.jpg', this)" style="background-image: url('images/KnockKnock/pairs/04_gun_sketch.png');"></div>
+            <div class="thumb" onclick="upd('05_closeup_sketch.png', '05_closeup_render.jpg', this)" style="background-image: url('images/KnockKnock/pairs/05_closeup_sketch.png');"></div>
+            <div class="thumb" onclick="upd('06_draw_sketch.png', '06_draw_render.png', this)" style="background-image: url('images/KnockKnock/pairs/06_draw_sketch.png');"></div>
+            <div class="thumb" onclick="upd('07_kiss_sketch.png', '07_kiss_render.jpg', this)" style="background-image: url('images/KnockKnock/pairs/07_kiss_sketch.png');"></div>
+            <div class="thumb" onclick="upd('08_hallway_sketch.png', '08_hallway_render.png', this)" style="background-image: url('images/KnockKnock/pairs/08_hallway_sketch.png');"></div>
         </div>
     </section>
 
-    <!-- OTHER PROJECTS -->
+    <!-- PROJECTS -->
     <section id="projects">
         <p class="section-label">More Work</p>
         <h2 class="section-title">AI Productions</h2>
@@ -301,6 +154,16 @@
             </div>
             <div class="project-card">
                 <video autoplay muted loop playsinline>
+                    <source src="videos/FlyAway/FlyAway_compressed.mp4" type="video/mp4">
+                </video>
+                <div class="project-info">
+                    <h3>Fly Away</h3>
+                    <p>Vertical story format. Atmospheric piece exploring movement and transition.</p>
+                    <span class="project-tag">AI Generated</span>
+                </div>
+            </div>
+            <div class="project-card">
+                <video autoplay muted loop playsinline>
                     <source src="videos/Bar/Bar_compressed.mp4" type="video/mp4">
                 </video>
                 <div class="project-info">
@@ -312,67 +175,172 @@
         </div>
     </section>
 
+    <!-- AI GENERATORS -->
+    <section id="generators">
+        <p class="section-label">Tools</p>
+        <h2 class="section-title">AI Generators</h2>
+        <p class="section-desc">Production tools built on top of my custom prompt engineering. Enter your input, get cinematic output.</p>
+        
+        <div class="gen-grid">
+            <!-- SKETCH TO SCREEN -->
+            <div class="gen-card">
+                <div class="gen-icon">🎬</div>
+                <h3>Sketch to Screen</h3>
+                <p>Transform rough storyboard descriptions into photorealistic cinematic pre-viz prompts for Gemini or MidJourney.</p>
+                <textarea id="sketchInput" placeholder="Example: Wide shot, man sitting in car at night, rain on windshield, neon signs reflecting, 1990s Bronx"></textarea>
+                <button onclick="generateSketch()">Generate Prompt</button>
+                <div class="gen-output" id="sketchOutput"></div>
+            </div>
+
+            <!-- CINEMATIC IMAGE -->
+            <div class="gen-card">
+                <div class="gen-icon">📷</div>
+                <h3>Cinematic Image Engine</h3>
+                <p>My custom prompt formula for photorealistic Kodachrome film look. Enter a scene, get a MidJourney ready prompt.</p>
+                <textarea id="cinematicInput" placeholder="Example: Detective standing in doorway of old Scottish inn, warm tungsten light from inside, foggy night"></textarea>
+                <button onclick="generateCinematic()">Generate Prompt</button>
+                <div class="gen-output" id="cinematicOutput"></div>
+            </div>
+
+            <!-- CHARACTER SHEET -->
+            <div class="gen-card">
+                <div class="gen-icon">👤</div>
+                <h3>Character Sheet Generator</h3>
+                <p>Upload a reference image or describe a character. Get a full consistency bible for maintaining character across shots.</p>
+                <textarea id="characterInput" placeholder="Example: Latino male, mid-30s, leather jacket, intense eyes, scar on left cheek, slicked back hair"></textarea>
+                <button onclick="generateCharacter()">Generate Sheet</button>
+                <div class="gen-output" id="characterOutput"></div>
+            </div>
+        </div>
+    </section>
+
     <footer>
-        <p>&copy; 2026 VEFILM. AI Production Pipeline by Pedro Feria Pino.</p>
+        <p>&copy; 2026 VEFILM. AI Production Pipeline by Pedro Feria Pino, SOC.</p>
     </footer>
 
     <script>
         // Custom Cursor
         const dot = document.querySelector('.cursor-dot');
         const ring = document.querySelector('.cursor-ring');
-        let mouseX = 0, mouseY = 0;
-        let ringX = 0, ringY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            dot.style.left = mouseX + 'px';
-            dot.style.top = mouseY + 'px';
-        });
-
-        function animateRing() {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            ring.style.left = ringX + 'px';
-            ring.style.top = ringY + 'px';
-            requestAnimationFrame(animateRing);
-        }
+        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; });
+        function animateRing() { ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15; ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; requestAnimationFrame(animateRing); }
         animateRing();
-
-        document.querySelectorAll('a, button, .slider-handle, video').forEach(el => {
+        document.querySelectorAll('a, button, .thumb, video, .gen-card').forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
 
-        // Comparison Sliders
-        document.querySelectorAll('[data-slider]').forEach(container => {
-            const handle = container.querySelector('.slider-handle');
-            const afterImg = container.querySelector('.after');
-            let isDragging = false;
+        // Console Slider
+        const canvas = document.getElementById('canvas');
+        const sAfter = document.getElementById('sAfter');
+        const moveHandler = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const x = ((clientX - rect.left) / rect.width) * 100;
+            sAfter.style.clipPath = `inset(0 0 0 ${Math.max(0, Math.min(100, x))}%)`;
+        };
+        canvas.addEventListener('mousemove', moveHandler);
+        canvas.addEventListener('touchmove', moveHandler);
 
-            function updateSlider(x) {
-                const rect = container.getBoundingClientRect();
-                let pos = (x - rect.left) / rect.width * 100;
-                pos = Math.max(0, Math.min(100, pos));
-                handle.style.left = pos + '%';
-                afterImg.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
-            }
+        function upd(sketch, render, el) {
+            document.getElementById('sBefore').style.backgroundImage = `url('images/KnockKnock/pairs/${sketch}')`;
+            document.getElementById('sAfter').style.backgroundImage = `url('images/KnockKnock/pairs/${render}')`;
+            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            sAfter.style.clipPath = 'inset(0 0 0 50%)';
+        }
 
-            handle.addEventListener('mousedown', () => isDragging = true);
-            document.addEventListener('mouseup', () => isDragging = false);
-            document.addEventListener('mousemove', (e) => {
-                if (isDragging) updateSlider(e.clientX);
-            });
+        // GENERATOR FUNCTIONS
+        const GEMINI_KEY = 'AIzaSyATotffPI43llg-6uNxqQ1GaoD4Izf6bss';
 
-            container.addEventListener('touchstart', (e) => {
-                isDragging = true;
-                updateSlider(e.touches[0].clientX);
+        async function callGemini(systemPrompt, userInput) {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: systemPrompt + '\n\nUser Input: ' + userInput }] }]
+                })
             });
-            container.addEventListener('touchmove', (e) => {
-                if (isDragging) updateSlider(e.touches[0].clientX);
-            });
-            container.addEventListener('touchend', () => isDragging = false);
-        });
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error generating response';
+        }
+
+        async function generateSketch() {
+            const input = document.getElementById('sketchInput').value;
+            const output = document.getElementById('sketchOutput');
+            output.style.display = 'block';
+            output.textContent = 'Generating...';
+            
+            const systemPrompt = `You are a cinematic pre-visualization expert. Convert storyboard descriptions into detailed image generation prompts.
+
+OUTPUT FORMAT (copy-paste ready for Gemini/MidJourney):
+- Start with shot type and framing
+- Include camera specs: "Shot on ARRI Alexa, Zeiss Master Prime 35mm"
+- Film stock: "Kodachrome 64 color palette" or "Kodak Vision3 500T"
+- Lighting ratios and practical sources
+- Atmospheric elements: fog, rain, neon reflections
+- End with "--ar 2.39:1 --v 6.1" for MidJourney
+
+Keep it under 150 words. No explanations, just the prompt.`;
+
+            const result = await callGemini(systemPrompt, input);
+            output.textContent = result;
+        }
+
+        async function generateCinematic() {
+            const input = document.getElementById('cinematicInput').value;
+            const output = document.getElementById('cinematicOutput');
+            output.style.display = 'block';
+            output.textContent = 'Generating...';
+            
+            const systemPrompt = `You are Pedro Feria Pino's custom cinematic image generator. Your job is to create MidJourney prompts with his signature Kodachrome film look.
+
+MANDATORY ELEMENTS:
+- "Hyper-realistic cinematic still"
+- Camera: "ARRI Alexa Mini LF, anamorphic lens"
+- Film stock: "Kodachrome 64 film emulation, warm highlights, crushed blacks"
+- Lighting: Always specify ratios (4:1, 6:1) and practical sources
+- Skin tone preservation for any ethnicity mentioned
+- Atmospheric depth: haze, fog, volumetric light
+- Period accuracy if era is specified
+
+END WITH: "--ar 2.39:1 --style raw --v 6.1"
+
+Output ONLY the prompt. No explanations. Under 120 words.`;
+
+            const result = await callGemini(systemPrompt, input);
+            output.textContent = result;
+        }
+
+        async function generateCharacter() {
+            const input = document.getElementById('characterInput').value;
+            const output = document.getElementById('characterOutput');
+            output.style.display = 'block';
+            output.textContent = 'Generating...';
+            
+            const systemPrompt = `You are a character consistency bible generator for film production. Create detailed character sheets for maintaining visual consistency across AI-generated shots.
+
+OUTPUT FORMAT:
+**CHARACTER PROFILE**
+- Full physical description (face shape, skin tone, hair, eyes, distinguishing features)
+- Default wardrobe with specific colors and materials
+- Age range and build
+
+**CONSISTENCY TOKENS** (for prompt injection):
+- 3 different angle prompts (front, 3/4, profile)
+- Lighting variations (warm, cool, dramatic)
+
+**NEGATIVE PROMPTS:**
+- What to exclude to maintain consistency
+
+**MIDJOURNEY SREF SEED:** Generate a suggested --sref value
+
+Keep output under 200 words. Professional format.`;
+
+            const result = await callGemini(systemPrompt, input);
+            output.textContent = result;
+        }
     </script>
 </body>
 </html>
