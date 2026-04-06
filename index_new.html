@@ -354,24 +354,13 @@
                 <button onclick="handleGenerate('cinematic')" style="background:var(--accent); color:#000; border-color:var(--accent); font-weight:bold;">Generate in My Style</button>
                 <div class="gen-output" id="cinematicOutput"></div>
             </div>
-            <div class="gen-card">
-                <span class="engine-badge" id="badge_character">LOADING...</span>
-                <h3>Character Sheet Generator</h3>
-                <p style="line-height:1.65; font-size:0.82rem;">Upload a single reference image of your character — or describe them in detail — and this generator builds a full photorealistic character consistency sheet. Face, wardrobe layers, physical details, expression baseline, and lighting spec. The output gives everyone on your production — casting, wardrobe, makeup, continuity — the exact same locked reference. One image in. A complete character bible out.</p>
-                <p style="font-size:0.72rem; color:var(--accent); font-family:'JetBrains Mono',monospace; margin-bottom:0.5rem; letter-spacing:0.04em;">UPLOAD ONE IMAGE — GET A COMPLETE CHARACTER REFERENCE</p>
-                <select class="style-select" id="characterStyle">
-                    <option value="character_greyhouse">Grey House — Period Horror, Scotland 1967</option>
-                    <option value="character_knockknock">Knock Knock — 90s Bronx Street</option>
-                    <option value="character_ichibonkiller">Ichibonkiller — Detached / Nihilistic</option>
-                    <option value="character_neutral">Neutral — Clean Reference Sheet</option>
-                </select>
-                <input type="file" id="characterFile" accept="image/*" style="margin-top:0.75rem; font-size: 0.7rem; color: #888;">
-                <div class="textarea-wrap">
-                    <textarea id="characterInput" placeholder="Physical traits, age, wardrobe, expression, build..."></textarea>
-                    <button class="mic-btn" onclick="startMic('characterInput', this)" title="Speak your prompt">🎤</button>
-                </div>
-                <button onclick="handleGenerate('character')">Generate Character</button>
-                <div class="gen-output" id="characterOutput"></div>
+            <div class="gen-card" style="padding:0; overflow:hidden; border-color: rgba(255,255,255,0.1);">
+                <iframe
+                    src="https://vefilm-character-sheet.vercel.app"
+                    style="width:100%; height:820px; border:none; display:block; background:#0a0a0a;"
+                    title="VEFILM Character Sheet Generator"
+                    loading="lazy"
+                ></iframe>
             </div>
         </div>
     </section>
