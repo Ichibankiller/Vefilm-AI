@@ -872,9 +872,19 @@
         .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: rgba(0,0,0,0.8); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
         .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.6rem 1.2rem; cursor: pointer; }
         
-        footer { padding: 5rem 3rem; text-align: center; border-top: 1px solid var(--border); background: #050505; }
-        .bio h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: 1rem; color: var(--accent); }
-        .bio p { color: var(--text-dim); max-width: 700px; margin: 0 auto; font-size: 0.9rem; }
+        footer { padding: 5rem 3rem 3rem; border-top: 1px solid var(--border); background: #050505; }
+        .bio { max-width: 860px; margin: 0 auto; }
+        .bio h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 1.2rem; color: var(--accent); text-align: center; }
+        .bio p { color: var(--text-dim); font-size: 0.92rem; line-height: 1.8; margin-bottom: 1rem; text-align: center; }
+        .bio-credits { display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; margin: 2rem 0; }
+        .bio-credit { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.25); text-transform: uppercase; }
+        .bio-credit span { display: block; font-size: 0.75rem; color: rgba(255,255,255,0.55); letter-spacing: 0.08em; margin-top: 4px; font-family: 'Inter', sans-serif; }
+        .bio-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 2.5rem; }
+        .bio-link { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; padding: 10px 22px; border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.45); border-radius: 2px; transition: all 0.18s; }
+        .bio-link:hover { border-color: var(--accent); color: var(--accent); }
+        .bio-link.primary { border-color: var(--accent); color: var(--accent); }
+        .bio-link.primary:hover { background: var(--accent); color: #000; }
+        .footer-copy { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.04); font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: rgba(255,255,255,0.15); letter-spacing: 0.12em; text-transform: uppercase; }
         @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -1054,9 +1064,23 @@
     <footer>
         <div class="bio">
             <h3>About VEFILM</h3>
-            <p>I'm Pedro Feria Pino, a Brooklyn based DP with 20+ years shooting for Netflix, Disney, and MTV. This is where I merge traditional camera craft with AI production tools.</p>
+            <p>I'm Pedro Feria Pino — filmmaker, DP, and AI systems director based in Brooklyn. Twenty years shooting for Netflix, Disney, TLC, MTV, ABC News, and VH1. I build AI production pipelines that apply real cinematography principles to generated imagery. Light, composition, and texture are not aesthetic preferences. They are structural tools.</p>
+            <p>This site is a live extension of that work — tools I built for myself, made available here.</p>
+
+            <div class="bio-credits">
+                <div class="bio-credit">CREDITS<span>Netflix · Disney · TLC · MTV · VH1 · ABC News</span></div>
+                <div class="bio-credit">BASED IN<span>Brooklyn, New York</span></div>
+                <div class="bio-credit">SOCIETY OF CAMERA OPERATORS<span>SOC Member</span></div>
+            </div>
+
+            <div class="bio-links">
+                <a class="bio-link primary" href="https://www.pedroferiapino.com" target="_blank" rel="noopener">REEL &amp; PORTFOLIO</a>
+                <a class="bio-link" href="https://www.instagram.com/pedroferiapino" target="_blank" rel="noopener">INSTAGRAM</a>
+                <a class="bio-link" href="https://www.imdb.com/name/nm4975921/" target="_blank" rel="noopener">IMDB</a>
+                <a class="bio-link" href="mailto:vefilm@gmail.com">EMAIL</a>
+            </div>
         </div>
-        <p style="margin-top:2rem; font-size:0.7rem; color:#444;">&copy; 2026 VEFILM. AI Pipeline by Pedro Feria Pino, SOC.</p>
+        <div class="footer-copy">&copy; 2026 VEFILM &nbsp;·&nbsp; Pedro Feria Pino, SOC &nbsp;·&nbsp; AI Systems Director</div>
     </footer>
     <script>
         // --- API & SETTINGS ---
