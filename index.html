@@ -895,10 +895,11 @@
             a, button, .thumb, .gen-card, .lookbook-item, .nav-links a { cursor: pointer !important; }
 
             /* NAV */
-            nav { padding: 1rem 1.25rem; }
-            .logo { height: 34px; }
-            .nav-links { gap: 1rem; }
-            .nav-links a { font-size: 0.58rem; letter-spacing: 0.06em; }
+            nav { padding: 0.85rem 1rem; }
+            .logo { height: 30px; }
+            .nav-links { gap: 0.7rem; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .nav-links::-webkit-scrollbar { display: none; }
+            .nav-links a { font-size: 0.5rem; letter-spacing: 0.04em; white-space: nowrap; }
 
             /* SECTIONS */
             section { padding: 3rem 1.25rem; }
@@ -911,7 +912,11 @@
             /* GREY HOUSE INFO */
             .hero-info { padding: 1.75rem 1.25rem 2rem; }
             .hero-info::after { display: none; }
-            .greyhouse-title { font-size: clamp(2.4rem, 13vw, 3.8rem); }
+            .greyhouse-title { font-size: clamp(1.9rem, 11vw, 3rem); line-height: 1; }
+
+            /* HARD OVERFLOW GUARD — nothing bleeds past viewport */
+            * { max-width: 100%; box-sizing: border-box; }
+            section, .hero-info, .hero-video, footer, .console-section { overflow-x: hidden; }
 
             /* LOOKBOOK — stack vertically on small screens */
             .lookbook-grid { grid-template-columns: 1fr !important; }
