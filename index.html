@@ -113,6 +113,29 @@
             font-size: 0.9rem;
             margin-bottom: 2.5rem;
         }
+        .intro-expand-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 0;
+            margin: 0.5rem 0 0;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .intro-expand-btn:hover { opacity: 1; }
+        .intro-expanded {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease;
+        }
+        .intro-expanded.open {
+            max-height: 1000px;
+        }
         .intro-rule {
             width: 48px;
             height: 1px;
@@ -1051,9 +1074,21 @@
     <!-- SECTION: INTRO -->
     <section class="page-intro">
         <p class="intro-eyebrow">Pedro Feria Pino</p>
-        <p class="intro-body">Some of this I've been sitting on for a while. Not because it wasn't ready. Because I wasn't sure anyone would get it. These are projects built with AI tools, put together the way I approach everything: obsessing over details, redoing things when better methods became available, never calling it done until it actually feels right.</p>
-        <p class="intro-body">Below is a film I've been developing for two years. A teaser. A sketch-to-storyboard tool I built for production development. A few short pieces. And an image generator I put together with a very specific visual look locked into it. If you've never tried one of these before, give it a shot. I'm still working through a few things. Be kind. If it gives you something good or something completely unhinged, share it.</p>
-        <p class="intro-body intro-sign">Thanks for stopping by.</p>
+        <p class="intro-body">My grandfather in his 90s, looking down at his hands. Telling me all the things these hands used to be able to do. And then that look. The way you see time on someone's face when they're really seeing it themselves.</p>
+        <p class="intro-body">I needed to make that image. To hold it. So I did.</p>
+        <p class="intro-body">That's when I understood what this tool actually is. Not a generator. Not a shortcut. A place to put the image your mind keeps returning to. The moment that needs to live somewhere other than just memory.</p>
+        <p class="intro-body">Everything since has come from that same impulse: I need to see this.</p>
+
+        <button class="intro-expand-btn" id="introToggle" onclick="toggleIntro()">Keep reading ↓</button>
+
+        <div class="intro-expanded" id="introExpanded">
+            <p class="intro-body">Below is a film I've been building for two years. It's set in Scotland, 1967. A psychological thriller. I add to it, strip it back, rebuild sequences when better tools come out. Some scenes I've redone three times because I could do them better. That's just how this works. What's here is a teaser. It's not finished, and I'm not sure it ever will be. That might be the point.</p>
+            <p class="intro-body">After that, a tool I built to take hand-drawn storyboard sketches and turn them into production-quality images. I use it in development. It's useful across a lot of stages. Pre-viz, department communication, figuring out if something actually works before you commit to it.</p>
+            <p class="intro-body">Then three short pieces. Different in tone, same in obsession.</p>
+            <p class="intro-body">And last, an image generator I put together with a very specific visual language built into it. Everything I know about light and composition is locked into how it thinks. If you've never touched one of these before, this is a good place to start. Describe what you're seeing in your head. It'll do the rest. I'm still working through some things. Be kind. If it gives you something you weren't expecting, share it.</p>
+            <p class="intro-body intro-sign">Thanks for being here.</p>
+        </div>
+
         <div class="intro-rule"></div>
         <p class="intro-project-line">↓ &nbsp; Two years. Passion project. Here's a teaser.</p>
     </section>
@@ -1587,6 +1622,13 @@
         }
         const audioBtn = document.getElementById('audioToggle');
         const heroVideo = document.getElementById('heroVideo');
+        function toggleIntro() {
+            const expanded = document.getElementById('introExpanded');
+            const btn = document.getElementById('introToggle');
+            const isOpen = expanded.classList.contains('open');
+            expanded.classList.toggle('open');
+            btn.textContent = isOpen ? 'Keep reading ↓' : 'Close ↑';
+        }
         function toggleAudio() {
             if (heroVideo.muted) {
                 heroVideo.muted = false;
