@@ -327,7 +327,7 @@
         /* GENERATORS */
         .gen-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: minmax(320px, 680px);
             gap: 1.5rem;
             margin-top: 2.5rem;
         }
@@ -672,29 +672,6 @@
 
         <div class="gen-grid">
 
-            <!-- SKETCH TO SCREEN -->
-            <div class="gen-card">
-                <div class="gen-card-label">01 — Sketch to Screen</div>
-                <h3>Turn Any Sketch Into a Film Frame</h3>
-                <p class="gen-desc">Upload a rough sketch, storyboard panel, or location reference. Gemini reads the composition and spatial intent, then FLUX renders it as a fully realized cinematic frame — camera spec, motivated lighting, film stock all locked in.</p>
-                <select class="style-select" id="sketchStyle">
-                    <option value="greyhouse">The Grey House — Scotland 1967</option>
-                    <option value="knockknock">Knock Knock — 90s Bronx</option>
-                    <option value="ichibonkiller">Ichibonkiller — Nihilistic</option>
-                    <option value="neutral">Neutral — Pure Cinematic</option>
-                </select>
-                <div class="file-input-wrap">
-                    <label class="file-input-label" for="sketchFile" id="sketchFileLabel">+ UPLOAD SKETCH</label>
-                    <input type="file" id="sketchFile" accept="image/*" onchange="document.getElementById('sketchFileLabel').textContent = this.files[0] ? '✓ ' + this.files[0].name.slice(0,28) : '+ UPLOAD SKETCH'">
-                </div>
-                <div class="textarea-wrap">
-                    <textarea id="sketchInput" rows="3" placeholder="Describe the shot — framing, action, location, mood..."></textarea>
-                    <button class="mic-btn" onclick="startMic('sketchInput', this)" title="Speak your prompt">🎤</button>
-                </div>
-                <button class="gen-btn" onclick="handleGenerate('sketch')">Generate Frame</button>
-                <div class="gen-output" id="sketchOutput"></div>
-            </div>
-
             <!-- VEFILM SIGNATURE GENERATOR -->
             <div class="gen-card accent-card">
                 <div class="gen-card-label" style="color:var(--accent);">02 — Signature Generator</div>
@@ -712,23 +689,6 @@
                 </div>
                 <button class="gen-btn primary" onclick="handleGenerate('cinematic')">Generate in My Style</button>
                 <div class="gen-output" id="cinematicOutput"></div>
-            </div>
-
-            <!-- CHARACTER SHEET GENERATOR -->
-            <div class="gen-card">
-                <div class="gen-card-label">03 — Character Sheet</div>
-                <h3>Multi-View<br>Reference Sheet</h3>
-                <p class="gen-desc">Upload a reference photo or describe the character. Gemini extracts every physical detail, then FLUX generates a 4-panel studio sheet — front, 3/4, profile, and face close-up. Production-ready continuity reference.</p>
-                <div class="file-input-wrap">
-                    <label class="file-input-label" for="characterFile" id="characterFileLabel">+ UPLOAD REFERENCE</label>
-                    <input type="file" id="characterFile" accept="image/*" onchange="document.getElementById('characterFileLabel').textContent = this.files[0] ? '✓ ' + this.files[0].name.slice(0,28) : '+ UPLOAD REFERENCE'">
-                </div>
-                <div class="textarea-wrap">
-                    <textarea id="characterInput" rows="3" placeholder="Describe the character — age, ethnicity, build, wardrobe, distinguishing features..."></textarea>
-                    <button class="mic-btn" onclick="startMic('characterInput', this)" title="Speak your prompt">🎤</button>
-                </div>
-                <button class="gen-btn" onclick="handleGenerate('character')">Generate Sheet</button>
-                <div class="gen-output" id="characterOutput"></div>
             </div>
 
         </div>
