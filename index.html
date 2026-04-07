@@ -24,7 +24,12 @@
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Grain_Noise.png');
             opacity: 0.04; pointer-events: none; z-index: 10000;
         }
-        body { 
+        html {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        html::-webkit-scrollbar { display: none; }
+        body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
@@ -81,8 +86,49 @@
             letter-spacing: 0.02em;
         }
         .section-desc { color: rgba(255,255,255,0.38); max-width: 600px; margin-top: 1rem; font-size: 0.88rem; line-height: 1.7; }
+        /* PAGE INTRO */
+        .page-intro {
+            padding: 9rem 3rem 4rem;
+            max-width: 780px;
+        }
+        .intro-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--accent);
+            opacity: 0.7;
+            margin-bottom: 2rem;
+        }
+        .intro-body {
+            font-size: 1rem;
+            line-height: 1.85;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 1.4rem;
+            font-weight: 300;
+            max-width: 680px;
+        }
+        .intro-sign {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.9rem;
+            margin-bottom: 2.5rem;
+        }
+        .intro-rule {
+            width: 48px;
+            height: 1px;
+            background: var(--accent);
+            opacity: 0.4;
+            margin-bottom: 2rem;
+        }
+        .intro-project-line {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.25);
+        }
         /* HERO & VIDEO */
-        .hero-video { position: relative; width: 100%; margin-top: 80px; padding: 0 3rem; }
+        .hero-video { position: relative; width: 100%; margin-top: 0; padding: 0 3rem; }
         .hero-video video {
             width: 100%; max-height: 75vh; object-fit: contain;
             background: #000; display: block;
@@ -908,8 +954,11 @@
             /* SECTIONS */
             section { padding: 3rem 1.25rem; }
 
+            /* INTRO */
+            .page-intro { padding: 6rem 1.25rem 3rem; }
+            .intro-body { font-size: 0.9rem; }
             /* HERO VIDEO */
-            .hero-video { padding: 0; margin-top: 64px; }
+            .hero-video { padding: 0; margin-top: 0; }
             .hero-video video { max-height: 52vw; }
             .audio-toggle { font-size: 0.55rem; padding: 0.3rem 0.7rem; margin: 0.4rem 0.75rem 0 auto; }
 
@@ -999,19 +1048,27 @@
             <a href="#generators" onclick="navScroll('generators',event)">Generators</a>
         </div>
     </nav>
+    <!-- SECTION: INTRO -->
+    <section class="page-intro">
+        <p class="intro-eyebrow">Pedro Feria Pino</p>
+        <p class="intro-body">Some of this I've been sitting on for a while. Not because it wasn't ready — because I wasn't sure anyone would get it. These are projects built with AI tools, put together the way I approach everything: obsessing over details, redoing things when better methods became available, never calling it done until it actually feels right.</p>
+        <p class="intro-body">Below is a film I've been developing for two years — a teaser. A sketch-to-storyboard tool I built for production development. A few short pieces. And an image generator I put together with a very specific visual look locked into it. If you've never tried one of these before, give it a shot. I'm still working through a few things — be kind. If it gives you something good or something completely unhinged, share it.</p>
+        <p class="intro-body intro-sign">Thanks for stopping by.</p>
+        <div class="intro-rule"></div>
+        <p class="intro-project-line">↓ &nbsp; Two years. Passion project. Here's a teaser.</p>
+    </section>
     <!-- SECTION: GREY HOUSE -->
     <section id="greyhouse" class="hero-video">
         <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="images/GreyHouse/04_inn_exterior.png">
-            <source src="videos/GreyHouse/TheGreyHouse_compressed.mp4" type="video/mp4">
+            <source src="videos/GreyHouse/GreyhouseUltimate.mp4" type="video/mp4">
         </video>
         <button class="audio-toggle" id="audioToggle" onclick="toggleAudio()">🔇 SOUND</button>
     </section>
     <!-- CRIME SCENE BG WRAPPER: spans hero-info + lookbook -->
     <div class="greyhouse-bg-wrapper">
         <div class="hero-info">
-            <p class="section-label">AI Generated Horror</p>
             <span class="greyhouse-title">The Grey House<br>Incident</span>
-            <p>Scotland, 1967. A psychological thriller built entirely with AI. MidJourney stills, Veo sequences, ElevenLabs voiceover.</p>
+            <p>Scotland, 1967. A psychological thriller. Character-driven, atmospheric, tension-focused.</p>
         </div>
     <!-- SECTION: GREY HOUSE LOOKBOOK -->
     <section class="lookbook-section" style="padding: 3rem;">
@@ -1066,7 +1123,7 @@
     <div class="projects-bg-wrapper">
     <section id="projects">
         <p class="section-label">Selected Works</p>
-        <h2 class="section-title">AI Productions</h2>
+        <h2 class="section-title">Short Pieces</h2>
         <div class="project-grid">
             <div class="project-card">
                 <video muted loop playsinline controls preload="metadata">
