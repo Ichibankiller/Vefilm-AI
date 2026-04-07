@@ -1426,13 +1426,17 @@
             const btn = document.querySelector(`#actions_${type} .copy-btn`);
             if (btn) { btn.textContent = 'COPIED'; setTimeout(() => btn.textContent = 'COPY PROMPT', 2000); }
         }
-        const ambience = document.getElementById('ambience');
         const audioBtn = document.getElementById('audioToggle');
-        let audioPlaying = false;
+        const heroVideo = document.getElementById('heroVideo');
         function toggleAudio() {
-            if (audioPlaying) { ambience.pause(); audioBtn.textContent = '🔇 SOUND'; }
-            else { ambience.volume = 0.3; ambience.play(); audioBtn.textContent = '🔊 SOUND'; }
-            audioPlaying = !audioPlaying;
+            if (heroVideo.muted) {
+                heroVideo.muted = false;
+                heroVideo.volume = 1.0;
+                audioBtn.textContent = '🔊 SOUND';
+            } else {
+                heroVideo.muted = true;
+                audioBtn.textContent = '🔇 SOUND';
+            }
         }
     </script>
 </body>
