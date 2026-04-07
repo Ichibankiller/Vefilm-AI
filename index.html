@@ -25,13 +25,16 @@
             opacity: 0.04; pointer-events: none; z-index: 10000;
         }
         body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            line-height: 1.6; 
-            overflow-x: hidden; 
-            cursor: none; 
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: none;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        body::-webkit-scrollbar { display: none; }
         a, button, .thumb, .gen-card, .lookbook-item, .nav-links a { cursor: none; }
         video { cursor: default !important; }
         /* CUSTOM CURSOR */
