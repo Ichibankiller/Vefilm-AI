@@ -233,7 +233,7 @@
         }
         .knockknock-bg-wrapper .console-section { position: relative; z-index: 2; }
         .console-section { padding: 4rem 3rem; display: flex; flex-direction: column; align-items: center; }
-        .console { width: 100%; max-width: 1100px; aspect-ratio: 2.39/1; position: relative; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8); touch-action: none; }
+        .console { width: 100%; max-width: 1100px; aspect-ratio: 2.39/1; position: relative; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8); touch-action: pan-y; }
         .frame-before, .frame-after { position: absolute; inset: 0; background-size: cover; background-position: center; transition: background-image 0.4s ease; }
         .frame-after { clip-path: inset(0 0 0 50%); z-index: 2; border-left: 2px solid var(--accent); }
         .label-view { position: absolute; top: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; text-transform: uppercase; color: rgba(255,255,255,0.5); z-index: 10; pointer-events: none; letter-spacing: 0.1em; }
@@ -885,6 +885,85 @@
         .bio-link.primary:hover { background: var(--accent); color: #000; }
         .footer-copy { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.04); font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: rgba(255,255,255,0.15); letter-spacing: 0.12em; text-transform: uppercase; }
         @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(4, 1fr); } .console { aspect-ratio: 16/9; } .project-grid, .gen-grid { grid-template-columns: 1fr; } }
+
+        /* ── MOBILE — comprehensive overhaul ─────────────────────────────── */
+        @media (max-width: 768px) {
+
+            /* Hide custom cursor — use native pointer on touch */
+            .cursor-dot, .cursor-ring { display: none !important; }
+            body { cursor: auto !important; }
+            a, button, .thumb, .gen-card, .lookbook-item, .nav-links a { cursor: pointer !important; }
+
+            /* NAV */
+            nav { padding: 1rem 1.25rem; }
+            .logo { height: 34px; }
+            .nav-links { gap: 1rem; }
+            .nav-links a { font-size: 0.58rem; letter-spacing: 0.06em; }
+
+            /* SECTIONS */
+            section { padding: 3rem 1.25rem; }
+
+            /* HERO VIDEO */
+            .hero-video { padding: 0; margin-top: 64px; }
+            .hero-video video { max-height: 52vw; }
+            .audio-toggle { padding: 0.4rem 0.75rem; font-size: 0.62rem; bottom: 0.75rem; right: 0.75rem; }
+
+            /* GREY HOUSE INFO */
+            .hero-info { padding: 1.75rem 1.25rem 2rem; }
+            .hero-info::after { display: none; }
+            .greyhouse-title { font-size: clamp(2.4rem, 13vw, 3.8rem); }
+
+            /* LOOKBOOK — stack vertically on small screens */
+            .lookbook-grid { grid-template-columns: 1fr !important; }
+            .lookbook-item img { max-height: 60vw; object-fit: cover; }
+
+            /* KNOCK KNOCK CONSOLE */
+            .console-section { padding: 2.5rem 1rem; }
+            .console { touch-action: pan-y; }
+            .filmstrip { grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 1rem; }
+            .thumb { border-width: 1px; }
+
+            /* PROJECTS */
+            .project-grid { grid-template-columns: 1fr !important; }
+            .projects-bg-wrapper .console-section { padding: 2.5rem 1.25rem; }
+
+            /* SECTION TITLES */
+            .section-title { font-size: clamp(2rem, 10vw, 3rem); }
+            .section-desc { font-size: 0.82rem; }
+
+            /* SIGNATURE GENERATOR */
+            .sig-layout { grid-template-columns: 1fr !important; min-height: unset; }
+            .sig-controls { padding: 1.75rem 1.25rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+            .sig-frame { aspect-ratio: 3 / 2; }
+            .sig-panel { padding: 1.25rem; }
+            .sig-bottom { padding: 1rem 1.25rem; flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+            .sig-main-title { font-size: clamp(2.4rem, 10vw, 3.5rem); }
+            .sig-tagline { font-size: 0.82rem; }
+            #sigInput { font-size: 0.88rem; }
+            #sigBtn { width: 100%; padding: 1rem; font-size: 1rem; }
+
+            /* GENERATORS SECTION */
+            .gen-grid { grid-template-columns: 1fr !important; }
+            .gen-welcome { font-size: 0.85rem; }
+            .gen-card { padding: 1.5rem 1.25rem; }
+            .gen-input { font-size: 0.88rem; }
+
+            /* FOOTER / ABOUT */
+            footer { padding: 3rem 1.25rem 2rem; }
+            .bio h3 { font-size: 1.6rem; }
+            .bio p { font-size: 0.85rem; }
+            .bio-credits { flex-direction: column; align-items: center; gap: 1.25rem; }
+            .bio-links { flex-direction: column; align-items: center; }
+            .bio-link { width: 200px; text-align: center; padding: 12px 20px; }
+        }
+
+        /* ── VERY SMALL PHONES ────────────────────────────────────────────── */
+        @media (max-width: 420px) {
+            .nav-links { gap: 0.65rem; }
+            .nav-links a { font-size: 0.52rem; letter-spacing: 0.04em; }
+            section { padding: 2.5rem 1rem; }
+            .greyhouse-title { font-size: clamp(2rem, 14vw, 3rem); }
+        }
     </style>
 </head>
 <body>
