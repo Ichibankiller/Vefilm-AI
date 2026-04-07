@@ -869,7 +869,6 @@
             .sig-frame { aspect-ratio: 16/9; }
         }
         /* UTILS */
-        .timecode { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.15em; background: rgba(0,0,0,0.8); color: var(--text); padding: 0.5rem 1.25rem; border-radius: 4px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
         .audio-toggle { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); padding: 0.6rem 1.2rem; cursor: pointer; }
         
         footer { padding: 5rem 3rem 3rem; border-top: 1px solid var(--border); background: #050505; }
@@ -891,7 +890,6 @@
 <body>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
-    <div class="timecode" id="timecode">00:00:00:00</div>
     
     <audio id="ambience" loop>
         <source src="audio/ambience.mp3" type="audio/mpeg">
@@ -1428,19 +1426,6 @@
             const btn = document.querySelector(`#actions_${type} .copy-btn`);
             if (btn) { btn.textContent = 'COPIED'; setTimeout(() => btn.textContent = 'COPY PROMPT', 2000); }
         }
-        // --- UTILS ---
-        const tcEl = document.getElementById('timecode');
-        const startTime = Date.now();
-        function updateTimecode() {
-            const elapsed = Date.now() - startTime;
-            const hrs = String(Math.floor(elapsed / 3600000)).padStart(2, '0');
-            const mins = String(Math.floor((elapsed % 3600000) / 60000)).padStart(2, '0');
-            const secs = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, '0');
-            const frames = String(Math.floor((elapsed % 1000) / 41.67)).padStart(2, '0');
-            tcEl.textContent = `${hrs}:${mins}:${secs}:${frames}`;
-            requestAnimationFrame(updateTimecode);
-        }
-        updateTimecode();
         const ambience = document.getElementById('ambience');
         const audioBtn = document.getElementById('audioToggle');
         let audioPlaying = false;
