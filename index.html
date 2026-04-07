@@ -914,9 +914,16 @@
             .hero-info::after { display: none; }
             .greyhouse-title { font-size: clamp(1.9rem, 11vw, 3rem); line-height: 1; }
 
-            /* HARD OVERFLOW GUARD — nothing bleeds past viewport */
+            /* LOOKBOOK — single column on mobile (minmax(280px) = 2×280=560px overflow) */
+            .lookbook-grid { grid-template-columns: 1fr !important; }
+            .lookbook-item { min-height: 56vw; }
+
+            /* HARD OVERFLOW GUARD */
+            html { overflow-x: hidden; }
             * { max-width: 100%; box-sizing: border-box; }
-            section, .hero-info, .hero-video, footer, .console-section { overflow-x: hidden; }
+            section, .hero-info, .hero-video, footer, .console-section,
+            .greyhouse-bg-wrapper, .knockknock-bg-wrapper,
+            .projects-bg-wrapper, .generators-bg-wrapper { overflow-x: hidden; }
 
             /* LOOKBOOK — stack vertically on small screens */
             .lookbook-grid { grid-template-columns: 1fr !important; }
