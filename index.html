@@ -240,6 +240,55 @@
         .filmstrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 1100px; margin-top: 2rem; }
         .thumb { aspect-ratio: 16/9; background-size: cover; background-position: center; cursor: pointer; opacity: 0.35; transition: 0.3s; border: 2px solid transparent; }
         .thumb.active { opacity: 1; border-color: var(--accent); transform: translateY(-4px); }
+        /* GENERATORS — atmospheric background wrapper */
+        .generators-bg-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        .generators-bg-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -8%;
+            background: url('images/AIwork%20photos/Manwalking.png') center / cover no-repeat;
+            opacity: 0.15;
+            filter: blur(6px) saturate(0.4);
+            z-index: 0;
+        }
+        .generators-bg-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to bottom, var(--bg) 0%, transparent 6%, transparent 92%, var(--bg) 100%),
+                linear-gradient(to right, var(--bg) 0%, transparent 8%, transparent 92%, var(--bg) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .generators-bg-wrapper #generators { position: relative; z-index: 2; }
+        /* GENERATORS WELCOME BLOCK */
+        .gen-welcome {
+            max-width: 720px;
+            margin: 1.5rem 0 2rem;
+            padding: 1.5rem 2rem;
+            border-left: 2px solid rgba(255,107,0,0.4);
+            background: rgba(255,107,0,0.04);
+        }
+        .gen-welcome h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+        .gen-welcome p {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.88rem;
+            line-height: 1.75;
+            margin-bottom: 0.6rem;
+        }
+        .gen-welcome p:last-child { margin-bottom: 0; }
+        .gen-welcome strong { color: rgba(255,255,255,0.8); font-weight: 500; }
         /* AI PRODUCTIONS — atmospheric background wrapper */
         .projects-bg-wrapper {
             position: relative;
@@ -604,12 +653,18 @@
     </section>
     </div><!-- /projects-bg-wrapper -->
     <!-- SECTION: GENERATORS -->
+    <div class="generators-bg-wrapper">
     <section id="generators" style="padding: 5rem 3rem;">
         <p class="section-label">Production Tools</p>
         <h2 class="section-title">AI Generators</h2>
-        <p style="color:rgba(255,255,255,0.4); font-size:0.88rem; line-height:1.7; max-width:620px; margin-top:1rem; margin-bottom:0.5rem;">
-            Powered by Gemini 2.5 Flash + FLUX 1.1 Pro. Describe what you need — the camera spec, lighting logic, and cinematic language are already loaded. No technical knowledge required.
-        </p>
+
+        <div class="gen-welcome">
+            <h4>New to AI generation? Start here.</h4>
+            <p>These tools work the same way a cinematographer thinks — with <strong>light, texture, and intention</strong>. You don't need to know any technical terms or understand how AI works under the hood.</p>
+            <p>Just describe what you see in your mind: a place, a person, a moment. <strong>The pipeline handles everything else</strong> — camera specification, lens choice, lighting logic, film stock, color science. Every technical decision is already loaded.</p>
+            <p>Type something simple like <strong>"a woman alone at a diner counter, late night, neon sign outside"</strong> and hit generate. That's it. The system translates your idea into a fully realized cinematic frame. Generation takes 20–45 seconds depending on the tool.</p>
+        </div>
+
         <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:2.5rem; font-family:'JetBrains Mono',monospace; font-size:0.56rem; letter-spacing:0.15em; color:var(--accent); background:rgba(255,107,0,0.06); border:1px solid rgba(255,107,0,0.18); padding:4px 10px;">
             GEMINI 2.5 FLASH &nbsp;+&nbsp; FLUX 1.1 PRO &nbsp;·&nbsp; VEFILM PIPELINE
         </div>
@@ -677,6 +732,7 @@
 
         </div>
     </section>
+    </div><!-- /generators-bg-wrapper -->
     <footer>
         <div class="bio">
             <h3>About VEFILM</h3>
